@@ -1,4 +1,3 @@
 package com.example.parkmate.core.domain.use_case.parking_sessions
 
-class ParkingSessionUseCases {
-}
+data class ParkingSessionsUseCases()
