@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.compose) apply false
 
-    kotlin("jvm") version "2.2.10"
-    id("com.google.devtools.ksp") version "2.3.7"
+    // Versioni allineate per Kotlin 2.0.21, KSP e Hilt
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
+    id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }

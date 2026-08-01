@@ -1,4 +1,11 @@
 package com.example.parkmate.core.domain.use_case.parking_sessions
 
-class getActiveParkingSessions {
+import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.repository.ParkingSessionRepository
+import kotlinx.coroutines.flow.Flow
+
+class GetActiveParkingSessions (private val repository: ParkingSessionRepository){
+    operator fun invoke(): Flow<List<ParkingSession>> {
+        return repository.getActiveParkingSessions()
+    }
 }

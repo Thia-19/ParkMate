@@ -1,0 +1,31 @@
+package com.example.parkmate.feature_history.presentation
+
+import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingType
+
+// will survive screen rotations
+// Mantiene i dati filtrati, la vista attiva (LISTA/MAPPA), ecc.
+data class HistoryState(
+    val parkingSessions: List<ParkingSession> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    // ordine: val parkingSessionOrder: ParkingSessionOrder = Park...
+
+    // Filters
+    val selectedVehicleId: String? = null,
+    val selectedParkType: ParkingType? = null,
+    val dateRange: Long? = null,
+
+    /*ADD: At least two different types of visualization must be provided,
+such as a geographic heat map showing the distribution of parks over time, or
+a chart representing parking costs aggregated by period or category. */
+
+    // State (List or Map)
+    val viewMode: HistoryViewMode = HistoryViewMode.LIST
+
+)
+
+enum class HistoryViewMode {
+    LIST,
+    MAP
+}
