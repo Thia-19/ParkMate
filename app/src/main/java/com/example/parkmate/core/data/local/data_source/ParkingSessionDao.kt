@@ -25,6 +25,6 @@ interface ParkingSessionDao {
     @Delete
     suspend fun deleteParkingSession(parkingSession: ParkingSession)
 
-    @Query("UPDATE parkingsession SET isActive = 0, endTime = :endTime WHERE vehicleId = :vehicleID AND isActive = 1")
+    @Query("UPDATE parkingsession SET isActive = 0, endTime = :endTime WHERE vehicleId = :vehicleId AND isActive = 1")
     suspend fun closeActiveParkingSession(vehicleId: Int, endTime: Long)
 }

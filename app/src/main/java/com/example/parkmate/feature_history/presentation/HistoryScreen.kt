@@ -12,7 +12,6 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import androidx.compose.material3.Surface
-import androidx.compose.ui.unit.dp
 
 // UI Composable principale
 
@@ -37,15 +36,15 @@ fun HistoryContent(
     state: HistoryState,
     onEvent: (HistoryEvent) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Cronologia Parcheggi (${state.parkingSessions.size})",
-            style = MaterialTheme.typography.headlineMedium
-        )
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "Your parking sessions (${state.parkingSessions.size})",
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            // Qui disegni la tua lista o la tua UI vera e propria...
+        }
     }
 }
 

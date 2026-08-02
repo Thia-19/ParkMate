@@ -4,14 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.parkmate.core.domain.models.ParkingSession
-import com.example.parkmate.core.domain.models.SavedLocation
-import com.example.parkmate.core.domain.models.Vehicle
 
 @Database(
     entities = [
         ParkingSession::class,
-        Vehicle::class,
-        SavedLocation::class
+        // Vehicle::class,
+        // SavedLocation::class
     ],
     version = 1,
     exportSchema = false
