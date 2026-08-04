@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.parkmate.core.domain.models.Vehicle
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
 import com.example.parkmate.feature_history.presentation.components.FilterBottomSheet
 import com.example.parkmate.feature_history.presentation.parking_sessions_map.ParkingSessionsMapSection
@@ -40,9 +41,11 @@ fun HistoryScreen(
 
     if (showFilterSheet) {
         FilterBottomSheet(
+            vehicles = state.userVehicles,
             currentVehicleId = state.selectedVehicleId,
             currentParkingType = state.selectedParkingType,
-            currentDateRange = state.selectedDateRange,
+            startDate = state.selectedStartDate,
+            endDate = state.selectedEndDate,
             onEvent = viewModel::onEvent,
             onDismissRequest = { showFilterSheet = false }
         )

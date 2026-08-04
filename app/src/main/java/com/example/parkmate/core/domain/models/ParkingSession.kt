@@ -10,7 +10,7 @@ data class Position (
 )
 
 enum class ParkingType {
-    FREE, HOURLY_PAID, FIXED_TICKET
+    FREE, HOURLY_PAID, FIXED
 }
 @Entity
 data class ParkingSession(

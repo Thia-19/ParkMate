@@ -1,5 +1,12 @@
 package com.example.parkmate.core.domain.models
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-// data class Vehicle()
+@Entity
+data class Vehicle (
+    val name: String,
+    @PrimaryKey val id: Int
+){
+
+}

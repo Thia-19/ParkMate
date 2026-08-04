@@ -78,7 +78,7 @@ fun ParkingSessionCard(
                         )
                     }
                 }
-                ParkingType.FIXED_TICKET -> {
+                ParkingType.FIXED -> {
                     session.fixedCost?.let {
                         Text(
                             text = "Fixed cost: €%.2f".format(it),

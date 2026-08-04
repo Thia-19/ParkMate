@@ -3,6 +3,7 @@ package com.example.parkmate.feature_history.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parkmate.MockData
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -21,14 +22,21 @@ class HistoryViewModel @Inject constructor(
     private val useCases: ParkingSessionsUseCases
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HistoryState())
+    // TRUE private val _state = MutableStateFlow(HistoryState())
+    //da cancellare sotto
+    private val _state = MutableStateFlow(
+        HistoryState(
+            allSession = MockData.mockSessions,
+            sessions = MockData.mockSessions, // <-- Inserisci i mock qui
+            userVehicles = MockData.mockVehicles
+        )
+    )
     val state: StateFlow<HistoryState> = _state.asStateFlow()
 
-    // Mantieni il riferimento al Job del Flow per evitare collezionatori multipli
     private var getSessionsJob: Job? = null
 
     init {
-        observeParkingSessions()
+        // observeParkingSessions(), togli il commento quando lavori con dati veri
     }
 
     fun onEvent(event: HistoryEvent) {
@@ -55,7 +63,12 @@ class HistoryViewModel @Inject constructor(
             }
 
             is HistoryEvent.FilterByDateRange -> {
-                _state.update { it.copy(selectedDateRange = event.dateRange) }
+                _state.update {
+                    it.copy(
+                        selectedStartDate = event.startDate,
+                        selectedEndDate = event.endDate
+                    )
+                }
                 applyFilters()
             }
 
@@ -64,7 +77,8 @@ class HistoryViewModel @Inject constructor(
                     it.copy(
                         selectedVehicleId = null,
                         selectedParkingType = null,
-                        selectedDateRange = null
+                        selectedEndDate = null,
+                        selectedStartDate = null
                     )
                 }
                 applyFilters()
@@ -102,6 +116,7 @@ class HistoryViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
+                applyFilters()
             }
             .catch { e ->
                 _state.update {
@@ -115,18 +130,36 @@ class HistoryViewModel @Inject constructor(
     }
 
     private fun applyFilters() {
-        // Esempio di filtraggio locale se hai sia `parkingSessions` (lista grezza dal DB)
-        // che `filteredSessions` (lista filtrata mostrata a schermo) nello stato:
-        /*
         _state.update { currentState ->
-            val filtered = currentState.parkingSessions.filter { session ->
-                val matchesVehicle = currentState.selectedVehicleId == null || session.vehicleId.toString() == currentState.selectedVehicleId
-                val matchesType = currentState.selectedParkType == null || session.parkType == currentState.selectedParkType
-                // aggiungi condizione dateRange...
-                matchesVehicle && matchesType
+            val filteredList = currentState.allSession.filter { session ->
+
+                // 1. Filtro Veicolo (se null -> accetta tutti)
+                val matchesVehicle = currentState.selectedVehicleId == null ||
+                        session.vehicleId == currentState.selectedVehicleId
+
+                // 2. Filtro Tipo Parcheggio (se null -> accetta tutti)
+                val matchesType = currentState.selectedParkingType == null ||
+                        session.parkingType == currentState.selectedParkingType
+
+                // 3. Filtro Range Date
+                // Controlla se il parcheggio rientra nell'intervallo selezionato
+                val matchesDate = when {
+                    currentState.selectedStartDate == null && currentState.selectedEndDate == null -> true
+                    currentState.selectedStartDate != null && currentState.selectedEndDate != null -> {
+                        // Il parcheggio è valido se il suo startTime rientra tra startDate e endDate
+                        session.startTime in currentState.selectedStartDate..currentState.selectedEndDate
+                    }
+                    currentState.selectedStartDate != null -> {
+                        session.startTime >= currentState.selectedStartDate
+                    }
+                    else -> true
+                }
+
+                // La sessione deve soddisfare TUTTI e 3 i criteri
+                matchesVehicle && matchesType && matchesDate
             }
-            currentState.copy(filteredSessions = filtered)
+
+            currentState.copy(sessions = filteredList)
         }
-        */
     }
 }

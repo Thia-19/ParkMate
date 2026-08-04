@@ -12,7 +12,10 @@ sealed interface HistoryEvent {
     // filters
     data class FilterByVehicle(val vehicleId: Int?) : HistoryEvent
     data class FilterByParkType(val parkType: ParkingType?) : HistoryEvent
-    data class FilterByDateRange(val dateRange: Long?) : HistoryEvent
+    data class FilterByDateRange(
+        val startDate: Long?,
+        val endDate: Long?
+    ) : HistoryEvent
     object ResetFilters : HistoryEvent
 
     // Azione opzionale sulla singola sessione
