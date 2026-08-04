@@ -13,8 +13,8 @@ data class HistoryState(
 
     // Filters
     val selectedVehicleId: Int? = null,
-    val selectedParkType: ParkingType? = null,
-    val dateRange: Long? = null,
+    val selectedParkingType: ParkingType? = null,
+    val selectedDateRange: Long? = null,
 
     /*ADD: At least two different types of visualization must be provided,
 such as a geographic heat map showing the distribution of parks over time, or

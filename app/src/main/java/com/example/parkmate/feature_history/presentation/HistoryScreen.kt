@@ -13,31 +13,48 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
+import com.example.parkmate.feature_history.presentation.components.FilterBottomSheet
 import com.example.parkmate.feature_history.presentation.parking_sessions_map.ParkingSessionsMapSection
 
-// 1. Schermata Stateful con Hilt
 @Composable
 fun HistoryScreen(
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var showFilterSheet by rememberSaveable { mutableStateOf(false)}
+
     HistoryContent(
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onOpenFilterClick = {showFilterSheet = true}
     )
+
+    if (showFilterSheet) {
+        FilterBottomSheet(
+            currentVehicleId = state.selectedVehicleId,
+            currentParkingType = state.selectedParkingType,
+            currentDateRange = state.selectedDateRange,
+            onEvent = viewModel::onEvent,
+            onDismissRequest = { showFilterSheet = false }
+        )
+    }
 }
 
 // 2. Componente di sola UI (Stateless)
 @Composable
 fun HistoryContent(
     state: HistoryState,
-    onEvent: (HistoryEvent) -> Unit
+    onEvent: (HistoryEvent) -> Unit,
+    onOpenFilterClick: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -78,7 +95,7 @@ fun HistoryContent(
 
             // FAB per i filtri
             FloatingActionButton(
-                onClick = { /* Azione filtro */ }
+                onClick = onOpenFilterClick
             ) {
                 Icon(
                     imageVector = Icons.Default.FilterList,

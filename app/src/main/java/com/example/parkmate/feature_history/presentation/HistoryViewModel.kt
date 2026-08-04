@@ -50,12 +50,12 @@ class HistoryViewModel @Inject constructor(
             }
 
             is HistoryEvent.FilterByParkType -> {
-                _state.update { it.copy(selectedParkType = event.parkType) }
+                _state.update { it.copy(selectedParkingType = event.parkType) }
                 applyFilters()
             }
 
             is HistoryEvent.FilterByDateRange -> {
-                _state.update { it.copy(dateRange = event.dateRange) }
+                _state.update { it.copy(selectedDateRange = event.dateRange) }
                 applyFilters()
             }
 
@@ -63,8 +63,8 @@ class HistoryViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         selectedVehicleId = null,
-                        selectedParkType = null,
-                        dateRange = null
+                        selectedParkingType = null,
+                        selectedDateRange = null
                     )
                 }
                 applyFilters()
