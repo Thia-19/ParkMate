@@ -1,6 +1,8 @@
 package com.example.parkmate.core.domain.use_case.parking_sessions
 
-data class ParkingSessionsUseCases(
+import javax.inject.Inject
+
+data class ParkingSessionsUseCases @Inject constructor(
     val getActiveParkingSessions: GetActiveParkingSessions,
     val getParkingSessions: GetAllParkingSessions,
     val deleteParkingSession: DeleteParkingSession,

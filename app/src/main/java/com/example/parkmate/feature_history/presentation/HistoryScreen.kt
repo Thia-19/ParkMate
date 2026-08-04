@@ -1,62 +1,104 @@
 package com.example.parkmate.feature_history.presentation
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.parkmate.core.domain.models.ParkingSession
-import com.example.parkmate.core.domain.models.ParkingType
-import com.example.parkmate.core.domain.models.Position
-import androidx.compose.material3.Surface
+import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
+import com.example.parkmate.feature_history.presentation.parking_sessions_map.ParkingSessionsMapSection
 
-// UI Composable principale
-
+// 1. Schermata Stateful con Hilt
 @Composable
-fun HistoryScreen (
+fun HistoryScreen(
     viewModel: HistoryViewModel = hiltViewModel()
-){
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    HistoryContent(state = state, onEvent = viewModel::onEvent)
-    // ...
-    // Nella UI Compose (quando l'utente clicca elimina):
-    //
-    //Kotlin
-    //// Passi l'oggetto sessione direttamente alla callback dell'evento
-    //onEvent(HistoryEvent.DeleteSession(session))
+    HistoryContent(
+        state = state,
+        onEvent = viewModel::onEvent
+    )
 }
 
-
-// 2. Componente di sola UI (Stateless) -> Perfetto per le Preview!
+// 2. Componente di sola UI (Stateless)
 @Composable
 fun HistoryContent(
     state: HistoryState,
     onEvent: (HistoryEvent) -> Unit
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = "Your parking sessions (${state.parkingSessions.size})",
-                style = MaterialTheme.typography.headlineMedium
-            )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // CONTENUTO PRINCIPALE (Lista o Mappa)
+        when (state.viewMode) {
+            HistoryViewMode.LIST -> {
+                ParkingSessionsListSection(
+                    state = state,
+                    onEvent = onEvent
+                )
+            }
+            HistoryViewMode.MAP -> {
+                ParkingSessionsMapSection(
+                    state = state,
+                    onEvent = onEvent
+                )
+            }
+        }
 
-            // Qui disegni la tua lista o la tua UI vera e propria...
+        // FLOATING ACTION BUTTONS (Posizionati in basso a destra sopra il contenuto)
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp), // Distanza dai bordi e dalla BottomBar
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // FAB per cambiare vista
+            FloatingActionButton(
+                onClick = { onEvent(HistoryEvent.ChangeViewMode) }
+            ) {
+                Icon(
+                    imageVector = if (state.viewMode == HistoryViewMode.LIST) Icons.Default.Place else Icons.Default.Menu,
+                    contentDescription = if (state.viewMode == HistoryViewMode.LIST) "Go to Map View" else "Go to List View"
+                )
+            }
+
+            // FAB per i filtri
+            FloatingActionButton(
+                onClick = { /* Azione filtro */ }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "Filter Sessions"
+                )
+            }
         }
     }
 }
 
+/*
 @Preview(showBackground = true, name = "Stato con dati di esempio")
 @Composable
 fun HistoryContentPreview() {
     // Creiamo uno stato fittizio (Mock) con dati di prova per la Preview
     val dummyState = HistoryState(
-        parkingSessions = listOf(
+        sessions = listOf(
             ParkingSession(
                 id = 1,
-                isActive = false,
+                isActive = true,
                 vehicleId = 101,
                 parkingType = ParkingType.HOURLY_PAID,
                 startTime = System.currentTimeMillis() - 7200000, // 2 ore fa
@@ -86,3 +128,4 @@ fun HistoryContentPreview() {
         onEvent = {}
     )
 }
+*/

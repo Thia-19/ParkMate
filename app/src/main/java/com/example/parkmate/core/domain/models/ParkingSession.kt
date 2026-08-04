@@ -33,7 +33,7 @@ data class ParkingSession(
     val endTime: Long? = null,
     val finalCost: Double? = null,
 
-    @PrimaryKey val id: Int? = null
+    @PrimaryKey val id: Int
 ){
 
 }

@@ -6,7 +6,8 @@ import com.example.parkmate.core.domain.models.ParkingType
 // Eventi (cambio filtro, toggle mappa/lista, click su sessione)
 sealed interface HistoryEvent {
     // change mode
-    data class ChangeViewMode(val viewMode: HistoryViewMode) : HistoryEvent
+    data object ChangeViewMode : HistoryEvent
+    // data class OnSessionClick(val session: ParkingSession) : HistoryEvent
 
     // filters
     data class FilterByVehicle(val vehicleId: Int?) : HistoryEvent
@@ -16,5 +17,7 @@ sealed interface HistoryEvent {
 
     // Azione opzionale sulla singola sessione
     data class DeleteSession(val session: ParkingSession) : HistoryEvent
+
+    data class OnSessionClick(val session: ParkingSession) : HistoryEvent
 
 }
