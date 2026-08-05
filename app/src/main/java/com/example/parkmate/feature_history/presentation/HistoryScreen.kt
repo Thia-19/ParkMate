@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
@@ -27,6 +28,8 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.Vehicle
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
 import com.example.parkmate.feature_history.presentation.components.FilterBottomSheet
+import com.example.parkmate.feature_history.presentation.components.HistoryTopTabBar
+import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.ParkingSessionsAnalytics
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ConfirmDeleteDialog
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ParkingSessionDetailBottomSheet
 import com.example.parkmate.feature_history.presentation.parking_sessions_map.ParkingSessionsMapSection
@@ -88,68 +91,59 @@ fun HistoryScreen(
 
 }
 
-// 2. Componente di sola UI (Stateless)
 @Composable
 fun HistoryContent(
     state: HistoryState,
     onEvent: (HistoryEvent) -> Unit,
     onOpenFilterClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // CONTENUTO PRINCIPALE (Lista o Mappa)
-        when (state.viewMode) {
-            HistoryViewMode.LIST -> {
-                ParkingSessionsListSection(
-                    state = state,
-                    onEvent = onEvent
-                )
-            }
-            HistoryViewMode.MAP -> {
-                ParkingSessionsMapSection(
-                    state = state,
-                    onEvent = onEvent
-                )
-            }
-        }
+    Column(modifier = Modifier.fillMaxSize()) {
+        HistoryTopTabBar(
+            selectedTab = state.selectedTab,
+            onTabSelected = { newTab ->
+                onEvent(HistoryEvent.OnTabSelected(newTab))
+            },
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
 
-        // FLOATING ACTION BUTTONS (Posizionati in basso a destra sopra il contenuto)
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp), // Distanza dai bordi e dalla BottomBar
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            // FAB per vedere i grafici
-            FloatingActionButton(
-                onClick = { /*TODO */ }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Analytics,
-                    contentDescription = "Analytics"
-                )
-            }
+            when (state.selectedTab) {
+                 HistoryTab.LIST -> {
+                    ParkingSessionsListSection(
+                        state = state,
+                        onEvent = onEvent
+                    )
+                }
 
-            // FAB per cambiare vista
-            FloatingActionButton(
-                onClick = { onEvent(HistoryEvent.ChangeViewMode) }
-            ) {
-                Icon(
-                    imageVector = if (state.viewMode == HistoryViewMode.LIST) Icons.Default.Place else Icons.Default.Menu,
-                    contentDescription = if (state.viewMode == HistoryViewMode.LIST) "Go to Map View" else "Go to List View"
-                )
-            }
+                HistoryTab.ANALYTICS -> {
+                    ParkingSessionsAnalytics(
+                        state = state,
+                        onEvent = onEvent
+                    )
+                }
 
-            // FAB per i filtri
-            FloatingActionButton(
-                onClick = onOpenFilterClick
-            ) {
-                Icon(
-                    imageVector = Icons.Default.FilterList,
-                    contentDescription = "Filter Sessions"
-                )
+                 HistoryTab.MAP -> {
+                    ParkingSessionsMapSection(
+                        state = state,
+                        onEvent = onEvent
+                    )
+                }
+
+            }
+            if(state.selectedTab == HistoryTab.LIST) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp),
+                    onClick = onOpenFilterClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FilterList,
+                        contentDescription = "Filter Sessions"
+                    )
+                }
             }
         }
     }

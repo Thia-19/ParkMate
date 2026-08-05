@@ -71,6 +71,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
 
+    // VICO
+    implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.22")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -42,14 +42,9 @@ class HistoryViewModel @Inject constructor(
 
     fun onEvent(event: HistoryEvent) {
         when (event) {
-            is HistoryEvent.ChangeViewMode -> {
+            is HistoryEvent.OnTabSelected -> {
                 _state.update { currentState ->
-                    val newMode = if (currentState.viewMode == HistoryViewMode.LIST) {
-                        HistoryViewMode.MAP
-                    } else {
-                        HistoryViewMode.LIST
-                    }
-                    currentState.copy(viewMode = newMode)
+                    currentState.copy(selectedTab = event.tab)
                 }
             }
 

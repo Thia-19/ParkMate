@@ -21,16 +21,13 @@ data class HistoryState(
     val selectedStartDate: Long? = null,
     val selectedEndDate: Long? = null,
 
-    /*ADD: At least two different types of visualization must be provided,
-such as a geographic heat map showing the distribution of parks over time, or
-a chart representing parking costs aggregated by period or category. */
-
-    // State (List or Map)
-    val viewMode: HistoryViewMode = HistoryViewMode.LIST
+    // History tab
+    val selectedTab: HistoryTab = HistoryTab.LIST
 
 )
 
-enum class HistoryViewMode {
+enum class HistoryTab {
     LIST,
+    ANALYTICS,
     MAP
 }
