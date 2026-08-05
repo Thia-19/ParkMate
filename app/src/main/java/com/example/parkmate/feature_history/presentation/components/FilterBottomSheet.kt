@@ -3,11 +3,16 @@ package com.example.parkmate.feature_history.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.FireTruck
@@ -20,6 +25,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,9 +43,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.feature_history.presentation.HistoryEvent
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -152,12 +160,30 @@ fun FilterBottomSheet(
             }
 
             // ParkingType filter
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ParkingType.entries.forEach { type ->
+            // Usa LazyRow per la massima efficienza
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp) // Spazio piacevole ai bordi
+            ) {
+                items(ParkingType.entries.toList()) { type ->
                     FilterChip(
                         selected = currentParkingType == type,
-                        onClick = { onEvent(HistoryEvent.FilterByParkType(type))},
-                        label = {Text(type.name)}
+                        onClick = { onEvent(HistoryEvent.FilterByParkType(type)) },
+                        label = {
+                            Text(
+                                text = stringResource(id = type.labelRes),
+                                maxLines = 1 // Garantisce che il testo non vada mai a capo
+                            )
+                        },
+                        leadingIcon = if (currentParkingType == type) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else null
                     )
                 }
             }

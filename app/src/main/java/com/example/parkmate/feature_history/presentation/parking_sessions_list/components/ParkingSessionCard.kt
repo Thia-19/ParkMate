@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingType
+import androidx.compose.ui.res.stringResource
+import com.example.parkmate.core.domain.models.labelRes
 
 // card per la singola sessione
 
@@ -49,9 +51,9 @@ fun ParkingSessionCard(
                     color = if (session.isActive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Text(
-                        text = if (session.isActive) "ACTIVE" else "CONCLUDED",
+                        text = "CONCLUDED",
                         style = MaterialTheme.typography.labelMedium,
-                        color = if (session.isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
@@ -59,13 +61,21 @@ fun ParkingSessionCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Parking Type: ${session.parkingType.name}",
-                style = MaterialTheme.typography.bodyMedium
+                text = "Start date: ${formatTimestamp(session.startTime)}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
                 text = "Position: ${session.position.latitude}, ${session.position.longitude}",
                 style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Parking type: ${stringResource(id = session.parkingType.labelRes)}",
+                style = MaterialTheme.typography.bodyMedium
             )
 
             // Opzionale, mi sembra troppo in una sola schermata
@@ -78,7 +88,7 @@ fun ParkingSessionCard(
                         )
                     }
                 }
-                ParkingType.FIXED -> {
+                ParkingType.FIXED_TICKET -> {
                     session.fixedCost?.let {
                         Text(
                             text = "Fixed cost: €%.2f".format(it),
@@ -100,3 +110,25 @@ fun ParkingSessionCard(
         }
     }
 }
+
+/*Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = session.parkingType.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                session.finalCost?.let {
+                    Text(
+                        text = "€ %.2f".format(it),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+ */

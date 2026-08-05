@@ -54,7 +54,7 @@ object MockData {
             id = 3,
             isActive = false,
             vehicleId = 2,
-            parkingType = ParkingType.FIXED,
+            parkingType = ParkingType.FIXED_TICKET,
             startTime = currentTime - (3 * dayInMillis),
             endTime = currentTime - (3 * dayInMillis) + (5 * hourInMillis),
             expiryTime = currentTime - (3 * dayInMillis) + (4 * hourInMillis), // Scaduto prima della fine
@@ -85,7 +85,7 @@ object MockData {
             id = 5,
             isActive = true,
             vehicleId = 2,
-            parkingType = ParkingType.FIXED,
+            parkingType = ParkingType.FIXED_TICKET,
             startTime = currentTime - (1 * hourInMillis),
             expiryTime = currentTime + (3 * hourInMillis), // Scade tra 3 ore
             position = Position(latitude = 45.4825, longitude = 9.1895), // Porta Nuova

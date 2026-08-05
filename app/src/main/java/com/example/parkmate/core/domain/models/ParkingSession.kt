@@ -3,6 +3,7 @@ package com.example.parkmate.core.domain.models
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.parkmate.R
 
 data class Position (
     val latitude: Double,
@@ -10,8 +11,16 @@ data class Position (
 )
 
 enum class ParkingType {
-    FREE, HOURLY_PAID, FIXED
+    FREE, HOURLY_PAID, FIXED_TICKET
 }
+
+val ParkingType.labelRes: Int
+    get() = when (this) {
+        ParkingType.HOURLY_PAID -> R.string.parking_type_hourly
+        ParkingType.FIXED_TICKET -> R.string.parking_type_fixed
+        ParkingType.FREE -> R.string.parking_type_free
+    }
+
 @Entity
 data class ParkingSession(
     val isActive: Boolean,

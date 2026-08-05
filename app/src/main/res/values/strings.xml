@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ParkMate</string>
+
+    <string name="parking_type_free">Free Parking</string>
+    <string name="parking_type_hourly">Hourly Paid</string>
+    <string name="parking_type_fixed">Fixed Ticket</string>
 </resources>

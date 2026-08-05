@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Place
@@ -14,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -21,9 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.Vehicle
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
 import com.example.parkmate.feature_history.presentation.components.FilterBottomSheet
+import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ConfirmDeleteDialog
+import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ParkingSessionDetailBottomSheet
 import com.example.parkmate.feature_history.presentation.parking_sessions_map.ParkingSessionsMapSection
 
 @Composable
@@ -32,11 +37,18 @@ fun HistoryScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showFilterSheet by rememberSaveable { mutableStateOf(false)}
+    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null)}
+    var sessionToDelete by remember { mutableStateOf<ParkingSession?>(null) }
 
     HistoryContent(
         state = state,
-        onEvent = viewModel::onEvent,
-        onOpenFilterClick = {showFilterSheet = true}
+        onEvent = { event ->
+            if (event is HistoryEvent.OnSessionClick) {
+                selectedSessionForDetail = event.session
+            }
+            viewModel.onEvent(event)
+        },
+        onOpenFilterClick = { showFilterSheet = true }
     )
 
     if (showFilterSheet) {
@@ -50,6 +62,30 @@ fun HistoryScreen(
             onDismissRequest = { showFilterSheet = false }
         )
     }
+
+    selectedSessionForDetail?.let { session ->
+        ParkingSessionDetailBottomSheet(
+            session = session,
+            onDismissRequest = { selectedSessionForDetail = null },
+            onDeleteClick = { sessionToConfirm ->
+                sessionToDelete = sessionToConfirm
+            }
+        )
+    }
+
+    sessionToDelete?.let { session ->
+        ConfirmDeleteDialog(
+            onConfirm = {
+                viewModel.onEvent(HistoryEvent.DeleteSession(session))
+                sessionToDelete = null
+                selectedSessionForDetail = null
+            },
+            onDismiss = {
+                sessionToDelete = null
+            }
+        )
+    }
+
 }
 
 // 2. Componente di sola UI (Stateless)
@@ -86,6 +122,16 @@ fun HistoryContent(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // FAB per vedere i grafici
+            FloatingActionButton(
+                onClick = { /*TODO */ }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Analytics,
+                    contentDescription = "Analytics"
+                )
+            }
+
             // FAB per cambiare vista
             FloatingActionButton(
                 onClick = { onEvent(HistoryEvent.ChangeViewMode) }
@@ -109,43 +155,3 @@ fun HistoryContent(
     }
 }
 
-/*
-@Preview(showBackground = true, name = "Stato con dati di esempio")
-@Composable
-fun HistoryContentPreview() {
-    // Creiamo uno stato fittizio (Mock) con dati di prova per la Preview
-    val dummyState = HistoryState(
-        sessions = listOf(
-            ParkingSession(
-                id = 1,
-                isActive = true,
-                vehicleId = 101,
-                parkingType = ParkingType.HOURLY_PAID,
-                startTime = System.currentTimeMillis() - 7200000, // 2 ore fa
-                endTime = System.currentTimeMillis(),
-                position = Position(44.4949, 11.3426),
-                hourlyRate = 1.50,
-                finalCost = 3.00
-            ),
-            ParkingSession(
-                id = 2,
-                isActive = false,
-                vehicleId = 102,
-                parkingType = ParkingType.FIXED_TICKET,
-                startTime = System.currentTimeMillis() - 86400000,
-                endTime = System.currentTimeMillis() - 80000000,
-                position = Position(44.5000, 11.3500),
-                fixedCost = 5.00,
-                finalCost = 5.00
-            )
-        ),
-        isLoading = false
-    )
-
-    // Passiamo lo stato fittizio e una lambda vuota per gli eventi
-    HistoryContent(
-        state = dummyState,
-        onEvent = {}
-    )
-}
-*/

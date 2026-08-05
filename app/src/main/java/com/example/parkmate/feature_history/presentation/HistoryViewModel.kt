@@ -24,10 +24,11 @@ class HistoryViewModel @Inject constructor(
 
     // TRUE private val _state = MutableStateFlow(HistoryState())
     //da cancellare sotto
+    private val initialMockSession = MockData.mockSessions.filter { !it.isActive }
     private val _state = MutableStateFlow(
         HistoryState(
-            allSession = MockData.mockSessions,
-            sessions = MockData.mockSessions, // <-- Inserisci i mock qui
+            allSession = initialMockSession,
+            sessions = initialMockSession, // <-- Inserisci i mock qui
             userVehicles = MockData.mockVehicles
         )
     )
@@ -87,8 +88,6 @@ class HistoryViewModel @Inject constructor(
             is HistoryEvent.DeleteSession -> {
                 viewModelScope.launch {
                     useCases.deleteParkingSession(event.session)
-                    // Non serve richiamare observeParkingSessions():
-                    // Room aggiornerà automaticamente il Flow!
                 }
             }
 
@@ -103,16 +102,15 @@ class HistoryViewModel @Inject constructor(
     private fun observeParkingSessions() {
         // Annulla l'ascolto precedente se presente
         getSessionsJob?.cancel()
-
         _state.update { it.copy(isLoading = true) }
-
         getSessionsJob = useCases.getParkingSessions()
-            .onEach { sessions ->
+            .onEach { allSessions ->
+
+                val concludedSessions = allSessions.filter { !it.isActive }
                 _state.update { currentState ->
                     currentState.copy(
-                        sessions = sessions,
-                        // Se vuoi tenere anche una lista filtrata visibile nell'UI:
-                        // filteredSessions = filterList(sessions, currentState),
+                        allSession = concludedSessions,
+                        sessions = concludedSessions,
                         isLoading = false
                     )
                 }
