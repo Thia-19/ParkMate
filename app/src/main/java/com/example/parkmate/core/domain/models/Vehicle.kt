@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Vehicle (
     val name: String,
+    val licensePlate: String?,
     @PrimaryKey val id: Int
 ){
 

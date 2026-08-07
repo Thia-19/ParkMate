@@ -48,7 +48,7 @@ fun ParkingSessionCard(
                 )
                 Surface(
                     shape = MaterialTheme.shapes.small,
-                    color = if (session.isActive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+                    color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
                         text = "CONCLUDED",

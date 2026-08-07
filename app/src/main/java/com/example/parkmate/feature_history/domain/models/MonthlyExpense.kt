@@ -1,8 +1,7 @@
-package com.example.parkmate.feature_history.presentation.util
+package com.example.parkmate.feature_history.domain.models
 
 import com.example.parkmate.core.domain.models.ParkingSession
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 

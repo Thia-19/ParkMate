@@ -120,7 +120,8 @@ fun HistoryContent(
                 HistoryTab.ANALYTICS -> {
                     ParkingSessionsAnalytics(
                         state = state,
-                        onEvent = onEvent
+                        onEvent = onEvent,
+                        vehicles = state.userVehicles
                     )
                 }
 

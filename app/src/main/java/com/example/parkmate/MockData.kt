@@ -53,7 +53,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 8,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 3,
         parkingType = ParkingType.FREE,
         startTime = millisOf(2026, 7, 3, 20, 0),
         endTime = millisOf(2026, 7, 3, 23, 30),
@@ -67,7 +67,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 9,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 3,
         parkingType = ParkingType.HOURLY_PAID,
         startTime = millisOf(2026, 6, 22, 9, 15),
         endTime = millisOf(2026, 6, 22, 12, 15),
@@ -80,7 +80,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 10,
         isActive = false,
-        vehicleId = 2,
+        vehicleId = 5,
         parkingType = ParkingType.FIXED_TICKET,
         startTime = millisOf(2026, 6, 14, 8, 0),
         endTime = millisOf(2026, 6, 14, 20, 0),
@@ -94,7 +94,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 11,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 5,
         parkingType = ParkingType.FREE,
         startTime = millisOf(2026, 6, 2, 11, 0),
         endTime = millisOf(2026, 6, 2, 17, 30),
@@ -121,7 +121,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 13,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 3,
         parkingType = ParkingType.FIXED_TICKET,
         startTime = millisOf(2026, 5, 18, 19, 30),
         endTime = millisOf(2026, 5, 18, 23, 30),
@@ -135,7 +135,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 14,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 3,
         parkingType = ParkingType.HOURLY_PAID,
         startTime = millisOf(2026, 5, 5, 10, 0),
         endTime = millisOf(2026, 5, 5, 14, 0),
@@ -150,7 +150,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 15,
         isActive = false,
-        vehicleId = 2,
+        vehicleId = 3,
         parkingType = ParkingType.FREE,
         startTime = millisOf(2026, 4, 25, 10, 30),
         endTime = millisOf(2026, 4, 25, 16, 0),
@@ -162,7 +162,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 16,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 3,
         parkingType = ParkingType.HOURLY_PAID,
         startTime = millisOf(2026, 4, 16, 14, 0),
         endTime = millisOf(2026, 4, 16, 19, 0),
@@ -204,7 +204,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 19,
         isActive = false,
-        vehicleId = 2,
+        vehicleId = 5,
         parkingType = ParkingType.FREE,
         startTime = millisOf(2026, 3, 15, 9, 0),
         endTime = millisOf(2026, 3, 15, 12, 0),
@@ -216,7 +216,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 20,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 5,
         parkingType = ParkingType.FIXED_TICKET,
         startTime = millisOf(2026, 3, 5, 20, 0),
         endTime = millisOf(2026, 3, 5, 23, 45),
@@ -232,7 +232,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 21,
         isActive = false,
-        vehicleId = 2,
+        vehicleId = 5,
         parkingType = ParkingType.HOURLY_PAID,
         startTime = millisOf(2026, 2, 21, 11, 0),
         endTime = millisOf(2026, 2, 21, 15, 0),
@@ -245,7 +245,7 @@ val pastMockSessions = listOf(
     ParkingSession(
         id = 22,
         isActive = false,
-        vehicleId = 1,
+        vehicleId = 5,
         parkingType = ParkingType.FIXED_TICKET,
         startTime = millisOf(2026, 2, 10, 8, 0),
         endTime = millisOf(2026, 2, 10, 18, 0),
@@ -296,7 +296,59 @@ val pastMockSessions = listOf(
         note = "Rientro dalle vacanze - Ufficio",
         photoUri = null,
         finalCost = 6.00
-    )
+    ),
+    ParkingSession(
+        id = 26,
+        isActive = false,
+        vehicleId = 8,
+        parkingType = ParkingType.HOURLY_PAID,
+        startTime = millisOf(2026, 7, 28, 10, 0),
+        endTime = millisOf(2026, 7, 28, 13, 30),
+        position = Position(latitude = 45.4627, longitude = 9.1777), // Sant'Ambrogio
+        hourlyRate = 2.00,
+        note = "Shopping in centro",
+        photoUri = null,
+        finalCost = 7.00
+    ),
+    ParkingSession(
+        id = 27,
+        isActive = false,
+        vehicleId = 9,
+        parkingType = ParkingType.HOURLY_PAID,
+        startTime = millisOf(2026, 7, 28, 10, 0),
+        endTime = millisOf(2026, 7, 28, 13, 30),
+        position = Position(latitude = 45.4627, longitude = 9.1777), // Sant'Ambrogio
+        hourlyRate = 2.00,
+        note = "Shopping in centro",
+        photoUri = null,
+        finalCost = 7.00
+    ),
+    ParkingSession(
+        id = 28,
+        isActive = false,
+        vehicleId = 7,
+        parkingType = ParkingType.HOURLY_PAID,
+        startTime = millisOf(2026, 7, 28, 10, 0),
+        endTime = millisOf(2026, 7, 28, 13, 30),
+        position = Position(latitude = 45.4627, longitude = 9.1777), // Sant'Ambrogio
+        hourlyRate = 2.00,
+        note = "Shopping in centro",
+        photoUri = null,
+        finalCost = 7.00
+    ),
+    ParkingSession(
+        id = 6,
+        isActive = false,
+        vehicleId = 6,
+        parkingType = ParkingType.HOURLY_PAID,
+        startTime = millisOf(2026, 7, 28, 10, 0),
+        endTime = millisOf(2026, 7, 28, 13, 30),
+        position = Position(latitude = 45.4627, longitude = 9.1777), // Sant'Ambrogio
+        hourlyRate = 2.00,
+        note = "Shopping in centro",
+        photoUri = null,
+        finalCost = 7.00
+    ),
 )
 
 object MockData {
@@ -307,8 +359,17 @@ object MockData {
 
     // --- LISTA MOCK VEICOLI (Utile per testare la modale dei filtri) ---
     val mockVehicles = listOf(
-        Vehicle(id = 1, name = "Fiat Panda"),
-        Vehicle(id = 2, name = "Tesla Model 3")
+        Vehicle(id = 1, name = "Fiat Panda", licensePlate = "EX5681"),
+        Vehicle(id = 2, name = "Tesla Model 3", licensePlate = "EZ5681"),
+        Vehicle(id = 3, name = "Pegeot Partner TP", licensePlate = "SIGMASKSK"),
+        Vehicle(id = 4, name = "Tesla Model 2", licensePlate = "EZ5681"),
+        Vehicle(id = 5, name = "Carsan TPER", licensePlate = "E12346"),
+        Vehicle(id = 6, name = "dih", licensePlate = "E12346"),
+        Vehicle(id = 7, name = "luca", licensePlate = "E12346"),
+        Vehicle(id = 8, name = "Umami", licensePlate = "E12346"),
+        Vehicle(id = 9, name = "siR", licensePlate = "E12346"),
+
+
     )
 
     // --- LISTA MOCK SESSIONI DI PARCHEGGIO ---
