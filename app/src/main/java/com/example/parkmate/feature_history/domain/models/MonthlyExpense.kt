@@ -11,7 +11,6 @@ data class MonthlyExpense(
 )
 
 fun List<ParkingSession>.aggregateByMonth(): List<MonthlyExpense> {
-    // Utilizziamo SimpleDateFormat anziché DateTimeFormatter
     val monthYearFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
     val monthNameFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
