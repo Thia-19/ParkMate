@@ -23,7 +23,6 @@ data class HistoryState(
 
     // History tab
     val selectedTab: HistoryTab = HistoryTab.LIST
-
 )
 
 enum class HistoryTab {

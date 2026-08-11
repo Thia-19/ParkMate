@@ -16,6 +16,7 @@ hiltNavigationCompose = "1.2.0"
 room = "2.6.1"
 navigationCompose = "2.8.5"
 kotlinxSerialization = "1.6.3"
+playServicesMaps = "20.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 
 # Coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 
 [plugins]
 androidApp = { id = "com.android.application", version.ref = "agp" }

@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.play.services.maps)
     // Room (Usa correttamente libs dal toml)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -76,6 +77,9 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.22")
     implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.22")
 
+    // Google Maps
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.android.gms:play-services-maps:18.9.2")
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
