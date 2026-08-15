@@ -115,7 +115,7 @@ class HistoryViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.localizedMessage ?: "Errore sconosciuto"
+                        errorMessage = e.localizedMessage ?: "Unknown error"
                     )
                 }
             }

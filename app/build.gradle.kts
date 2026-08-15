@@ -79,6 +79,7 @@ dependencies {
 
     // Google Maps
     implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.maps.android:maps-compose-utils:4.3.0")
     implementation("com.google.android.gms:play-services-maps:18.9.2")
     // Testing
     testImplementation(libs.junit)

@@ -42,7 +42,7 @@ fun ParkingSessionsList(
     ) {
         if (sessions.isEmpty()) {
             Text(
-                text = "Nessuna sessione di parcheggio trovata",
+                text = "No parking session found",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

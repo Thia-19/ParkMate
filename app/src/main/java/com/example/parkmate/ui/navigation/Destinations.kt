@@ -58,3 +58,6 @@ val bottomBarItems = listOf(
         route = HistoryRoute
     )
 )
+
+@Serializable
+object AddSessionRoute

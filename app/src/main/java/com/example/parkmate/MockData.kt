@@ -312,9 +312,9 @@ val pastMockSessions = listOf(
     ),
     ParkingSession(
         id = 27,
-        isActive = false,
+        isActive = true,
         vehicleId = 9,
-        parkingType = ParkingType.HOURLY_PAID,
+        parkingType = ParkingType.FREE,
         startTime = millisOf(2026, 7, 28, 10, 0),
         endTime = millisOf(2026, 7, 28, 13, 30),
         position = Position(latitude = 45.4627, longitude = 9.1777), // Sant'Ambrogio
@@ -338,7 +338,7 @@ val pastMockSessions = listOf(
     ),
     ParkingSession(
         id = 6,
-        isActive = false,
+        isActive = true,
         vehicleId = 6,
         parkingType = ParkingType.HOURLY_PAID,
         startTime = millisOf(2026, 7, 28, 10, 0),

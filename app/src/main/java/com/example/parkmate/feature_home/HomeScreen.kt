@@ -3,47 +3,58 @@ package com.example.parkmate.feature_home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.parkmate.feature_history.presentation.HistoryViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.feature_home.presentation.components.ParkingSessionCardHome
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onSessionClick: (ParkingSession) -> Unit = {},
+    onNavigateToAddSession: () -> Unit
 ){
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val cameraPositionState = rememberCameraPositionState()
+
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.PartiallyExpanded,
@@ -90,16 +101,16 @@ fun HomeScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
 
-                    /* Surface(
+                    Surface (
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "2",
+                            text = "${state.sessions.count()}",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall
                         )
-                    } */
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -109,9 +120,29 @@ fun HomeScreen(
                     fontSize = 18.sp
                 )
 
-                // LazyColumn ...
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(top = 16.dp, start = 0.dp, end = 0.dp, bottom = 88.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    itemsIndexed(
+                        items = state.sessions,
+                        key = { _, session -> session.id }
+                    ) { index, session ->
+                        ParkingSessionCardHome(
+                            session = session,
+                            onClick = onSessionClick
+                        )
 
-                Spacer(modifier = Modifier.height(400.dp))
+                        if (index < state.sessions.lastIndex) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(top = 12.dp),
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                }
             }
         },
     ) { innerPadding ->
@@ -120,6 +151,12 @@ fun HomeScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                contentPadding = PaddingValues(top = 60.dp, bottom = 80.dp)
+            ) {
+            }
             SmallFloatingActionButton(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -131,17 +168,29 @@ fun HomeScreen(
                     contentDescription = "Settings"
                 )
             }
-            Text(text = "Home Screen (map)")
 
-            SmallFloatingActionButton(
+            FloatingActionButton(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp),
-                onClick = { /* TODO */ }
+                onClick = { /* TODO */ },
             ) {
                 Icon(
                     imageVector = Icons.Default.Layers,
                     contentDescription = "Layers"
+                )
+            }
+
+            FloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(vertical = 80.dp, horizontal = 16.dp),
+                onClick = onNavigateToAddSession,
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Parking Session"
                 )
             }
         }

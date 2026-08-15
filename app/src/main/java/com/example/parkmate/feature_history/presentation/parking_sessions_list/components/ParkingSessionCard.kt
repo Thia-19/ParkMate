@@ -30,6 +30,7 @@ fun ParkingSessionCard(
 ){
     Card(
         onClick = { onClick(session) },
+
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)

@@ -27,4 +27,9 @@ interface ParkingSessionDao {
 
     @Query("UPDATE parkingsession SET isActive = 0, endTime = :endTime WHERE vehicleId = :vehicleId AND isActive = 1")
     suspend fun closeActiveParkingSession(vehicleId: Int, endTime: Long)
+
+    /*
+    @Query("SELECT * FROM ParkingSession WHERE isActive = 0 AND endTime IS NOT NULL")
+    fun getCompletedSessions(): Flow<List<ParkingSession>>
+    */
 }

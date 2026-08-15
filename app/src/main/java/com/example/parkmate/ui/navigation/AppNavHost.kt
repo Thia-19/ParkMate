@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.parkmate.feature_addSession.AddSessionScreen
 import com.example.parkmate.feature_history.presentation.HistoryScreen
 import com.example.parkmate.feature_home.HomeScreen
 
@@ -20,7 +21,20 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable<HomeRoute> {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToAddSession = {
+                    navController.navigate(AddSessionRoute)
+                }
+            )
+        }
+
+        // Nuova Schermata Form
+        composable<AddSessionRoute> {
+            AddSessionScreen (
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable<VehicleListRoute>{
             // zara, qui devi mettere il tuo ...screen.kt
