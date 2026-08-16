@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.parkmate.feature_addSession.AddSessionScreen
 import com.example.parkmate.feature_history.presentation.HistoryScreen
 import com.example.parkmate.feature_home.HomeScreen
+import com.example.parkmate.feature_settings.SettingsScreen
 
 
 @Composable
@@ -24,13 +25,23 @@ fun AppNavHost(
             HomeScreen(
                 onNavigateToAddSession = {
                     navController.navigate(AddSessionRoute)
+                },
+                onNavigateToSettings = {
+                    navController.navigate(SettingsRoute)
                 }
             )
         }
 
-        // Nuova Schermata Form
         composable<AddSessionRoute> {
             AddSessionScreen (
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<SettingsRoute>{
+            SettingsScreen (
                 onNavigateBack = {
                     navController.popBackStack()
                 }

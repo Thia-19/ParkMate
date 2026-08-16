@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,10 +30,14 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -41,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.feature_home.presentation.components.ParkingSessionCardHome
+import com.example.parkmate.feature_home.presentation.components.ParkingSessionDetailsHome
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 
@@ -50,7 +56,8 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onSessionClick: (ParkingSession) -> Unit = {},
-    onNavigateToAddSession: () -> Unit
+    onNavigateToAddSession: () -> Unit,
+    onNavigateToSettings: () -> Unit,
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
     val cameraPositionState = rememberCameraPositionState()
@@ -61,6 +68,74 @@ fun HomeScreen(
             skipHiddenState = true
         )
     )
+
+    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null)}
+    var sessionToDelete by rememberSaveable { mutableStateOf<ParkingSession?>(null) }
+    var sessionToConclude by rememberSaveable { mutableStateOf<ParkingSession?>(null) }
+
+    selectedSessionForDetail?.let { session ->
+        ParkingSessionDetailsHome(
+            session = session,
+            onDismissRequest = { selectedSessionForDetail = null },
+            onDeleteClick = { sessionToConfirm ->
+                selectedSessionForDetail = null
+                sessionToDelete = sessionToConfirm
+            },
+            onConcludeClick = { sessionToConfirm ->
+                selectedSessionForDetail = null
+                sessionToConclude = sessionToConfirm
+            }
+        )
+    }
+
+    sessionToDelete?.let { session ->
+        AlertDialog(
+            onDismissRequest = { sessionToDelete = null },
+            title = { Text("Delete session") },
+            text = { Text("Are you sure you want to delete this parking session?") },
+            confirmButton = {
+                TextButton (
+                    onClick = {
+                        // viewModel.deleteSession(session)
+                        // sessionToDelete = null
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { sessionToDelete = null }) {
+                    Text("Undo")
+                }
+            }
+        )
+    }
+
+    sessionToConclude?.let { session ->
+        AlertDialog(
+            onDismissRequest = { sessionToConclude = null },
+            title = { Text("Conclude Parking Session") },
+            text = { Text("Do you want to conclude this Parking Session?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        /* TODO
+                        viewModel.concludeSession(session) // Il tuo metodo nel ViewModel
+                        sessionToConclude = null
+
+                         */
+                    }
+                ) {
+                    Text("Conclude")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { sessionToConclude = null }) {
+                    Text("Undo")
+                }
+            }
+        )
+    }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -131,7 +206,10 @@ fun HomeScreen(
                     ) { index, session ->
                         ParkingSessionCardHome(
                             session = session,
-                            onClick = onSessionClick
+                            onClick = { clickedSession ->
+                                selectedSessionForDetail = clickedSession
+                                onSessionClick(clickedSession)
+                            }
                         )
 
                         if (index < state.sessions.lastIndex) {
@@ -157,11 +235,11 @@ fun HomeScreen(
                 contentPadding = PaddingValues(top = 60.dp, bottom = 80.dp)
             ) {
             }
-            SmallFloatingActionButton(
+            FloatingActionButton (
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(16.dp),
-                onClick = { /* TODO */ }
+                onClick = onNavigateToSettings
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,

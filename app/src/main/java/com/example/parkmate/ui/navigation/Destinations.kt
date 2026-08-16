@@ -23,13 +23,6 @@ object ParkingEffortRoute : TopLevelRoute
 @Serializable
 object HistoryRoute : TopLevelRoute
 
-/*
-// Se una rotta ha dei parametri (es. il dettaglio di un prodotto), usiamo una data class:
-@Serializable
-data class DetailRoute(val itemId: String)
-
-*/
-
 data class BottomBarItem(
     val label: String,
     val icon: ImageVector,
@@ -61,3 +54,6 @@ val bottomBarItems = listOf(
 
 @Serializable
 object AddSessionRoute
+
+@Serializable
+object SettingsRoute

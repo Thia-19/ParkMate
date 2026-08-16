@@ -1,7 +1,11 @@
 package com.example.parkmate.feature_addSession
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.icu.util.Calendar
 import android.text.format.DateUtils
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,13 +51,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.feature_addSession.components.ParkingTimePickerDialog
+import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
 import com.example.parkmate.feature_addSession.components.VehicleDropdownSelector
 import com.example.parkmate.feature_addSession.components.formatTimestampToTime
 
@@ -63,6 +70,35 @@ fun AddSessionScreen(
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+        if (isGranted) {
+            viewModel.onEvent(AddSessionEvent.FetchLocationRequested)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val hasFineLocation = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!hasFineLocation) {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        } else {
+            viewModel.onEvent(AddSessionEvent.FetchLocationRequested)
+        }
+    }
 
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) {
@@ -185,6 +221,27 @@ private fun AddSessionContent (
             )
 
             HorizontalDivider()
+
+            Text(
+                text = "Position",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            SavedLocationsDropdownSelector(
+                locations = state.locations,
+                selectedLocationId = state.locationId,
+                onLocationSelected = { locationId ->
+                    onEvent(AddSessionEvent.OnLocationSelected(locationId))
+                }
+            )
+
+            Text(
+                text = "If no saved location is selected, this parking session's location will be associated to your current position",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
 
             Text(
                 text = "Parking Type",

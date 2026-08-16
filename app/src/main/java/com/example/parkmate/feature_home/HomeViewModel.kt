@@ -2,10 +2,7 @@ package com.example.parkmate.feature_home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.parkmate.MockData
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
-import com.example.parkmate.feature_history.presentation.HistoryEvent
-import com.example.parkmate.feature_history.presentation.HistoryState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +45,12 @@ class HomeViewModel @Inject constructor(
                     useCases.deleteParkingSession(event.session)
                 }
             }
+            is HomeEvent.OnSessionClick -> {
+                viewModelScope.launch {
+                    // to do
+                }
+            }
+
             HomeEvent.RefreshSessions -> {
                 observeParkingSessions()
             }
