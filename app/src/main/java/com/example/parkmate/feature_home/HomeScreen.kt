@@ -1,5 +1,7 @@
 package com.example.parkmate.feature_home
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,10 +28,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -46,7 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.feature_home.presentation.components.ParkingSessionCardHome
-import com.example.parkmate.feature_home.presentation.components.ParkingSessionDetailsHome
+import com.example.parkmate.feature_home.presentation.components.ParkingSessionDetails
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 
@@ -55,6 +54,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
+    onEvent: (HomeEvent) -> Unit = viewModel::onEvent,
     onSessionClick: (ParkingSession) -> Unit = {},
     onNavigateToAddSession: () -> Unit,
     onNavigateToSettings: () -> Unit,
@@ -70,69 +70,28 @@ fun HomeScreen(
     )
 
     var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null)}
-    var sessionToDelete by rememberSaveable { mutableStateOf<ParkingSession?>(null) }
-    var sessionToConclude by rememberSaveable { mutableStateOf<ParkingSession?>(null) }
 
     selectedSessionForDetail?.let { session ->
-        ParkingSessionDetailsHome(
+        ParkingSessionDetails(
             session = session,
-            onDismissRequest = { selectedSessionForDetail = null },
-            onDeleteClick = { sessionToConfirm ->
+            onDismiss = {
                 selectedSessionForDetail = null
-                sessionToDelete = sessionToConfirm
             },
-            onConcludeClick = { sessionToConfirm ->
+            onConcludeSession = { sessionToEnd ->
+                onEvent(HomeEvent.CloseActiveSession(sessionToEnd))
                 selectedSessionForDetail = null
-                sessionToConclude = sessionToConfirm
-            }
-        )
-    }
-
-    sessionToDelete?.let { session ->
-        AlertDialog(
-            onDismissRequest = { sessionToDelete = null },
-            title = { Text("Delete session") },
-            text = { Text("Are you sure you want to delete this parking session?") },
-            confirmButton = {
-                TextButton (
-                    onClick = {
-                        // viewModel.deleteSession(session)
-                        // sessionToDelete = null
-                    }
-                ) {
-                    Text("Delete")
-                }
             },
-            dismissButton = {
-                TextButton(onClick = { sessionToDelete = null }) {
-                    Text("Undo")
-                }
-            }
-        )
-    }
-
-    sessionToConclude?.let { session ->
-        AlertDialog(
-            onDismissRequest = { sessionToConclude = null },
-            title = { Text("Conclude Parking Session") },
-            text = { Text("Do you want to conclude this Parking Session?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        /* TODO
-                        viewModel.concludeSession(session) // Il tuo metodo nel ViewModel
-                        sessionToConclude = null
-
-                         */
-                    }
-                ) {
-                    Text("Conclude")
-                }
+            onDeleteSession = { sessionToDelete ->
+                onEvent(HomeEvent.DeleteSession(sessionToDelete))
+                selectedSessionForDetail = null
             },
-            dismissButton = {
-                TextButton(onClick = { sessionToConclude = null }) {
-                    Text("Undo")
-                }
+            onOpenMapClick = {
+                /* position ->
+                val mapUri = Uri.parse("geo:${position.latitude},${position.longitude}?q=${position.latitude},${position.longitude}(Parcheggio)")
+                val mapIntent = Intent(Intent.ACTION_VIEW, mapUri)
+                context.startActivity(mapIntent)
+
+                 */
             }
         )
     }

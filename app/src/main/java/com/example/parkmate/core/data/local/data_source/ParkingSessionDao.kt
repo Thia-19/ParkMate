@@ -13,7 +13,7 @@ interface ParkingSessionDao {
     @Query("SELECT * FROM parkingsession WHERE isActive = 1")
     fun getActiveParkingSessions(): Flow<List<ParkingSession>>
 
-    @Query("SELECT * FROM parkingsession")
+    @Query("SELECT * FROM parkingsession WHERE isActive = 0 AND endTime IS NOT NULL")
     fun getAllParkingSessions(): Flow<List<ParkingSession>>
 
     @Query("SELECT * FROM parkingsession WHERE id = :id")
@@ -25,11 +25,7 @@ interface ParkingSessionDao {
     @Delete
     suspend fun deleteParkingSession(parkingSession: ParkingSession)
 
-    @Query("UPDATE parkingsession SET isActive = 0, endTime = :endTime WHERE vehicleId = :vehicleId AND isActive = 1")
-    suspend fun closeActiveParkingSession(vehicleId: Int, endTime: Long)
-
-    /*
-    @Query("SELECT * FROM ParkingSession WHERE isActive = 0 AND endTime IS NOT NULL")
-    fun getCompletedSessions(): Flow<List<ParkingSession>>
-    */
+    @Query("UPDATE parkingsession SET isActive = 0, endTime = :endTime, finalCost = :finalCost WHERE vehicleId = :vehicleId AND isActive = 1")
+    suspend fun closeActiveParkingSession(vehicleId: Int, endTime: Long, finalCost: Double)
 }
+

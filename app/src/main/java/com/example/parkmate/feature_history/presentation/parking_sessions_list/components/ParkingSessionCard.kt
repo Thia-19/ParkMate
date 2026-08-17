@@ -19,8 +19,7 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingType
 import androidx.compose.ui.res.stringResource
 import com.example.parkmate.core.domain.models.labelRes
-
-// card per la singola sessione
+import com.example.parkmate.core.domain.util.formatTimestamp
 
 @Composable
 fun ParkingSessionCard(

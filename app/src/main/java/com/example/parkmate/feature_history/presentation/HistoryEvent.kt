@@ -17,7 +17,6 @@ sealed interface HistoryEvent {
     ) : HistoryEvent
     object ResetFilters : HistoryEvent
 
-    // Azione opzionale sulla singola sessione
     data class DeleteSession(val session: ParkingSession) : HistoryEvent
 
     data class OnSessionClick(val session: ParkingSession) : HistoryEvent

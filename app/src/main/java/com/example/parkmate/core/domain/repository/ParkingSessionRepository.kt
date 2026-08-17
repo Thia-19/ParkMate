@@ -14,6 +14,6 @@ interface ParkingSessionRepository {
 
     suspend fun deleteParkingSession(parkingSession: ParkingSession)
 
-    suspend fun closeActiveSessionForVehicle(vehicleId: Int, endTime: Long)
+    suspend fun closeActiveSessionForVehicle(vehicleId: Int, endTime: Long, finalCost: Double)
 
 }

@@ -3,7 +3,6 @@ package com.example.parkmate.feature_history.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.parkmate.MockData
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,22 +21,14 @@ class HistoryViewModel @Inject constructor(
     private val useCases: ParkingSessionsUseCases
 ) : ViewModel() {
 
-    // TRUE private val _state = MutableStateFlow(HistoryState())
-    //da cancellare sotto
-    private val initialMockSession = MockData.mockSessions.filter { !it.isActive }
-    private val _state = MutableStateFlow(
-        HistoryState(
-            allSession = initialMockSession,
-            sessions = initialMockSession, // <-- Inserisci i mock qui
-            userVehicles = MockData.mockVehicles
-        )
-    )
+    private val _state = MutableStateFlow(HistoryState())
+
     val state: StateFlow<HistoryState> = _state.asStateFlow()
 
     private var getSessionsJob: Job? = null
 
     init {
-        // observeParkingSessions(), togli il commento quando lavori con dati veri
+         observeParkingSessions()
     }
 
     fun onEvent(event: HistoryEvent) {
@@ -95,7 +86,6 @@ class HistoryViewModel @Inject constructor(
     }
 
     private fun observeParkingSessions() {
-        // Annulla l'ascolto precedente se presente
         getSessionsJob?.cancel()
         _state.update { it.copy(isLoading = true) }
         getSessionsJob = useCases.getParkingSessions()

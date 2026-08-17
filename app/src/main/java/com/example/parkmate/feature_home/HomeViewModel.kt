@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.CloseActiveSession -> {
                 viewModelScope.launch {
-                    useCases.closeActiveParkingSession(event.session.vehicleId)
+                    useCases.closeActiveParkingSession(event.session)
                 }
             }
             is HomeEvent.DeleteSession -> {
@@ -60,7 +60,7 @@ class HomeViewModel @Inject constructor(
     private fun observeParkingSessions() {
         getSessionsJob?.cancel()
         _state.update { it.copy(isLoading = true, errorMessage = null) }
-        getSessionsJob = useCases.getParkingSessions()
+        getSessionsJob = useCases.getActiveParkingSessions()
             .onEach { sessions ->
                 _state.update {
                     it.copy(

@@ -25,23 +25,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.core.domain.models.ParkingSession
-import com.example.parkmate.core.domain.models.Vehicle
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
 import com.example.parkmate.feature_history.presentation.components.FilterBottomSheet
 import com.example.parkmate.feature_history.presentation.components.HistoryTopTabBar
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.ParkingSessionsAnalytics
-import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ConfirmDeleteDialog
-import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ParkingSessionDetailBottomSheet
 import com.example.parkmate.feature_history.presentation.parking_sessions_map.ParkingSessionsMapSection
+import com.example.parkmate.feature_home.presentation.components.ParkingSessionDetails
 
 @Composable
 fun HistoryScreen(
-    viewModel: HistoryViewModel = hiltViewModel()
+    viewModel: HistoryViewModel = hiltViewModel(),
+    onEvent: (HistoryEvent) -> Unit = viewModel::onEvent,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showFilterSheet by rememberSaveable { mutableStateOf(false)}
     var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null)}
-    var sessionToDelete by remember { mutableStateOf<ParkingSession?>(null) }
 
     HistoryContent(
         state = state,
@@ -67,24 +65,24 @@ fun HistoryScreen(
     }
 
     selectedSessionForDetail?.let { session ->
-        ParkingSessionDetailBottomSheet(
+        ParkingSessionDetails(
             session = session,
-            onDismissRequest = { selectedSessionForDetail = null },
-            onDeleteClick = { sessionToConfirm ->
-                sessionToDelete = sessionToConfirm
-            }
-        )
-    }
-
-    sessionToDelete?.let { session ->
-        ConfirmDeleteDialog(
-            onConfirm = {
-                viewModel.onEvent(HistoryEvent.DeleteSession(session))
-                sessionToDelete = null
+            onDismiss = {
                 selectedSessionForDetail = null
             },
-            onDismiss = {
-                sessionToDelete = null
+            onConcludeSession = { // NULL
+            },
+            onDeleteSession = { sessionToDelete ->
+                onEvent(HistoryEvent.DeleteSession(sessionToDelete))
+                selectedSessionForDetail = null
+            },
+            onOpenMapClick = {
+                /* position ->
+                val mapUri = Uri.parse("geo:${position.latitude},${position.longitude}?q=${position.latitude},${position.longitude}(Parcheggio)")
+                val mapIntent = Intent(Intent.ACTION_VIEW, mapUri)
+                context.startActivity(mapIntent)
+
+                 */
             }
         )
     }
