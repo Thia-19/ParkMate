@@ -3,146 +3,99 @@ package com.example.parkmate.feature_history.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+
+private data class FilterState(
+    val tab: HistoryTab = HistoryTab.LIST,
+    val vehicleId: Int? = null,
+    val parkType: ParkingType? = null,
+    val startDate: Long? = null,
+    val endDate: Long? = null
+)
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val useCases: ParkingSessionsUseCases
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HistoryState())
+    private val _filterState = MutableStateFlow(FilterState())
 
-    val state: StateFlow<HistoryState> = _state.asStateFlow()
+    private val _concludedSessions = useCases.getParkingSessions()
+        .map { allSessions -> allSessions.filter { !it.isActive } }
 
-    private var getSessionsJob: Job? = null
+    val state: StateFlow<HistoryState> = combine(
+        _concludedSessions,
+        _filterState
+    ) { sessions, filters ->
+        val filteredList = sessions.filter { session ->
+            val matchesVehicle = filters.vehicleId == null || session.vehicleId == filters.vehicleId
+            val matchesType = filters.parkType == null || session.parkingType == filters.parkType
+            val matchesDate = when {
+                filters.startDate == null && filters.endDate == null -> true
+                filters.startDate != null && filters.endDate != null -> session.startTime in filters.startDate..filters.endDate
+                filters.startDate != null -> session.startTime >= filters.startDate
+                else -> true
+            }
+            matchesVehicle && matchesType && matchesDate
+        }
 
-    init {
-         observeParkingSessions()
+        HistoryState(
+            allSessions = sessions,
+            sessions = filteredList,
+            selectedTab = filters.tab,
+            selectedVehicleId = filters.vehicleId,
+            selectedParkingType = filters.parkType,
+            selectedStartDate = filters.startDate,
+            selectedEndDate = filters.endDate,
+            isLoading = false
+        )
     }
+        .catch { e ->
+            emit(HistoryState(isLoading = false, errorMessage = e.localizedMessage ?: "Unknown error"))
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = HistoryState(isLoading = true)
+        )
 
     fun onEvent(event: HistoryEvent) {
         when (event) {
             is HistoryEvent.OnTabSelected -> {
-                _state.update { currentState ->
-                    currentState.copy(selectedTab = event.tab)
-                }
+                _filterState.update { it.copy(tab = event.tab) }
             }
-
             is HistoryEvent.FilterByVehicle -> {
-                _state.update { it.copy(selectedVehicleId = event.vehicleId) }
-                applyFilters()
+                _filterState.update { it.copy(vehicleId = event.vehicleId) }
             }
-
             is HistoryEvent.FilterByParkType -> {
-                _state.update { it.copy(selectedParkingType = event.parkType) }
-                applyFilters()
+                _filterState.update { it.copy(parkType = event.parkType) }
             }
-
             is HistoryEvent.FilterByDateRange -> {
-                _state.update {
-                    it.copy(
-                        selectedStartDate = event.startDate,
-                        selectedEndDate = event.endDate
-                    )
-                }
-                applyFilters()
+                _filterState.update { it.copy(startDate = event.startDate, endDate = event.endDate) }
             }
-
             is HistoryEvent.ResetFilters -> {
-                _state.update {
-                    it.copy(
-                        selectedVehicleId = null,
-                        selectedParkingType = null,
-                        selectedEndDate = null,
-                        selectedStartDate = null
-                    )
-                }
-                applyFilters()
+                _filterState.value = FilterState()
             }
-
             is HistoryEvent.DeleteSession -> {
                 viewModelScope.launch {
                     useCases.deleteParkingSession(event.session)
                 }
             }
-
             is HistoryEvent.OnSessionClick -> {
-                viewModelScope.launch {
-                    // to do
-                }
+                viewModelScope.launch { /* to do */ }
             }
-        }
-    }
-
-    private fun observeParkingSessions() {
-        getSessionsJob?.cancel()
-        _state.update { it.copy(isLoading = true) }
-        getSessionsJob = useCases.getParkingSessions()
-            .onEach { allSessions ->
-
-                val concludedSessions = allSessions.filter { !it.isActive }
-                _state.update { currentState ->
-                    currentState.copy(
-                        allSession = concludedSessions,
-                        sessions = concludedSessions,
-                        isLoading = false
-                    )
-                }
-                applyFilters()
-            }
-            .catch { e ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = e.localizedMessage ?: "Unknown error"
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun applyFilters() {
-        _state.update { currentState ->
-            val filteredList = currentState.allSession.filter { session ->
-
-                // 1. Filtro Veicolo (se null -> accetta tutti)
-                val matchesVehicle = currentState.selectedVehicleId == null ||
-                        session.vehicleId == currentState.selectedVehicleId
-
-                // 2. Filtro Tipo Parcheggio (se null -> accetta tutti)
-                val matchesType = currentState.selectedParkingType == null ||
-                        session.parkingType == currentState.selectedParkingType
-
-                // 3. Filtro Range Date
-                // Controlla se il parcheggio rientra nell'intervallo selezionato
-                val matchesDate = when {
-                    currentState.selectedStartDate == null && currentState.selectedEndDate == null -> true
-                    currentState.selectedStartDate != null && currentState.selectedEndDate != null -> {
-                        // Il parcheggio è valido se il suo startTime rientra tra startDate e endDate
-                        session.startTime in currentState.selectedStartDate..currentState.selectedEndDate
-                    }
-                    currentState.selectedStartDate != null -> {
-                        session.startTime >= currentState.selectedStartDate
-                    }
-                    else -> true
-                }
-
-                // La sessione deve soddisfare TUTTI e 3 i criteri
-                matchesVehicle && matchesType && matchesDate
-            }
-
-            currentState.copy(sessions = filteredList)
         }
     }
 }

@@ -39,10 +39,10 @@ fun ParkingSessionsMapSection(
     modifier: Modifier = Modifier
 ){
     var selectedTimeRange by remember { mutableStateOf(TimeRange.ALL_TIME) }
-    val filteredPoints = remember (state.allSession, selectedTimeRange){
+    val filteredPoints = remember (state.allSessions, selectedTimeRange){
         val startTimestamp = selectedTimeRange.getStartTimestamp()
 
-        state.allSession
+        state.allSessions
             .filter { session ->
                 startTimestamp == null || session.startTime >= startTimestamp
             }

@@ -131,7 +131,7 @@ fun FilterBottomSheet(
                         modifier = Modifier.padding(end = 8.dp)
                     )
 
-                    Text(text = "Vehicles: ${selectedVehicle?.id ?: "All"}")
+                    Text(text = "Vehicles: ${selectedVehicle?.name ?: "All"}")
                 }
 
                 DropdownMenu(

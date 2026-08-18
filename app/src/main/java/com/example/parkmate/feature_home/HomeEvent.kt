@@ -8,6 +8,5 @@ sealed interface HomeEvent {
     data class DeleteSession (val session: ParkingSession) : HomeEvent
 
     data class OnSessionClick (val session: ParkingSession) : HomeEvent
-    object RefreshSessions : HomeEvent
 
 }

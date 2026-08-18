@@ -39,20 +39,20 @@ fun ParkingSessionsAnalytics(
     modifier: Modifier = Modifier
 ) {
     var selectedFilter by remember { mutableStateOf(AnalyticsFilter.BY_MONTH) }
-    val monthlyData = remember(state.allSession){
-        state.allSession.aggregateByMonth()
+    val monthlyData = remember(state.allSessions){
+        state.allSessions.aggregateByMonth()
     }
 
-    val categoryData = remember (state.allSession){
-        state.allSession.aggregateByCategory()
+    val categoryData = remember (state.allSessions){
+        state.allSessions.aggregateByCategory()
     }
 
-    val vehicleData = remember (state.allSession, vehicles){
-        state.allSession.aggregateByVehicle(vehicles)
+    val vehicleData = remember (state.allSessions, vehicles){
+        state.allSessions.aggregateByVehicle(vehicles)
     }
 
-    val totalSpent = remember (state.allSession){
-        state.allSession.filter { !it.isActive }.sumOf { it.finalCost ?: 0.0 }
+    val totalSpent = remember (state.allSessions){
+        state.allSessions.filter { !it.isActive }.sumOf { it.finalCost ?: 0.0 }
     }
 
     Column(

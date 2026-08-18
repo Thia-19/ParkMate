@@ -3,30 +3,46 @@ package com.example.parkmate.feature_home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
+import com.example.parkmate.core.domain.use_case.saved_locations.SavedLocationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val useCases: ParkingSessionsUseCases
+    private val useCases: ParkingSessionsUseCases,
+    private val savedLocationsUseCases: SavedLocationUseCases
 ) : ViewModel(){
-    private val _state = MutableStateFlow(HomeState())
-    val state: StateFlow<HomeState> = _state.asStateFlow()
 
-    private var getSessionsJob: Job? = null
-
-    init {
-        observeParkingSessions()
+    val state: StateFlow<HomeState> = combine(
+        useCases.getActiveParkingSessions(),
+        savedLocationsUseCases.getAllSavedLocations()
+    ){ sessions, savedLocations ->
+        HomeState (
+            sessions = sessions,
+            savedLocations = savedLocations,
+            isLoading = false,
+            errorMessage = null
+        )
     }
+        .catch { e ->
+            emit(
+                HomeState (
+                    isLoading = false,
+                    errorMessage = e.localizedMessage ?: "Unknown error"
+                )
+            )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = HomeState(isLoading = true)
+        )
 
     fun onEvent(event: HomeEvent) {
         when(event){
@@ -50,34 +66,7 @@ class HomeViewModel @Inject constructor(
                     // to do
                 }
             }
-
-            HomeEvent.RefreshSessions -> {
-                observeParkingSessions()
-            }
         }
-    }
-
-    private fun observeParkingSessions() {
-        getSessionsJob?.cancel()
-        _state.update { it.copy(isLoading = true, errorMessage = null) }
-        getSessionsJob = useCases.getActiveParkingSessions()
-            .onEach { sessions ->
-                _state.update {
-                    it.copy(
-                        sessions = sessions,
-                        isLoading = false
-                    )
-                }
-            }
-            .catch { e ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = e.localizedMessage ?: "Unknown error"
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
     }
 }
 

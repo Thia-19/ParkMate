@@ -6,6 +6,14 @@ import com.example.parkmate.core.data.local.data_source.ParkMateDatabase
 import com.example.parkmate.core.data.local.data_source.ParkingSessionDao
 import com.example.parkmate.core.data.local.data_source.SavedLocationDao
 import com.example.parkmate.core.data.local.data_source.VehicleDao
+import com.example.parkmate.core.data.repository.ParkingSessionsRepositoryImpl
+import com.example.parkmate.core.data.repository.SavedLocationsRepositoryImpl
+import com.example.parkmate.core.data.repository.VehiclesRepositoryImpl
+import com.example.parkmate.core.domain.repository.ParkingSessionRepository
+import com.example.parkmate.core.domain.repository.SavedLocationRepository
+import com.example.parkmate.core.domain.repository.VehicleRepository
+import com.example.parkmate.core.domain.use_case.saved_locations.GetAllSavedLocations
+import com.example.parkmate.core.domain.use_case.saved_locations.SavedLocationUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,5 +53,31 @@ object AppModule {
     @Singleton
     fun provideSavedLocationDao(db: ParkMateDatabase): SavedLocationDao {
         return db.savedLocationDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideParkingSessionRepository(
+        dao: ParkingSessionDao
+    ): ParkingSessionRepository{
+        return ParkingSessionsRepositoryImpl(dao)
+    }
+
+    /*
+    @Provides
+    @Singleton
+    fun provideVehicleRepository(
+        dao: VehicleDao
+    ): VehicleRepository{
+        return VehiclesRepositoryImpl(dao)
+    }
+     */
+
+    @Provides
+    @Singleton
+    fun provideSavedLocationRepository(
+        dao: SavedLocationDao
+    ): SavedLocationRepository{
+        return SavedLocationsRepositoryImpl(dao)
     }
 }

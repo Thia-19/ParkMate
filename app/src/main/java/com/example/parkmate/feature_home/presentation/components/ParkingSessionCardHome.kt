@@ -52,6 +52,7 @@ fun ParkingSessionCardHome(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
+                    /* TODO: non il suo ID ma il suo NOME */
                     text = "Vehicle ID: ${session.vehicleId}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
