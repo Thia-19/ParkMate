@@ -84,6 +84,7 @@ fun HomeScreen(
     onSessionClick: (ParkingSession) -> Unit = {},
     onNavigateToAddSession: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToSavedLocations: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -153,6 +154,7 @@ fun HomeScreen(
                         scope.launch { drawerState.close() }
                         when (item.id) {
                             "settings" -> onNavigateToSettings()
+                            "savedLocations" -> onNavigateToSavedLocations()
                         }
                     }
                 )

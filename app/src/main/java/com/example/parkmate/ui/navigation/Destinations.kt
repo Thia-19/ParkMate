@@ -57,3 +57,6 @@ object AddSessionRoute
 
 @Serializable
 object SettingsRoute
+
+@Serializable
+object SavedLocationsRoute

@@ -32,6 +32,7 @@ class HistoryViewModel @Inject constructor(
 
     private val _filterState = MutableStateFlow(FilterState())
 
+    /* TODO: togli il filtro perchè la query filtra da sola */
     private val _concludedSessions = useCases.getParkingSessions()
         .map { allSessions -> allSessions.filter { !it.isActive } }
 

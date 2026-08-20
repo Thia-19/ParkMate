@@ -1,6 +1,7 @@
 package com.example.parkmate.core.data.local.data_source
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,4 +15,7 @@ interface SavedLocationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSavedLocation(savedLocation: SavedLocation)
+
+    @Delete
+    suspend fun deleteSavedLocation(savedLocation: SavedLocation)
 }

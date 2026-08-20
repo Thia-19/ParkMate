@@ -1,0 +1,104 @@
+package com.example.parkmate.feature_savedLocations
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.parkmate.feature_savedLocations.components.CreateLocationBottomSheet
+import com.example.parkmate.feature_savedLocations.components.SavedLocationContent
+import com.patrykandpatrick.vico.core.common.shape.Shape
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SavedLocationsScreen(
+    viewModel: SavedLocationsViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit,
+    onEvent: (SavedLocationsEvent) -> Unit,
+){
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect (state.errorMessage) {
+        state.errorMessage?.let { error ->
+            snackbarHostState.showSnackbar(error)
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Saved Locations",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                shape = CircleShape,
+                onClick = { onEvent(SavedLocationsEvent.OpenCreateModal)}) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Add"
+                )
+            }
+        }
+    ) { padding ->
+        SavedLocationContent(
+            locations = state.locations,
+            isLoading = state.isLoading,
+            modifier = Modifier.padding(padding)
+        )
+
+        if (state.isCreateModalOpen) {
+            CreateLocationBottomSheet(
+                onDismiss = {
+                    onEvent(SavedLocationsEvent.DismissCreateModal)
+                },
+                onSave = { name, icon, position ->
+                    onEvent(
+                        SavedLocationsEvent.AddSavedLocation(
+                            name = name,
+                            icon = icon,
+                            position = position
+                        )
+                    )
+                }
+            )
+        }
+    }
+}
+

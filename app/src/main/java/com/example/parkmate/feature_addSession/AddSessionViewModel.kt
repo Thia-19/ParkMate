@@ -110,7 +110,7 @@ class AddSessionViewModel @Inject constructor(
     private fun saveSession (){
         val currentState = _state.value
 
-        /*
+        /* TODO
         val vehicleId = currentState.vehicleId ?: run {
             _state.update { it.copy(errorMessage = "Select a vehicle!") }
             return

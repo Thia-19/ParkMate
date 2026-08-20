@@ -4,5 +4,6 @@ import javax.inject.Inject
 
 data class SavedLocationUseCases @Inject constructor(
     val getAllSavedLocations: GetAllSavedLocations,
-    val addSavedLocation: AddSavedLocation
+    val addSavedLocation: AddSavedLocation,
+    val deleteSavedLocation: DeleteSavedLocation
 )
