@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.SavedLocation
+import com.example.parkmate.feature_savedLocations.SavedLocationsEvent
 
 @Composable
 fun SavedLocationContent(
     locations: List<SavedLocation>,
     isLoading: Boolean,
-    modifier: Modifier = Modifier
+    onEvent: (SavedLocationsEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ){
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -42,7 +44,8 @@ fun SavedLocationContent(
         ) { index, location ->
             SavedLocationCard(
                 location = location,
-                onClick = { /* TODO */ }
+                onClick = { /* TODO */ },
+                onEvent = onEvent
             )
         }
     }

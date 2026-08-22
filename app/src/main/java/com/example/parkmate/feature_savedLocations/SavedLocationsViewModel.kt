@@ -2,6 +2,7 @@ package com.example.parkmate.feature_savedLocations
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.parkmate.core.domain.models.MarkerIconType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.SavedLocation
@@ -67,11 +68,37 @@ class SavedLocationsViewModel @Inject constructor(
                     useCases.deleteSavedLocation(event.location)
                 }
             }
+            is SavedLocationsEvent.UpdateSavedLocation -> {
+                val locationToEdit = state.value.locationToEdit
+                if (locationToEdit != null) {
+                    val updatedLocation = locationToEdit.copy(
+                        name = event.name,
+                        icon = event.icon,
+                        position = event.position
+                    )
+
+                    viewModelScope.launch {
+                        useCases.updateSavedLocation(updatedLocation)
+                        _state.update { it.copy(locationToEdit = null) }
+                    }
+                }
+            }
             is SavedLocationsEvent.OpenCreateModal -> {
                 _state.update { it.copy(isCreateModalOpen = true) }
             }
+            is SavedLocationsEvent.OpenEditModal -> {
+                _state.update {
+                    it.copy(locationToEdit = event.location)
+                }
+            }
+
             is SavedLocationsEvent.DismissCreateModal -> {
-                _state.update { it.copy(isCreateModalOpen = false) }
+                _state.update {
+                    it.copy(
+                        isCreateModalOpen = false,
+                        locationToEdit = null
+                    )
+                }
             }
         }
     }

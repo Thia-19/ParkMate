@@ -1,19 +1,24 @@
 package com.example.parkmate.feature_addSession
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
+import com.example.parkmate.core.domain.use_case.saved_locations.SavedLocationUseCases
 import com.example.parkmate.core.preferences.domain.use_case.GetUseCurrentPositionUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,16 +26,24 @@ import javax.inject.Inject
 @HiltViewModel
 class AddSessionViewModel @Inject constructor(
     private val useCases: ParkingSessionsUseCases,
+    private val savedLocationUseCases: SavedLocationUseCases,
+    // private val vehiclesUseCases: VehiclesUseCases
     private val getUseCurrentPositionUseCase: GetUseCurrentPositionUseCase,
     private val fusedLocationClient: FusedLocationProviderClient
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddSessionState())
-    val state: StateFlow<AddSessionState> = _state.asStateFlow()
 
-    init {
-        fetchLocationIfEnabled()
-    }
+    val state: StateFlow<AddSessionState> = combine(
+        _state,
+        savedLocationUseCases.getAllSavedLocations()
+    ) { currentState, locations ->
+        currentState.copy(locations = locations)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = AddSessionState()
+    )
 
     fun onEvent(event: AddSessionEvent){
         when (event) {
@@ -108,7 +121,7 @@ class AddSessionViewModel @Inject constructor(
     }
 
     private fun saveSession (){
-        val currentState = _state.value
+        val currentState = state.value
 
         /* TODO
         val vehicleId = currentState.vehicleId ?: run {

@@ -17,16 +17,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LocalParking
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +37,7 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -64,6 +68,7 @@ import com.example.parkmate.feature_home.presentation.components.DrawerBody
 import com.example.parkmate.feature_home.presentation.components.ParkingSessionCardHome
 import com.example.parkmate.feature_home.presentation.components.ParkingSessionDetails
 import com.example.parkmate.feature_home.util.bitmapDescriptorFromVector
+import com.example.parkmate.feature_home.util.iconRes
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -106,6 +111,7 @@ fun HomeScreen(
 
     val scope = rememberCoroutineScope()
     var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null) }
+    var savedLocationsOn by rememberSaveable{ mutableStateOf(false)}
 
     selectedSessionForDetail?.let { session ->
         ParkingSessionDetails(
@@ -279,6 +285,34 @@ fun HomeScreen(
                                 }
                             )
                         }
+
+                        if (savedLocationsOn) {
+                            state.savedLocations.forEach { location ->
+                                val position = remember(
+                                    location.position.latitude,
+                                    location.position.longitude
+                                ) {
+                                    LatLng(location.position.latitude, location.position.longitude)
+                                }
+
+                                val iconDescriptor = remember(location.icon, context) {
+                                    bitmapDescriptorFromVector(context, location.icon.iconRes)
+                                }
+
+                                Marker(
+                                    title = location.name,
+                                    state = rememberMarkerState(
+                                        key = location.id.toString(),
+                                        position = position
+                                    ),
+                                    icon = iconDescriptor,
+                                    anchor = Offset(
+                                        0.5f,
+                                        1.0f
+                                    )
+                                )
+                            }
+                        }
                     }
 
                     FloatingActionButton(
@@ -294,15 +328,36 @@ fun HomeScreen(
                         )
                     }
 
+                    val containerColor = if (savedLocationsOn) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerHigh // o surface
+                    }
+
+                    val contentColor = if (savedLocationsOn) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+
+                    val icon = if (savedLocationsOn) {
+                        Icons.Filled.Bookmark
+                    } else {
+                        Icons.Outlined.BookmarkBorder
+                    }
+
                     FloatingActionButton(
-                        onClick = { /* TODO */ },
+                        onClick = { savedLocationsOn = !savedLocationsOn },
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 16.dp, bottom = 50.dp)
+                            .padding(16.dp)
+                            .align(Alignment.TopEnd),
+                        containerColor = containerColor,
+                        contentColor = contentColor,
+                        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Layers,
-                            contentDescription = "Layers"
+                            imageVector = icon,
+                            contentDescription = if (savedLocationsOn) "Nascondi luoghi salvati" else "Mostra luoghi salvati"
                         )
                     }
                 }

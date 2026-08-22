@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface SavedLocationRepository {
     fun getAllSavedLocations(): Flow<List<SavedLocation>>
     suspend fun insertSavedLocation(savedLocation: SavedLocation)
+    suspend fun updateSavedLocation(savedLocation: SavedLocation)
     suspend fun deleteSavedLocation(savedLocation: SavedLocation)
 }

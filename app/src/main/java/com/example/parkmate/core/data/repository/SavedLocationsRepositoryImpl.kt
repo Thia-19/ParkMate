@@ -14,6 +14,10 @@ class SavedLocationsRepositoryImpl (private val savedLocationDao: SavedLocationD
         return savedLocationDao.insertSavedLocation(savedLocation)
     }
 
+    override suspend fun updateSavedLocation(savedLocation: SavedLocation){
+        return savedLocationDao.updateSavedLocation(savedLocation)
+    }
+
     override suspend fun deleteSavedLocation(savedLocation: SavedLocation) {
         return savedLocationDao.deleteSavedLocation(savedLocation)
     }

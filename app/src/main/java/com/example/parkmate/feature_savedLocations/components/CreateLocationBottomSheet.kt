@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.MarkerIconType
 import com.example.parkmate.core.domain.models.Position
+import com.example.parkmate.core.domain.models.SavedLocation
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -62,16 +63,24 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateLocationBottomSheet(
+    locationToEdit: SavedLocation? = null,
     onDismiss: () -> Unit,
     onSave: (name: String, icon: MarkerIconType, position: Position) -> Unit
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var icon by rememberSaveable { mutableStateOf(MarkerIconType.HOME) }
-    var position by remember { mutableStateOf<Position?>(null) }
+    var name by rememberSaveable { mutableStateOf(locationToEdit?.name ?: "") }
+    var icon by rememberSaveable { mutableStateOf(locationToEdit?.icon ?: MarkerIconType.HOME) }
+    var position by remember { mutableStateOf<Position?>(locationToEdit?.position) }
 
-    val initialLatLng = remember { LatLng(44.4939, 11.3428) } // Es. Roma
+    val initialLatLng = remember(locationToEdit) {
+        locationToEdit?.position?.let { LatLng(it.latitude, it.longitude) }
+            ?: LatLng(44.4939, 11.3428)
+    }
+
     val cameraPositionState = rememberCameraPositionState {
-        this.position = CameraPosition.fromLatLngZoom(initialLatLng, 11f)
+        this.position = CameraPosition.fromLatLngZoom(
+            initialLatLng,
+            if (locationToEdit != null) 15f else 11f
+        )
     }
 
     ModalBottomSheet(
@@ -85,15 +94,15 @@ fun CreateLocationBottomSheet(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = "Name",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                text = if (locationToEdit != null) "Edit Location" else "Create Location",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
 
             OutlinedTextField (
                 value = name,
                 onValueChange = { name = it },
-                label = {Text("Name (e.g. Bubble Tea)")},
+                label = {Text("Name (e.g. Home, Work)")},
                 minLines = 1,
                 maxLines = 1,
                 modifier = Modifier.fillMaxWidth()
