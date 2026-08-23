@@ -50,8 +50,22 @@ class AddSessionViewModel @Inject constructor(
             is AddSessionEvent.OnVehicleSelected -> {
                 _state.update { it.copy(vehicleId = event.vehicleId) }
             }
-            is AddSessionEvent.OnLocationSelected -> {
-                _state.update { it.copy(locationId = event.locationId) }
+            is AddSessionEvent.OnSavedLocationSelected -> {
+                val selectedLoc = state.value.locations.find { it.id == event.locationId }
+                _state.update {
+                    it.copy(
+                        locationId = event.locationId,
+                        position = selectedLoc?.let { loc -> Position(loc.position.latitude, loc.position.longitude) }
+                    )
+                }
+            }
+            is AddSessionEvent.OnCustomPositionSelected -> {
+                _state.update {
+                    it.copy(
+                        locationId = null,
+                        position = event.position
+                    )
+                }
             }
             is AddSessionEvent.OnNoteChanged -> {
                 _state.update { it.copy(note = event.note) }
@@ -130,6 +144,9 @@ class AddSessionViewModel @Inject constructor(
         }
         */
 
+        val vehicleId = (1..100).random() // TEST; TEST; TEST; TODO
+
+
         val selectedSavedLocation = currentState.locations.find { it.id == currentState.locationId }
         val finalPosition = selectedSavedLocation?.position ?: currentState.position
 
@@ -144,7 +161,7 @@ class AddSessionViewModel @Inject constructor(
                 val newSession = ParkingSession(
                     id = 0,
                     isActive = true,
-                    vehicleId = (1..100).random(), // TEST; TEST; TEST; TODO
+                    vehicleId = vehicleId,
                     parkingType = currentState.parkingType,
                     startTime = System.currentTimeMillis(),
                     position = finalPosition,

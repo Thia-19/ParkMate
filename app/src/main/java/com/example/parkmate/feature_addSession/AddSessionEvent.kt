@@ -6,7 +6,8 @@ import com.example.parkmate.core.domain.models.Position
 sealed interface AddSessionEvent {
     // Form options
     data class OnVehicleSelected(val vehicleId: Int) : AddSessionEvent
-    data class OnLocationSelected(val locationId: Int?) : AddSessionEvent
+    data class OnSavedLocationSelected(val locationId: Int?) : AddSessionEvent
+    data class OnCustomPositionSelected(val position: Position) : AddSessionEvent
     data class OnNoteChanged(val note: String) : AddSessionEvent
     data class OnParkingTypeChanged (val type: ParkingType) : AddSessionEvent
     data class OnHourlyRateChanged (val rate: Double?) : AddSessionEvent

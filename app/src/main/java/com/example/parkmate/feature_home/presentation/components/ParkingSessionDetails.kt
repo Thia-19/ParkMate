@@ -20,7 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Money
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -39,6 +41,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,9 +61,11 @@ import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.util.formatTimestamp
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -217,6 +222,12 @@ fun ParkingSessionDetails(
                     }
                 }
 
+                RateDetailsCard(
+                    session.startTime,
+                    session.hourlyRate,
+                    session.expiryTime
+                )
+
                 OutlinedCard(
                     onClick = { onOpenMapClick(session.position) },
                     modifier = Modifier.fillMaxWidth()
@@ -347,4 +358,90 @@ fun ParkingSessionDetails(
             modifier = modifier
         )
     }
+}
+
+@Composable
+fun RateDetailsCard(
+    startTime: Long,
+    hourlyRate: Double?,
+    expiryTime: Long?,
+    modifier: Modifier = Modifier
+) {
+    var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
+
+    // Update currentTime every 1 sec
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime = System.currentTimeMillis()
+            delay(1000L)
+        }
+    }
+
+    OutlinedCard(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "Session Info",
+                tint = MaterialTheme.colorScheme.primary
+            )
+
+            Column(modifier = Modifier.weight(1f)) {
+                if (hourlyRate != null) {
+                    val elapsedMillis = max(0L, currentTime - startTime)
+                    val elapsedHours = elapsedMillis.toDouble() / (1000 * 60 * 60)
+                    val accumulatedCost = elapsedHours * hourlyRate
+
+                    Text(
+                        text = "Elapsed time: ${formatDuration(elapsedMillis)}",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = "Accumulated cost: ${String.format(Locale.getDefault(), "%.2f €", accumulatedCost)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else if (expiryTime != null) {
+                    val remainingMillis = max(0L, expiryTime - currentTime)
+                    val isExpired = currentTime >= expiryTime
+
+                    if (isExpired) {
+                        Text(
+                            text = "Parking expired!",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    } else {
+                        Text(
+                            text = "Expires in: ${formatDuration(remainingMillis)}",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+                } else {
+                    val elapsedMillis = max(0L, currentTime - startTime)
+
+                    Text(
+                        text = "Elapsed time: ${formatDuration(elapsedMillis)}",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Utility function
+private fun formatDuration(millis: Long): String {
+    val totalSeconds = millis / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
 }

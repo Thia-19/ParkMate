@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,11 +59,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.parkmate.core.domain.models.ParkingType
+import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.feature_addSession.components.ParkingTimePickerDialog
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
 import com.example.parkmate.feature_addSession.components.VehicleDropdownSelector
 import com.example.parkmate.feature_addSession.components.formatTimestampToTime
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun AddSessionScreen(
@@ -122,6 +131,22 @@ private fun AddSessionContent (
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     var showTimePicker by remember { mutableStateOf(false) }
+
+    val defaultPosition = LatLng(44.4939, 11.3428)
+
+    val currentLatLng = remember(state.position) {
+        state.position?.let { LatLng(it.latitude, it.longitude) } ?: defaultPosition
+    }
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(currentLatLng, 15f)
+    }
+
+    LaunchedEffect(currentLatLng) {
+        cameraPositionState.animate(
+            CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+        )
+    }
 
     if (showTimePicker) {
         ParkingTimePickerDialog(
@@ -232,16 +257,47 @@ private fun AddSessionContent (
                 locations = state.locations,
                 selectedLocationId = state.locationId,
                 onLocationSelected = { locationId ->
-                    onEvent(AddSessionEvent.OnLocationSelected(locationId))
+                    if (locationId == null) {
+                        onEvent(AddSessionEvent.FetchLocationRequested)
+                    } else {
+                        onEvent(AddSessionEvent.OnSavedLocationSelected(locationId))
+                    }
                 }
             )
 
             Text(
-                text = "If no saved location is selected, this parking session's location will be associated to your current position",
+                text = "Or adjust current position via map interface",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            GoogleMap(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+                cameraPositionState = cameraPositionState,
+                onMapClick = { latLng ->
+                    // Notifica il ViewModel quando l'utente clicca sulla mappa
+                    onEvent(
+                        AddSessionEvent.OnCustomPositionSelected(
+                            Position(latLng.latitude, latLng.longitude)
+                        )
+                    )
+                }
+            ) {
+                Marker(
+                    state = MarkerState(position = currentLatLng),
+                    title = "Parking Location"
+                )
+            }
+
+            Text(
+                text = "If no location is selected, this parking session's location will be associated to your current position",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
+            HorizontalDivider()
 
             Text(
                 text = "Parking Type",
@@ -257,7 +313,7 @@ private fun AddSessionContent (
             )
 
             HorizontalDivider()
-            when (state.parkingType){
+            when (state.parkingType) {
                 ParkingType.HOURLY_PAID -> {
                     OutlinedTextField(
                         value = state.hourlyRate?.toString() ?: "",
@@ -272,6 +328,7 @@ private fun AddSessionContent (
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
+
                 ParkingType.FIXED_TICKET -> {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
@@ -318,6 +375,7 @@ private fun AddSessionContent (
                         }
                     }
                 }
+
                 ParkingType.FREE -> {
                     Text(
                         text = "No rate required.",
@@ -347,7 +405,6 @@ private fun AddSessionContent (
             )
 
         }
-
     }
 }
 

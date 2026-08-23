@@ -30,14 +30,15 @@ fun SavedLocationsDropdownSelector(
     selectedLocationId: Int?,
     onLocationSelected: (Int?) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     var expanded by remember { mutableStateOf(false) }
     val selectedLocation = locations.find { it.id == selectedLocationId }
+
     val textToShow = selectedLocation?.name ?: "Current Position (GPS)"
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded},
+        onExpandedChange = { expanded = !expanded },
         modifier = modifier
     ) {
         OutlinedTextField(
@@ -45,7 +46,6 @@ fun SavedLocationsDropdownSelector(
             onValueChange = {},
             readOnly = true,
             label = { Text("Select Saved Location") },
-            placeholder = { Text("Choose a Saved Location...") },
             leadingIcon = {
                 Icon(
                     imageVector = if (selectedLocationId == null) Icons.Default.MyLocation else Icons.Default.Place,
@@ -70,7 +70,8 @@ fun SavedLocationsDropdownSelector(
                 onClick = {
                     onLocationSelected(null)
                     expanded = false
-                }
+                },
+                leadingIcon = { Icon(Icons.Default.MyLocation, contentDescription = null) }
             )
 
             if (locations.isNotEmpty()) {
@@ -84,6 +85,7 @@ fun SavedLocationsDropdownSelector(
                         onLocationSelected(location.id)
                         expanded = false
                     },
+                    leadingIcon = { Icon(Icons.Default.Place, contentDescription = null) },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
             }

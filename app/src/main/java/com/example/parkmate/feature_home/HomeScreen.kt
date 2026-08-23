@@ -69,6 +69,7 @@ import com.example.parkmate.feature_home.presentation.components.ParkingSessionC
 import com.example.parkmate.feature_home.presentation.components.ParkingSessionDetails
 import com.example.parkmate.feature_home.util.bitmapDescriptorFromVector
 import com.example.parkmate.feature_home.util.iconRes
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -125,7 +126,20 @@ fun HomeScreen(
                 onEvent(HomeEvent.DeleteSession(sessionToDelete))
                 selectedSessionForDetail = null
             },
-            onOpenMapClick = { selectedSessionForDetail = null }
+            onOpenMapClick = { position ->
+                selectedSessionForDetail = null
+
+                scope.launch {
+                    bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                    cameraPositionState.animate(
+                        update = CameraUpdateFactory.newLatLngZoom(
+                            LatLng(position.latitude, position.longitude),
+                            17f // Livello di zoom consigliato per il dettaglio
+                        ),
+                        durationMs = 1000 // Durata animazione in ms
+                    )
+                }
+            }
         )
     }
 
