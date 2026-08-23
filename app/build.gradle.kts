@@ -51,12 +51,16 @@ dependencies {
     // Room (Usa correttamente libs dal toml)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.androidx.material3)
     ksp(libs.room.compiler)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    // Manage images
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // AndroidX & Compose (Dal TOML)
     implementation(libs.androidx.core.ktx)
@@ -97,3 +101,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
+

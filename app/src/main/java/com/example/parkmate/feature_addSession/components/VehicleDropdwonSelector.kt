@@ -17,7 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +36,7 @@ fun VehicleDropdownSelector(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = selectedVehicle?.displayName ?: "",
+            value = selectedVehicle?.name ?: "",
             onValueChange = {},
             readOnly = true,
             label = { Text("Select Vehicle") },
@@ -70,7 +70,7 @@ fun VehicleDropdownSelector(
                 vehicles.forEach { vehicle ->
                     DropdownMenuItem(
                         text = {
-                            Text(text = vehicle.displayName)
+                            Text(text = vehicle.name)
                         },
                         onClick = {
                             onVehicleSelected(vehicle.id)
@@ -84,9 +84,3 @@ fun VehicleDropdownSelector(
     }
 }
 
-val Vehicle.displayName: String
-    get() = if (!licensePlate.isNullOrBlank()) {
-        "$name ($licensePlate)"
-    } else {
-        name
-    }

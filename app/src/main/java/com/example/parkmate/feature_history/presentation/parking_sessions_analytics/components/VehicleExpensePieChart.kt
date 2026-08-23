@@ -97,8 +97,8 @@ fun VehicleExpensesPieChart(
             /* TODO Targa rimossa? */
             expenses.forEach { item ->
                 val percentage = if (totalSpent > 0) (item.totalCost / totalSpent ) * 100 else 0.0
-                val vehicleNameText = if(!item.vehicle.licensePlate.isNullOrBlank()){
-                    "${item.vehicle.name} (${item.vehicle.licensePlate})"
+                val vehicleNameText = if(!item.vehicle.name.isNullOrBlank()){
+                    "${item.vehicle.name} (${item.vehicle.name})"
                 } else {
                     item.vehicle.name
                 }

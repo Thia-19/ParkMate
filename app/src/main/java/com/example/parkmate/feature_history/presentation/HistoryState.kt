@@ -2,7 +2,7 @@ package com.example.parkmate.feature_history.presentation
 
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingType
-import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 
 data class HistoryState(
     val allSessions: List<ParkingSession> = emptyList(),

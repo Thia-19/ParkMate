@@ -9,11 +9,12 @@ import androidx.navigation.compose.composable
 import com.example.parkmate.feature_addSession.AddSessionScreen
 import com.example.parkmate.feature_history.presentation.HistoryScreen
 import com.example.parkmate.feature_home.HomeScreen
+import com.example.parkmate.feature_parkingEffort.screens.ParkingEffortMapScreen
+import com.example.parkmate.feature_settings.SettingsScreen
+import com.example.parkmate.feature_vehiclesManager.screens.DisplayVehiclesScreen
 import com.example.parkmate.feature_savedLocations.SavedLocationsEvent
 import com.example.parkmate.feature_savedLocations.SavedLocationsScreen
 import com.example.parkmate.feature_savedLocations.SavedLocationsViewModel
-import com.example.parkmate.feature_settings.SettingsScreen
-
 
 @Composable
 fun AppNavHost(
@@ -70,10 +71,10 @@ fun AppNavHost(
         }
 
         composable<VehicleListRoute>{
-            // zara, qui devi mettere il tuo ...screen.kt
+            DisplayVehiclesScreen()
         }
         composable<ParkingEffortRoute>{
-            // zara, qui devi mettere il tuo ...screen.kt
+            ParkingEffortMapScreen()
         }
         composable<HistoryRoute>{
             HistoryScreen()

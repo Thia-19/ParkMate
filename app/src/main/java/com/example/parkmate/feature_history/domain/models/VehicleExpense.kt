@@ -2,7 +2,7 @@ package com.example.parkmate.feature_history.domain.models
 
 import androidx.compose.ui.graphics.Color
 import com.example.parkmate.core.domain.models.ParkingSession
-import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 
 data class VehicleExpense(
     val vehicle: Vehicle,

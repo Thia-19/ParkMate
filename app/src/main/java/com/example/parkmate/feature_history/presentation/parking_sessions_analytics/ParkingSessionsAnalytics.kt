@@ -21,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.feature_history.domain.models.aggregateByCategory
 import com.example.parkmate.feature_history.presentation.HistoryEvent
 import com.example.parkmate.feature_history.presentation.HistoryState

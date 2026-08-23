@@ -46,7 +46,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.ParkingType
-import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.feature_history.presentation.HistoryEvent
 import java.text.SimpleDateFormat
