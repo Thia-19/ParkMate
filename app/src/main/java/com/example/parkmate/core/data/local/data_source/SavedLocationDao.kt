@@ -1,0 +1,25 @@
+package com.example.parkmate.core.data.local.data_source
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import com.example.parkmate.core.domain.models.SavedLocation
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface SavedLocationDao {
+    @Query("SELECT * FROM savedlocation")
+    fun getAllSavedLocations(): Flow<List<SavedLocation>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedLocation(savedLocation: SavedLocation)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateSavedLocation(savedLocation: SavedLocation)
+
+    @Delete
+    suspend fun deleteSavedLocation(savedLocation: SavedLocation)
+}
