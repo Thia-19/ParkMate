@@ -3,6 +3,7 @@ package com.example.parkmate.feature_addSession
 import android.Manifest
 import android.content.pm.PackageManager
 import android.icu.util.Calendar
+import android.net.Uri
 import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,11 +17,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.Euro
 import androidx.compose.material.icons.filled.Schedule
@@ -31,6 +35,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -52,15 +57,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.labelRes
+import com.example.parkmate.core.domain.utils.images.createImageUri
 import com.example.parkmate.feature_addSession.components.ParkingTimePickerDialog
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
 import com.example.parkmate.feature_addSession.components.VehicleDropdownSelector
@@ -80,6 +89,21 @@ fun AddSessionScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    var tempPicUri by remember { mutableStateOf<Uri?>(null) }
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && tempPicUri != null){
+            viewModel.onEvent(AddSessionEvent.OnPhotoCaptured(tempPicUri.toString()))
+        }
+    }
+
+    val onTakePhoto: () -> Unit = {
+        val uri = createImageUri(context)
+        tempPicUri = uri
+        cameraLauncher.launch(uri)
+    }
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -118,6 +142,7 @@ fun AddSessionScreen(
     AddSessionContent(
         state = state,
         onEvent = viewModel::onEvent,
+        onTakePhoto = onTakePhoto,
         onNavigateBack = onNavigateBack
     )
 }
@@ -127,6 +152,7 @@ fun AddSessionScreen(
 private fun AddSessionContent (
     state: AddSessionState,
     onEvent: (AddSessionEvent) -> Unit,
+    onTakePhoto: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -392,6 +418,41 @@ private fun AddSessionContent (
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            if (state.photoUri != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                ) {
+                    AsyncImage(
+                        model = state.photoUri,
+                        contentDescription = "Parking picture",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                    IconButton(
+                        onClick = { onEvent(AddSessionEvent.OnPhotoRemoved) },
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Remove pic",
+                            tint = Color.White
+                        )
+                    }
+                }
+            } else {
+                OutlinedButton (
+                    onClick = onTakePhoto,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(imageVector = Icons.Default.AddAPhoto, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Take a picture")
+                }
+            }
 
             OutlinedTextField(
                 value = state.note,

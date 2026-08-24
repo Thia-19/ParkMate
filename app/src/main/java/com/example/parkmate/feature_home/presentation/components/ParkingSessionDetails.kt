@@ -216,7 +216,7 @@ fun ParkingSessionDetails(
 
                     item.session.finalCost?.let { cost ->
                         Text(
-                            text = "Final cost: €\$cost",
+                            text = "Final cost: €${cost}",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -235,11 +235,13 @@ fun ParkingSessionDetails(
                     }
                 }
 
-                RateDetailsCard(
-                    item.session.startTime,
-                    item.session.hourlyRate,
-                    item.session.expiryTime
-                )
+                if (item.session.isActive) {
+                    RateDetailsCard(
+                        item.session.startTime,
+                        item.session.hourlyRate,
+                        item.session.expiryTime
+                    )
+                }
 
                 OutlinedCard(
                     onClick = { onOpenMapClick(item.session.position) },

@@ -14,6 +14,7 @@ sealed interface AddSessionEvent {
     data class OnFixedCostChanged (val cost: Double?) : AddSessionEvent
     data class OnExpiryTimeChanged (val time: Long?) : AddSessionEvent
     data class OnPhotoCaptured(val uri: String) : AddSessionEvent
+    object OnPhotoRemoved : AddSessionEvent
 
     // Save form
     data object OnSaveSession : AddSessionEvent

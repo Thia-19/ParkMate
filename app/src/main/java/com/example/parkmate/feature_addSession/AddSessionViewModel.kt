@@ -92,6 +92,9 @@ class AddSessionViewModel @Inject constructor(
             is AddSessionEvent.OnPhotoCaptured -> {
                 _state.update { it.copy(photoUri = event.uri) }
             }
+            is AddSessionEvent.OnPhotoRemoved -> {
+                _state.update { it.copy(photoUri = null) }
+            }
             is AddSessionEvent.OnPositionFetched -> {
                 _state.update { it.copy(position = event.position) }
             }

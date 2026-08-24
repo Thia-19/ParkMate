@@ -34,6 +34,16 @@ xmlns:tools="http://schemas.android.com/tools">
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyAxQcGR2t2r7l_YKF6GLqJ4fv4XDEL-uw4"/>
 
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+    </provider>
+
 </application>
 
 </manifest>

@@ -48,106 +48,82 @@ fun ParkingSessionCardHome(
         onClick = { onClick(item.session) },
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
         ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Un look flat moderno spesso funziona meglio
+        shape = MaterialTheme.shapes.medium
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(56.dp)
             ) {
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.size(44.dp)
+                Box(contentAlignment = Alignment.Center) {
+                    val icon = when (item.vehicleType) {
+                        VehicleType.CAR -> Icons.Default.DirectionsCar
+                        VehicleType.MOTORCYCLE -> Icons.Default.TwoWheeler
+                        VehicleType.BICYCLE -> Icons.Default.PedalBike
+                        VehicleType.OTHER -> Icons.Default.ElectricScooter
+                    }
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = item.vehicleType.name,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        when(item.vehicleType) {
-                            (VehicleType.CAR) -> {
-                                Icon(
-                                    imageVector = Icons.Default.DirectionsCar,
-                                    contentDescription = "car",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                    Text(
+                        text = item.vehicleName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            val parkingIcon = when (item.session.parkingType) {
+                                ParkingType.FREE -> Icons.Default.MoneyOff
+                                ParkingType.HOURLY_PAID, ParkingType.FIXED_TICKET -> Icons.Default.AttachMoney
                             }
-                            (VehicleType.MOTORCYCLE) -> {
-                                Icon(
-                                    imageVector = Icons.Default.TwoWheeler,
-                                    contentDescription = "motorcycle",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                            (VehicleType.BICYCLE) -> {
-                                Icon(
-                                    imageVector = Icons.Default.PedalBike,
-                                    contentDescription = "motorcycle",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                            (VehicleType.OTHER) -> {
-                                Icon(
-                                    imageVector = Icons.Default.ElectricScooter,
-                                    contentDescription = "motorcycle",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
+                            Icon(
+                                imageVector = parkingIcon,
+                                contentDescription = item.session.parkingType.name,
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     }
                 }
                 Text(
-                    text = "Vehicle Name: ${item.vehicleName}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    text = "Start Date: ${formatTimestamp(item.session.startTime)}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Surface(
-                    shape = MaterialTheme.shapes.small,
-                    color = MaterialTheme.colorScheme.primaryContainer
-                ) {
-                    when (item.session.parkingType){
-                        ParkingType.FREE -> {
-                            Icon(
-                                imageVector = Icons.Default.MoneyOff,
-                                contentDescription = "Free"
-                            )
-                        }
-                        ParkingType.HOURLY_PAID -> {
-                            Icon(
-                                imageVector = Icons.Default.AttachMoney,
-                                contentDescription = "HourlyPaid"
-                            )
-                        }
-                        ParkingType.FIXED_TICKET -> {
-                            Icon(
-                                imageVector = Icons.Default.AttachMoney,
-                                contentDescription = "FixedTicket"
-                            )
-                        }
-
-                    }
-                }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Start date: ${formatTimestamp(item.session.startTime)}",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-
-            Text(
-                text = "Position: ${item.session.position.latitude}, ${item.session.position.longitude}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            }
+        }
     }
 }
