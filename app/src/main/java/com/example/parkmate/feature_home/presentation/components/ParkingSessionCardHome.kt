@@ -1,15 +1,26 @@
 package com.example.parkmate.feature_home.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.DirectionsBoat
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.DirectionsCarFilled
+import androidx.compose.material.icons.filled.EditRoad
+import androidx.compose.material.icons.filled.ElectricScooter
 import androidx.compose.material.icons.filled.MoneyOff
+import androidx.compose.material.icons.filled.PedalBike
+import androidx.compose.material.icons.filled.SportsMotorsports
+import androidx.compose.material.icons.filled.TwoWheeler
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
+import com.example.parkmate.core.domain.models.vehicle.VehicleType
 import com.example.parkmate.core.domain.util.formatTimestamp
 
 @Composable
@@ -41,7 +53,7 @@ fun ParkingSessionCardHome(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 2.dp
         ),
     ) {
         Column(
@@ -49,16 +61,49 @@ fun ParkingSessionCardHome(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        when(item.vehicleType) {
+                            (VehicleType.CAR) -> {
+                                Icon(
+                                    imageVector = Icons.Default.DirectionsCar,
+                                    contentDescription = "car",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            (VehicleType.MOTORCYCLE) -> {
+                                Icon(
+                                    imageVector = Icons.Default.TwoWheeler,
+                                    contentDescription = "motorcycle",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            (VehicleType.BICYCLE) -> {
+                                Icon(
+                                    imageVector = Icons.Default.PedalBike,
+                                    contentDescription = "motorcycle",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            (VehicleType.OTHER) -> {
+                                Icon(
+                                    imageVector = Icons.Default.ElectricScooter,
+                                    contentDescription = "motorcycle",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                    }
+                }
                 Text(
                     text = "Vehicle Name: ${item.vehicleName}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Vehicle Type: ${item.vehicleType}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )

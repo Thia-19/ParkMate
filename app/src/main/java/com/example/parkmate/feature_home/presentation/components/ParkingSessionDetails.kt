@@ -136,7 +136,7 @@ fun ParkingSessionDetails(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(item.session.parkingType.labelRes),
+                        text = item.vehicleName,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -165,6 +165,18 @@ fun ParkingSessionDetails(
                 }
 
                 HorizontalDivider()
+
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)){
+                    Text(
+                        text = "VEHICLE TYPE",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "${item.vehicleType}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
