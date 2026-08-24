@@ -3,7 +3,7 @@ package com.example.parkmate.feature_addSession
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.SavedLocation
-import com.example.parkmate.core.domain.models.Vehicle
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 
 data class AddSessionState(
     val vehicles: List<Vehicle> = emptyList(),

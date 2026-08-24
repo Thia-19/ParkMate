@@ -1,12 +1,13 @@
 package com.example.parkmate.core.domain.repository
 
 import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import kotlinx.coroutines.flow.Flow
 
 interface ParkingSessionRepository {
-    fun getActiveParkingSessions(): Flow<List<ParkingSession>>
+    fun getActiveParkingSessions(): Flow<List<ParkingSessionWithVehicleInfo>>
 
-    fun getAllParkingSessions(): Flow<List<ParkingSession>>
+    fun getConcludedParkingSessions(): Flow<List<ParkingSessionWithVehicleInfo>>
 
     suspend fun getParkingSessionById(id: Int): ParkingSession?
 

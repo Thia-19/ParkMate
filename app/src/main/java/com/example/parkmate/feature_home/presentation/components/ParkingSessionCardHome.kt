@@ -22,17 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.util.formatTimestamp
 
 @Composable
 fun ParkingSessionCardHome(
-    session: ParkingSession,
+    item: ParkingSessionWithVehicleInfo,
     onClick: (ParkingSession) -> Unit,
     modifier: Modifier = Modifier
 ){
     Card(
-        onClick = { onClick(session) },
+        onClick = { onClick(item.session) },
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 8.dp),
@@ -52,8 +53,12 @@ fun ParkingSessionCardHome(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    /* TODO: non il suo ID ma il suo NOME */
-                    text = "Vehicle ID: ${session.vehicleId}",
+                    text = "Vehicle Name: ${item.vehicleName}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Vehicle Type: ${item.vehicleType}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -61,7 +66,7 @@ fun ParkingSessionCardHome(
                     shape = MaterialTheme.shapes.small,
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
-                    when (session.parkingType){
+                    when (item.session.parkingType){
                         ParkingType.FREE -> {
                             Icon(
                                 imageVector = Icons.Default.MoneyOff,
@@ -87,12 +92,12 @@ fun ParkingSessionCardHome(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Start date: ${formatTimestamp(session.startTime)}",
+                text = "Start date: ${formatTimestamp(item.session.startTime)}",
                 style = MaterialTheme.typography.bodyMedium,
             )
 
             Text(
-                text = "Position: ${session.position.latitude}, ${session.position.longitude}",
+                text = "Position: ${item.session.position.latitude}, ${item.session.position.longitude}",
                 style = MaterialTheme.typography.bodyMedium
             )
 

@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.parkmate.R
+import com.example.parkmate.core.domain.models.vehicle.Vehicle
 
 data class Position (
     val latitude: Double,

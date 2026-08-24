@@ -1,15 +1,14 @@
 package com.example.parkmate.feature_history.presentation.parking_sessions_list
 
-import com.example.parkmate.core.domain.models.ParkingSession
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.feature_history.presentation.HistoryEvent
 import com.example.parkmate.feature_history.presentation.HistoryState
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.components.ParkingSessionCard
@@ -22,18 +21,17 @@ fun ParkingSessionsListSection(
 ) {
     ParkingSessionsList(
         sessions = state.sessions,
-        onSessionClick = { session ->
-            onEvent(HistoryEvent.OnSessionClick(session))
+        onSessionClick = { item ->
+            onEvent(HistoryEvent.OnSessionClick(item))
         },
         modifier = modifier
     )
 }
 
-// 2. LISTA STATELESS
 @Composable
 fun ParkingSessionsList(
-    sessions: List<ParkingSession>,
-    onSessionClick: (ParkingSession) -> Unit,
+    sessions: List<ParkingSessionWithVehicleInfo>,
+    onSessionClick: (ParkingSessionWithVehicleInfo) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -54,10 +52,10 @@ fun ParkingSessionsList(
             ) {
                 items(
                     items = sessions,
-                    key = { session -> session.id }
-                ) { session ->
+                    key = { item -> item.session.id }
+                ) { sessionWithVehicle ->
                     ParkingSessionCard(
-                        session = session,
+                        item = sessionWithVehicle,
                         onClick = onSessionClick
                     )
                 }

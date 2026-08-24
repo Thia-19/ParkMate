@@ -9,6 +9,7 @@ import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
 import com.example.parkmate.core.domain.use_case.saved_locations.SavedLocationUseCases
+import com.example.parkmate.core.domain.use_case.vehicles.GetVehiclesUseCase
 import com.example.parkmate.core.preferences.domain.use_case.GetUseCurrentPositionUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ import javax.inject.Inject
 class AddSessionViewModel @Inject constructor(
     private val useCases: ParkingSessionsUseCases,
     private val savedLocationUseCases: SavedLocationUseCases,
-    // private val vehiclesUseCases: VehiclesUseCases
+    private val getVehicleUseCase: GetVehiclesUseCase,
     private val getUseCurrentPositionUseCase: GetUseCurrentPositionUseCase,
     private val fusedLocationClient: FusedLocationProviderClient
 ) : ViewModel() {
@@ -36,9 +37,13 @@ class AddSessionViewModel @Inject constructor(
 
     val state: StateFlow<AddSessionState> = combine(
         _state,
-        savedLocationUseCases.getAllSavedLocations()
-    ) { currentState, locations ->
-        currentState.copy(locations = locations)
+        savedLocationUseCases.getAllSavedLocations(),
+        getVehicleUseCase()
+    ) { currentState, locations, vehicles ->
+        currentState.copy(
+            locations = locations,
+            vehicles = vehicles
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -137,15 +142,10 @@ class AddSessionViewModel @Inject constructor(
     private fun saveSession (){
         val currentState = state.value
 
-        /* TODO
         val vehicleId = currentState.vehicleId ?: run {
             _state.update { it.copy(errorMessage = "Select a vehicle!") }
             return
         }
-        */
-
-        val vehicleId = (1..100).random() // TEST; TEST; TEST; TODO
-
 
         val selectedSavedLocation = currentState.locations.find { it.id == currentState.locationId }
         val finalPosition = selectedSavedLocation?.position ?: currentState.position

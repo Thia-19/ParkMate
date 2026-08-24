@@ -1,6 +1,6 @@
 package com.example.parkmate.feature_history.domain.models
 
-import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -10,21 +10,21 @@ data class MonthlyExpense(
     val totalCost: Double
 )
 
-fun List<ParkingSession>.aggregateByMonth(): List<MonthlyExpense> {
+fun List<ParkingSessionWithVehicleInfo>.aggregateByMonth(): List<MonthlyExpense> {
     val monthYearFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
     val monthNameFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
-    return this.filter { !it.isActive && it.finalCost != null && it.endTime != null }
-        .groupBy { session ->
-            val date = Date(session.startTime)
-            monthYearFormat.format(date) // Identificatore unico per ordinare: "2026-08"
+    return this.filter { !it.session.isActive && it.session.finalCost != null && it.session.endTime != null }
+        .groupBy { item ->
+            val date = Date(item.session.startTime)
+            monthYearFormat.format(date)
         }
         .toSortedMap()
-        .map { (_, sessions) ->
-            val firstSessionDate = Date(sessions.first().startTime)
+        .map { (_, items) ->
+            val firstSessionDate = Date(items.first().session.startTime)
             MonthlyExpense(
                 monthLabel = monthNameFormat.format(firstSessionDate),
-                totalCost = sessions.sumOf { it.finalCost ?: 0.0 }
+                totalCost = items.sumOf { it.session.finalCost ?: 0.0 }
             )
         }
 }

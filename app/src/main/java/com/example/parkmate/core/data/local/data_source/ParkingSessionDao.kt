@@ -5,16 +5,34 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ParkingSessionDao {
-    @Query("SELECT * FROM parkingsession WHERE isActive = 1")
-    fun getActiveParkingSessions(): Flow<List<ParkingSession>>
+    @Query("""
+        SELECT 
+            p.*, 
+            v.name AS vehicleName, 
+            v.type AS vehicleType 
+        FROM parkingsession p
+        INNER JOIN vehicles v ON p.vehicleId = v.id
+        WHERE p.isActive = 1
+    """)
+    fun getActiveParkingSessionsWithVehicle(): Flow<List<ParkingSessionWithVehicleInfo>>
 
-    @Query("SELECT * FROM parkingsession WHERE isActive = 0 AND endTime IS NOT NULL")
-    fun getAllParkingSessions(): Flow<List<ParkingSession>>
+    @Query("""
+        SELECT 
+            p.*, 
+            v.name AS vehicleName, 
+            v.type AS vehicleType 
+        FROM parkingsession p
+        INNER JOIN vehicles v ON p.vehicleId = v.id
+        WHERE p.isActive = 0 AND p.endTime IS NOT NULL
+    """)
+    fun getConcludedParkingSessionsWithVehicle(): Flow<List<ParkingSessionWithVehicleInfo>>
 
     @Query("SELECT * FROM parkingsession WHERE id = :id")
     suspend fun getParkingSessionById(id: Int): ParkingSession?

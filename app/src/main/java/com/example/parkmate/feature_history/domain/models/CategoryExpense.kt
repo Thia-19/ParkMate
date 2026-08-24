@@ -1,7 +1,7 @@
 package com.example.parkmate.feature_history.domain.models
 
 import androidx.compose.ui.graphics.Color
-import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 
 
@@ -12,16 +12,16 @@ data class CategoryExpense(
     val color: Color
 )
 
-fun List<ParkingSession>.aggregateByCategory(): List<CategoryExpense>{
-    val paidSessions = this.filter { !it.isActive && it.finalCost != null && it.finalCost > 0 }
-    val total = paidSessions.sumOf { it.finalCost ?: 0.0 }
+fun List<ParkingSessionWithVehicleInfo>.aggregateByCategory(): List<CategoryExpense>{
+    val paidSessions = this.filter { !it.session.isActive && it.session.finalCost != null && it.session.finalCost > 0 }
+    val total = paidSessions.sumOf { it.session.finalCost ?: 0.0 }
 
     if (total == 0.0) return emptyList()
 
     return paidSessions
-        .groupBy { it.parkingType }
+        .groupBy { it.session.parkingType }
         .mapNotNull { (type, sessions) ->
-            val cost = sessions.sumOf { it.finalCost ?: 0.0 }
+            val cost = sessions.sumOf { it.session.finalCost ?: 0.0 }
             if (cost <= 0) return@mapNotNull null
 
             val (label, color) = when (type) {

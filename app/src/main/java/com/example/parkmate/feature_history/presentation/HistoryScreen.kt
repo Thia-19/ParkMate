@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.feature_history.presentation.parking_sessions_list.ParkingSessionsListSection
 import com.example.parkmate.feature_history.presentation.components.FilterBottomSheet
 import com.example.parkmate.feature_history.presentation.components.HistoryTopTabBar
@@ -39,13 +40,13 @@ fun HistoryScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showFilterSheet by rememberSaveable { mutableStateOf(false)}
-    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null)}
+    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSessionWithVehicleInfo?>(null)}
 
     HistoryContent(
         state = state,
         onEvent = { event ->
             if (event is HistoryEvent.OnSessionClick) {
-                selectedSessionForDetail = event.session
+                selectedSessionForDetail = event.item
             }
             viewModel.onEvent(event)
         },
@@ -66,7 +67,7 @@ fun HistoryScreen(
 
     selectedSessionForDetail?.let { session ->
         ParkingSessionDetails(
-            session = session,
+            item = session,
             onDismiss = {
                 selectedSessionForDetail = null
             },

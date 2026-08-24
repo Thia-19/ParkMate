@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.labelRes
@@ -70,7 +71,7 @@ import kotlin.math.max
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParkingSessionDetails(
-    session: ParkingSession,
+    item: ParkingSessionWithVehicleInfo,
     onDismiss: () -> Unit,
     onDeleteSession: (ParkingSession) -> Unit,
     onConcludeSession: (ParkingSession) -> Unit,
@@ -81,7 +82,7 @@ fun ParkingSessionDetails(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        dragHandle = if (session.photoUri == null) {
+        dragHandle = if (item.session.photoUri == null) {
             { BottomSheetDefaults.DragHandle() }
         } else {
             null
@@ -92,7 +93,7 @@ fun ParkingSessionDetails(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            if (session.photoUri != null) {
+            if (item.session.photoUri != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,7 +101,7 @@ fun ParkingSessionDetails(
                 ) {
                     /* TODO, non so che funzione ha usato la zzara */
                     AsyncImage(
-                        model = session.photoUri,
+                        model = item.session.photoUri,
                         contentDescription = "Parking session photo",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -135,7 +136,7 @@ fun ParkingSessionDetails(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(session.parkingType.labelRes),
+                        text = stringResource(item.session.parkingType.labelRes),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -144,17 +145,17 @@ fun ParkingSessionDetails(
                         enabled = false,
                         label = {
                             Text(
-                                text = if (session.isActive) "Active" else "Concluded",
+                                text = if (item.session.isActive) "Active" else "Concluded",
                                 fontWeight = FontWeight.Medium
                             )
                         },
                         colors = AssistChipDefaults.assistChipColors(
-                            disabledContainerColor = if (session.isActive) {
+                            disabledContainerColor = if (item.session.isActive) {
                                 MaterialTheme.colorScheme.primaryContainer
                             } else {
                                 MaterialTheme.colorScheme.surfaceVariant
                             },
-                            disabledLabelColor = if (session.isActive) {
+                            disabledLabelColor = if (item.session.isActive) {
                                 MaterialTheme.colorScheme.onPrimaryContainer
                             } else {
                                 MaterialTheme.colorScheme.onSurfaceVariant
@@ -171,20 +172,20 @@ fun ParkingSessionDetails(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    when (session.parkingType) {
+                    when (item.session.parkingType) {
                         ParkingType.HOURLY_PAID -> {
                             Text(
-                                text = "Hourly rate: €${session.hourlyRate ?: "0.00"}",
+                                text = "Hourly rate: €${item.session.hourlyRate ?: "0.00"}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
 
                         ParkingType.FIXED_TICKET -> {
                             Text(
-                                text = "Fixed cost: €${session.fixedCost ?: "0.00"}",
+                                text = "Fixed cost: €${item.session.fixedCost ?: "0.00"}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
-                            session.expiryTime?.let { expiry ->
+                            item.session.expiryTime?.let { expiry ->
                                 Text(
                                     text = "Expiry date: ${formatTimestamp(expiry)}",
                                     style = MaterialTheme.typography.bodyMedium,
@@ -201,7 +202,7 @@ fun ParkingSessionDetails(
                         }
                     }
 
-                    session.finalCost?.let { cost ->
+                    item.session.finalCost?.let { cost ->
                         Text(
                             text = "Final cost: €\$cost",
                             style = MaterialTheme.typography.titleMedium,
@@ -216,20 +217,20 @@ fun ParkingSessionDetails(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text("Start Time: ${formatTimestamp(session.startTime)}")
-                    session.endTime?.let { end ->
+                    Text("Start Time: ${formatTimestamp(item.session.startTime)}")
+                    item.session.endTime?.let { end ->
                         Text("End Time: ${formatTimestamp(end)}")
                     }
                 }
 
                 RateDetailsCard(
-                    session.startTime,
-                    session.hourlyRate,
-                    session.expiryTime
+                    item.session.startTime,
+                    item.session.hourlyRate,
+                    item.session.expiryTime
                 )
 
                 OutlinedCard(
-                    onClick = { onOpenMapClick(session.position) },
+                    onClick = { onOpenMapClick(item.session.position) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -250,7 +251,7 @@ fun ParkingSessionDetails(
                                 style = MaterialTheme.typography.titleSmall
                             )
                             Text(
-                                text = "${session.position.latitude}, ${session.position.longitude}",
+                                text = "${item.session.position.latitude}, ${item.session.position.longitude}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -259,7 +260,7 @@ fun ParkingSessionDetails(
                 }
             }
 
-            session.note?.takeIf { it.isNotBlank() }?.let { note ->
+            item.session.note?.takeIf { it.isNotBlank() }?.let { note ->
                 Column(
                     modifier = Modifier
                         .padding(20.dp),
@@ -304,10 +305,10 @@ fun ParkingSessionDetails(
                     Text("Delete")
                 }
 
-                if (session.isActive) {
+                if (item.session.isActive) {
                     Button(
                         onClick = {
-                            onConcludeSession(session)
+                            onConcludeSession(item.session)
                             onDismiss()
                         },
                         modifier = Modifier.weight(1.5f)
@@ -340,7 +341,7 @@ fun ParkingSessionDetails(
                 TextButton(
                     onClick = {
                         showDeleteDialog = false
-                        onDeleteSession (session)
+                        onDeleteSession (item.session)
                         onDismiss()
                     },
                     colors = ButtonDefaults.textButtonColors(

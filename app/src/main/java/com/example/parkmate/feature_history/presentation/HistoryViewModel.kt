@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
+import com.example.parkmate.core.domain.use_case.vehicles.GetVehicleByIdUseCase
+import com.example.parkmate.core.domain.use_case.vehicles.GetVehiclesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,20 +29,23 @@ private data class FilterState(
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val useCases: ParkingSessionsUseCases
+    private val useCases: ParkingSessionsUseCases,
+    private val getVehicles: GetVehiclesUseCase,
 ) : ViewModel() {
 
     private val _filterState = MutableStateFlow(FilterState())
-
-    /* TODO: togli il filtro perchè la query filtra da sola */
-    private val _concludedSessions = useCases.getParkingSessions()
-        .map { allSessions -> allSessions.filter { !it.isActive } }
+    private val _concludedSessions = useCases.getConcludedParkingSessions()
+    private val _userVehicles = getVehicles()
 
     val state: StateFlow<HistoryState> = combine(
         _concludedSessions,
-        _filterState
-    ) { sessions, filters ->
-        val filteredList = sessions.filter { session ->
+        _filterState,
+        _userVehicles
+    ) { sessionsWithVehicle, filters, vehicles ->
+
+        val filteredList = sessionsWithVehicle.filter { item ->
+            val session = item.session
+
             val matchesVehicle = filters.vehicleId == null || session.vehicleId == filters.vehicleId
             val matchesType = filters.parkType == null || session.parkingType == filters.parkType
             val matchesDate = when {
@@ -53,7 +58,8 @@ class HistoryViewModel @Inject constructor(
         }
 
         HistoryState(
-            allSessions = sessions,
+            allSessions = sessionsWithVehicle,
+            userVehicles = vehicles,
             sessions = filteredList,
             selectedTab = filters.tab,
             selectedVehicleId = filters.vehicleId,

@@ -52,7 +52,7 @@ fun ParkingSessionsAnalytics(
     }
 
     val totalSpent = remember (state.allSessions){
-        state.allSessions.filter { !it.isActive }.sumOf { it.finalCost ?: 0.0 }
+        state.allSessions.filter { !it.session.isActive }.sumOf { it.session.finalCost ?: 0.0 }
     }
 
     Column(

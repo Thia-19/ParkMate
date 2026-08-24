@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 data class ParkingSessionsUseCases @Inject constructor(
     val getActiveParkingSessions: GetActiveParkingSessions,
-    val getParkingSessions: GetAllParkingSessions,
+    val getConcludedParkingSessions: GetConcludedParkingSessions,
     val deleteParkingSession: DeleteParkingSession,
     val addParkingSession: AddParkingSession,
     val getParkingSession: GetParkingSession,

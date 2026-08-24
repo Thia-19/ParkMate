@@ -73,7 +73,6 @@ fun FilterBottomSheet(
         initialSelectedEndDateMillis = endDate
     )
 
-    // Formatting the date
     val formattedRange = remember(startDate, endDate) {
         if (startDate != null && endDate != null) {
             val formatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
@@ -119,7 +118,6 @@ fun FilterBottomSheet(
                 Text(text = "Range: ${formattedRange}")
             }
 
-            // Vehicle filter
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedButton(
                     onClick = { isDropdownExpanded = true },
@@ -146,10 +144,9 @@ fun FilterBottomSheet(
                         }
                     )
 
-                    // Opzione 2: Un elemento per ogni veicolo reale
                     vehicles.forEach { vehicle ->
                         DropdownMenuItem(
-                            text = { Text("${vehicle.name} (${vehicle.id})") },
+                            text = { Text("${vehicle.name} (${vehicle.type})") },
                             onClick = {
                                 onEvent(HistoryEvent.FilterByVehicle(vehicleId = vehicle.id))
                                 isDropdownExpanded = false
@@ -159,11 +156,9 @@ fun FilterBottomSheet(
                 }
             }
 
-            // ParkingType filter
-            // Usa LazyRow per la massima efficienza
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp) // Spazio piacevole ai bordi
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 items(ParkingType.entries.toList()) { type ->
                     FilterChip(
@@ -172,7 +167,7 @@ fun FilterBottomSheet(
                         label = {
                             Text(
                                 text = stringResource(id = type.labelRes),
-                                maxLines = 1 // Garantisce che il testo non vada mai a capo
+                                maxLines = 1
                             )
                         },
                         leadingIcon = if (currentParkingType == type) {

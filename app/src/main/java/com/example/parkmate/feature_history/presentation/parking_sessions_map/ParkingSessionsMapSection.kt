@@ -43,11 +43,11 @@ fun ParkingSessionsMapSection(
         val startTimestamp = selectedTimeRange.getStartTimestamp()
 
         state.allSessions
-            .filter { session ->
-                startTimestamp == null || session.startTime >= startTimestamp
+            .filter { item ->
+                startTimestamp == null || item.session.startTime >= startTimestamp
             }
-            .map { session ->
-                LatLng(session.position.latitude, session.position.longitude)
+            .map { item ->
+                LatLng(item.session.position.latitude, item.session.position.longitude)
             }
     }
 

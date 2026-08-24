@@ -18,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material.icons.filled.LocalParking
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Settings
@@ -37,7 +35,6 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -61,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSession
+import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.feature_home.domain.MenuItem
 import com.example.parkmate.feature_home.presentation.components.AppBar
 import com.example.parkmate.feature_home.presentation.components.DrawHeader
@@ -95,7 +93,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val defaultPosition = state.sessions.firstOrNull()?.let {
-        LatLng(it.position.latitude, it.position.longitude)
+        LatLng(it.session.position.latitude, it.session.position.longitude)
     } ?: LatLng(44.4939, 11.3428)
 
     val cameraPositionState = rememberCameraPositionState {
@@ -111,12 +109,12 @@ fun HomeScreen(
     )
 
     val scope = rememberCoroutineScope()
-    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSession?>(null) }
+    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSessionWithVehicleInfo?>(null) }
     var savedLocationsOn by rememberSaveable{ mutableStateOf(false)}
 
     selectedSessionForDetail?.let { session ->
         ParkingSessionDetails(
-            session = session,
+            item = session,
             onDismiss = { selectedSessionForDetail = null },
             onConcludeSession = { sessionToEnd ->
                 onEvent(HomeEvent.CloseActiveSession(sessionToEnd))
@@ -134,9 +132,9 @@ fun HomeScreen(
                     cameraPositionState.animate(
                         update = CameraUpdateFactory.newLatLngZoom(
                             LatLng(position.latitude, position.longitude),
-                            17f // Livello di zoom consigliato per il dettaglio
+                            17f
                         ),
-                        durationMs = 1000 // Durata animazione in ms
+                        durationMs = 1000
                     )
                 }
             }
@@ -245,13 +243,13 @@ fun HomeScreen(
                         ) {
                             itemsIndexed(
                                 items = state.sessions,
-                                key = { _, session -> session.id }
-                            ) { index, session ->
+                                key = { _, item -> item.session.id }
+                            ) { index, item ->
                                 ParkingSessionCardHome(
-                                    session = session,
-                                    onClick = { clickedSession ->
-                                        selectedSessionForDetail = clickedSession
-                                        onSessionClick(clickedSession)
+                                    item = item,
+                                    onClick = {
+                                        selectedSessionForDetail = item
+                                        onSessionClick(item.session)
                                     }
                                 )
 
@@ -282,12 +280,12 @@ fun HomeScreen(
                         }
 
                         state.sessions.forEach { session ->
-                            val position = remember(session.position.latitude, session.position.longitude) {
-                                LatLng(session.position.latitude, session.position.longitude)
+                            val position = remember(session.session.position.latitude, session.session.position.longitude) {
+                                LatLng(session.session.position.latitude, session.session.position.longitude)
                             }
                             Marker(
                                 state = rememberMarkerState(
-                                    key = session.id.toString(),
+                                    key = session.session.id.toString(),
                                     position = position
                                 ),
                                 snippet = "Active session",

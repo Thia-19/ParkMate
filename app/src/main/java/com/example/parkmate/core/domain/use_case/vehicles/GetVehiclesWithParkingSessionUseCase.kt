@@ -15,9 +15,12 @@ class GetVehiclesWithParkingSessionUseCase @Inject constructor(
         return combine(
             vehiclesRepository.getVehicles(),
             parkingSessionRepository.getActiveParkingSessions()
-        )
-        { vehicles, activeSessions ->
-            val sessionsByVehicleId = activeSessions.associateBy { it.vehicleId }
+        ) { vehicles, activeSessionsWithVehicle ->
+            
+            val sessionsByVehicleId = activeSessionsWithVehicle.associateBy(
+                keySelector = { it.session.vehicleId },
+                valueTransform = { it.session }
+            )
 
             vehicles.map { vehicle ->
                 ParkedVehicle(

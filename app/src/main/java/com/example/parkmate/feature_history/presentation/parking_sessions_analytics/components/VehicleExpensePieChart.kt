@@ -94,14 +94,9 @@ fun VehicleExpensesPieChart(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ){
-            /* TODO Targa rimossa? */
             expenses.forEach { item ->
                 val percentage = if (totalSpent > 0) (item.totalCost / totalSpent ) * 100 else 0.0
-                val vehicleNameText = if(!item.vehicle.name.isNullOrBlank()){
-                    "${item.vehicle.name} (${item.vehicle.name})"
-                } else {
-                    item.vehicle.name
-                }
+                val vehicleNameText = "${item.vehicle.name} (${item.vehicle.type})"
 
                 Row (
                     modifier = Modifier.fillMaxWidth(),
