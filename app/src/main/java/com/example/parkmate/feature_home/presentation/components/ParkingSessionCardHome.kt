@@ -4,22 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
-import androidx.compose.material.icons.filled.DirectionsBoat
 import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.DirectionsCarFilled
-import androidx.compose.material.icons.filled.EditRoad
 import androidx.compose.material.icons.filled.ElectricScooter
 import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material.icons.filled.PedalBike
-import androidx.compose.material.icons.filled.SportsMotorsports
 import androidx.compose.material.icons.filled.TwoWheeler
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,7 +30,7 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.vehicle.VehicleType
-import com.example.parkmate.core.domain.util.formatTimestamp
+import com.example.parkmate.core.domain.utils.formatTimestamp
 
 @Composable
 fun ParkingSessionCardHome(

@@ -14,7 +14,7 @@ fun List<ParkingSessionWithVehicleInfo>.aggregateByMonth(): List<MonthlyExpense>
     val monthYearFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
     val monthNameFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
-    return this.filter { !it.session.isActive && it.session.finalCost != null && it.session.endTime != null }
+    return this.filter { it.session.finalCost != null }
         .groupBy { item ->
             val date = Date(item.session.startTime)
             monthYearFormat.format(date)

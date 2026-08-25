@@ -27,8 +27,10 @@ import com.example.parkmate.feature_history.presentation.HistoryEvent
 import com.example.parkmate.feature_history.presentation.HistoryState
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.TotExpensesBarChart
 import com.example.parkmate.feature_history.domain.models.aggregateByMonth
+import com.example.parkmate.feature_history.domain.models.aggregateByMonthSessions
 import com.example.parkmate.feature_history.domain.models.aggregateByVehicle
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.CategoryExpensesPieChart
+import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.SessionsPerMonth
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.VehicleExpensesPieChart
 
 @Composable
@@ -41,6 +43,10 @@ fun ParkingSessionsAnalytics(
     var selectedFilter by remember { mutableStateOf(AnalyticsFilter.BY_MONTH) }
     val monthlyData = remember(state.allSessions){
         state.allSessions.aggregateByMonth()
+    }
+
+    val monthlySessionData = remember (state.allSessions){
+        state.allSessions.aggregateByMonthSessions()
     }
 
     val categoryData = remember (state.allSessions){
@@ -125,6 +131,29 @@ fun ParkingSessionsAnalytics(
                             CategoryExpensesPieChart(expenses = categoryData)
                         }
                     }
+                }
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
+        ) {
+            Column (modifier = Modifier.padding(16.dp)){
+                Text(
+                    text = "Number of sessions per month",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                if(monthlySessionData.isEmpty()){
+                    Text(
+                        text = "No completed parking sessions recorded.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                } else {
+                    SessionsPerMonth(monthlySessionData)
                 }
             }
         }

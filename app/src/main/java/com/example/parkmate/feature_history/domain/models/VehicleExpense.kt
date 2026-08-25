@@ -25,7 +25,7 @@ fun List<ParkingSessionWithVehicleInfo>.aggregateByVehicle(
 ): List<VehicleExpense> {
     val vehicleMap = vehiclesList.associateBy { it.id }
 
-    return this.filter { !it.session.isActive && it.session.finalCost != null }
+    return this.filter { it.session.finalCost != null }
         .groupBy { it.session.vehicleId }
         .entries
         .mapIndexedNotNull { index, entry ->
