@@ -46,7 +46,18 @@ data class ParkingSession(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 ){
-
+    fun calculateFinalCost(endTime: Long): Double {
+        return when (this.parkingType) {
+            ParkingType.FIXED_TICKET -> this.fixedCost ?: 0.0
+            ParkingType.HOURLY_PAID -> {
+                val rate = this.hourlyRate ?: 0.0
+                val durationMillis = endTime - this.startTime
+                val durationHours = durationMillis / (1000.0 * 60 * 60)
+                durationHours * rate
+            }
+            ParkingType.FREE -> 0.0
+        }
+    }
 }
 
 fun ParkingSession.calculateFinalCost(endTime: Long = System.currentTimeMillis()): Double {

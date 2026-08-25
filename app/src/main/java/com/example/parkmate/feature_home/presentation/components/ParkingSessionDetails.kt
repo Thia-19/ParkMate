@@ -214,9 +214,9 @@ fun ParkingSessionDetails(
                         }
                     }
 
-                    item.session.finalCost?.let { cost ->
+                    if (item.session.finalCost != null) {
                         Text(
-                            text = "Final cost: €${cost}",
+                            text = String.format("Final cost: €%.2f", item.session.finalCost),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )

@@ -15,8 +15,8 @@ class ParkingSessionsRepositoryImpl (private val parkingSessionDao: ParkingSessi
         return parkingSessionDao.getConcludedParkingSessionsWithVehicle()
     }
 
-    override suspend fun getParkingSessionById(id: Int): ParkingSession? {
-        return parkingSessionDao.getParkingSessionById(id)
+    override suspend fun getActiveSessionByVehicle(vehicleId: Int): ParkingSession? {
+        return parkingSessionDao.getActiveSessionByVehicle(vehicleId)
     }
 
     override suspend fun insertParkingSession(parkingSession: ParkingSession) {
@@ -27,7 +27,11 @@ class ParkingSessionsRepositoryImpl (private val parkingSessionDao: ParkingSessi
         return parkingSessionDao.deleteParkingSession(parkingSession)
     }
 
-    override suspend fun closeActiveSessionForVehicle(vehicleId: Int, endTime: Long, finalCost: Double) {
-        return parkingSessionDao.closeActiveParkingSession(vehicleId, endTime, finalCost)
+    override suspend fun closeActiveSessionForVehicle(sessionId: Int, endTime: Long, finalCost: Double) {
+        return parkingSessionDao.closeActiveParkingSession(sessionId, endTime, finalCost)
+    }
+
+    override suspend fun startNewSessionCloseActive(newSession: ParkingSession) {
+        return parkingSessionDao.startNewSessionCloseActive(newSession)
     }
 }

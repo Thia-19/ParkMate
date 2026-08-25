@@ -14,7 +14,7 @@ class CloseActiveParkingSession @Inject constructor(
         val calculatedCost = session.calculateFinalCost(currentTime)
 
         repository.closeActiveSessionForVehicle(
-            vehicleId = session.vehicleId,
+            sessionId = session.id,
             endTime = currentTime,
             finalCost = calculatedCost
         )

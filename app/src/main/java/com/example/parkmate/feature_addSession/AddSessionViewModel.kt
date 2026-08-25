@@ -142,7 +142,7 @@ class AddSessionViewModel @Inject constructor(
         }
     }
 
-    private fun saveSession (){
+    private fun saveSession() {
         val currentState = state.value
 
         val vehicleId = currentState.vehicleId ?: run {
@@ -180,7 +180,8 @@ class AddSessionViewModel @Inject constructor(
                     finalCost = null
                 )
 
-                useCases.addParkingSession(newSession)
+                useCases.startSessionCloseActive(newSession)
+
                 _state.update { it.copy(isLoading = false, isSaved = true) }
             } catch (e: Exception) {
                 _state.update {

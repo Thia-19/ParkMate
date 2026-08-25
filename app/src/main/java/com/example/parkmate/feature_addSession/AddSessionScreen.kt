@@ -70,7 +70,7 @@ import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.utils.images.createImageUri
-import com.example.parkmate.feature_addSession.components.ParkingTimePickerDialog
+import com.example.parkmate.feature_addSession.components.ParkingDateTimePickerDialog
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
 import com.example.parkmate.feature_addSession.components.VehicleDropdownSelector
 import com.example.parkmate.feature_addSession.components.formatTimestampToTime
@@ -175,23 +175,11 @@ private fun AddSessionContent (
     }
 
     if (showTimePicker) {
-        ParkingTimePickerDialog(
+        ParkingDateTimePickerDialog(
             onDismiss = { showTimePicker = false },
-            onTimeSelected = { hour, minute ->
+            onDateTimeSelected = { timestamp ->
                 showTimePicker = false
-
-                val calendar = Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, hour)
-                    set(Calendar.MINUTE, minute)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-
-                    if (timeInMillis < System.currentTimeMillis()) {
-                        add(Calendar.DAY_OF_MONTH, 1)
-                    }
-                }
-
-                onEvent(AddSessionEvent.OnExpiryTimeChanged(calendar.timeInMillis))
+                onEvent(AddSessionEvent.OnExpiryTimeChanged(timestamp))
             }
         )
     }

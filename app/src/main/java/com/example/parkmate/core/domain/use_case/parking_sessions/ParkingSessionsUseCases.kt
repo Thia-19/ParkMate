@@ -7,6 +7,6 @@ data class ParkingSessionsUseCases @Inject constructor(
     val getConcludedParkingSessions: GetConcludedParkingSessions,
     val deleteParkingSession: DeleteParkingSession,
     val addParkingSession: AddParkingSession,
-    val getParkingSession: GetParkingSession,
+    val startSessionCloseActive: StartSessionCloseActive,
     val closeActiveParkingSession: CloseActiveParkingSession
 )
