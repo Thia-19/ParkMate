@@ -20,7 +20,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.feature_history.domain.models.aggregateByCategory
 import com.example.parkmate.feature_history.presentation.HistoryEvent
@@ -76,7 +78,7 @@ fun ParkingSessionsAnalytics(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Total historical spent amount",
+                    text = stringResource(R.string.history_total_amount),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -96,7 +98,7 @@ fun ParkingSessionsAnalytics(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Expenses Analytics",
+                    text = stringResource(R.string.history_exp_analytics),
                     style = MaterialTheme.typography.titleMedium
                 )
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
@@ -105,28 +107,28 @@ fun ParkingSessionsAnalytics(
                         onClick = { selectedFilter = AnalyticsFilter.BY_MONTH },
                         shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                     ) {
-                        Text("Month")
+                        Text(stringResource(R.string.history_month))
                     }
                     SegmentedButton(
                         selected = selectedFilter == AnalyticsFilter.BY_CATEGORY,
                         onClick = { selectedFilter = AnalyticsFilter.BY_CATEGORY },
                         shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                     ) {
-                        Text("Category")
+                        Text(stringResource(R.string.history_category))
                     }
                 }
 
                 when (selectedFilter) {
                     AnalyticsFilter.BY_MONTH -> {
                         if (monthlyData.isEmpty()) {
-                            Text("No monthly data available.")
+                            Text(stringResource(R.string.history_exp_alt))
                         } else {
                             TotExpensesBarChart(expenses = monthlyData)
                         }
                     }
                     AnalyticsFilter.BY_CATEGORY -> {
                         if (categoryData.isEmpty()) {
-                            Text("No expense found.")
+                            Text(stringResource(R.string.history_exp_alt_2))
                         } else {
                             CategoryExpensesPieChart(expenses = categoryData)
                         }
@@ -143,13 +145,13 @@ fun ParkingSessionsAnalytics(
         ) {
             Column (modifier = Modifier.padding(16.dp)){
                 Text(
-                    text = "Number of sessions per month",
-                    style = MaterialTheme.typography.titleSmall,
+                    text = stringResource(R.string.history_sessions_month),
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 if(monthlySessionData.isEmpty()){
                     Text(
-                        text = "No completed parking sessions recorded.",
+                        text = stringResource(R.string.history_sessions_month_alt),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 } else {
@@ -166,13 +168,13 @@ fun ParkingSessionsAnalytics(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Total vehicle expenses",
-                    style = MaterialTheme.typography.titleSmall,
+                    text = stringResource(R.string.history_vehicle_expense),
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
                 if (vehicleData.isEmpty()) {
                     Text(
-                        text = "No completed parking sessions recorded.",
+                        text = stringResource(R.string.history_sessions_month_alt),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 } else {

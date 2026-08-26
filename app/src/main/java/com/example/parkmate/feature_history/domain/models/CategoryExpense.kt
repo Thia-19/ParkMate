@@ -13,7 +13,7 @@ data class CategoryExpense(
 )
 
 fun List<ParkingSessionWithVehicleInfo>.aggregateByCategory(): List<CategoryExpense>{
-    val paidSessions = this.filter { it.session.finalCost != null && it.session.finalCost > 0 }
+    val paidSessions = this.filter { it.session.finalCost != 0.0 }
     val total = paidSessions.sumOf { it.session.finalCost ?: 0.0 }
 
     if (total == 0.0) return emptyList()

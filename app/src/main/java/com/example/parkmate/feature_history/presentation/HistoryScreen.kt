@@ -189,7 +189,7 @@ private fun NoConcludedParkingSessions(){
         Column {
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                text = stringResource(R.string.history_list_alt),
+                text = stringResource(R.string.history_sessions_month_alt),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

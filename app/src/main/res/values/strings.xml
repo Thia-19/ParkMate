@@ -44,4 +44,13 @@
     <string name="history_reset_filters">Reset filters</string>
     <string name="history_apply_filters">Apply</string>
     <string name="history_vehicle">Vehicle name</string>
+    <string name="history_total_amount">Total historical spent amount</string>
+    <string name="history_exp_analytics">Expenses Analytics</string>
+    <string name="history_month">Month</string>
+    <string name="history_category">Category</string>
+    <string name="history_exp_alt">No monthly data available.</string>
+    <string name="history_exp_alt_2">No expense found.</string>
+    <string name="history_sessions_month">Number of sessions per month</string>
+    <string name="history_sessions_month_alt">No completed parking sessions recorded</string>
+    <string name="history_vehicle_expense">Total vehicle expenses</string>
 </resources>
