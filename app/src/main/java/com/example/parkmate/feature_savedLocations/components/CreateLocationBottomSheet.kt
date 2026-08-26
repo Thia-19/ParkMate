@@ -11,21 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AirplanemodeActive
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocalBar
-import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Shop
-import androidx.compose.material.icons.filled.Train
-import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,14 +30,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.MarkerIconType
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.SavedLocation
@@ -94,7 +80,7 @@ fun CreateLocationBottomSheet(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = if (locationToEdit != null) "Edit Location" else "Create Location",
+                text = if (locationToEdit != null) stringResource(R.string.edit_location) else stringResource(R.string.create_location),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -102,7 +88,7 @@ fun CreateLocationBottomSheet(
             OutlinedTextField (
                 value = name,
                 onValueChange = { name = it },
-                label = {Text("Name (e.g. Home, Work)")},
+                label = {Text(stringResource(R.string.location_name))},
                 minLines = 1,
                 maxLines = 1,
                 modifier = Modifier.fillMaxWidth()
@@ -111,7 +97,7 @@ fun CreateLocationBottomSheet(
             HorizontalDivider()
 
             Text(
-                text = "Tap on map to set position",
+                text = stringResource(R.string.location_map),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -142,7 +128,7 @@ fun CreateLocationBottomSheet(
             }
 
             Text(
-                text = "Select Icon",
+                text = stringResource(R.string.location_icon),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -164,7 +150,7 @@ fun CreateLocationBottomSheet(
                 enabled = name.isNotBlank() && position != null,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save Location")
+                Text(stringResource(R.string.save_location))
             }
         }
 

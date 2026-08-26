@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.core.domain.models.labelRes
@@ -102,7 +103,7 @@ fun FilterBottomSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Filter Sessions",
+                text = stringResource(R.string.history_filter),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -115,7 +116,7 @@ fun FilterBottomSheet(
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp)
                 )
-                Text(text = "Range: ${formattedRange}")
+                Text(text = stringResource(R.string.history_range)+": ${formattedRange}")
             }
 
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -124,12 +125,12 @@ fun FilterBottomSheet(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FireTruck,
+                        imageVector = Icons.Default.DirectionsCar,
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
 
-                    Text(text = "Vehicles: ${selectedVehicle?.name ?: "All"}")
+                    Text(text = stringResource(R.string.history_vehicles)+": ${selectedVehicle?.name ?: stringResource(R.string.history_vehicles_default)}")
                 }
 
                 DropdownMenu(
@@ -137,7 +138,7 @@ fun FilterBottomSheet(
                     onDismissRequest = { isDropdownExpanded = false}
                 ) {
                     DropdownMenuItem(
-                        text = { Text("All vehicles") },
+                        text = { Text(stringResource(R.string.history_vehicles_default)) },
                         onClick = {
                             onEvent(HistoryEvent.FilterByVehicle(vehicleId = null))
                             isDropdownExpanded = false
@@ -192,11 +193,11 @@ fun FilterBottomSheet(
                 TextButton(onClick = {
                     onEvent(HistoryEvent.ResetFilters)
                 }) {
-                    Text("Reset filters")
+                    Text(stringResource(R.string.history_reset_filters))
                 }
 
                 Button(onClick = onDismissRequest) {
-                    Text("Apply")
+                    Text(stringResource(R.string.history_apply_filters))
                 }
             }
         }
@@ -220,12 +221,12 @@ fun FilterBottomSheet(
                         },
                         enabled = dateRangePickerState.selectedEndDateMillis != null
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.OK))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = {showDateRangePicker = false}) {
-                        Text("Undo")// annulla
+                        Text(stringResource(R.string.undo))
                     }
                 }
             ) {
@@ -233,7 +234,7 @@ fun FilterBottomSheet(
                     state = dateRangePickerState,
                     title = {
                         Text(
-                            text = "Select Range",
+                            text = stringResource(R.string.history_select_range),
                             modifier = Modifier.padding(start = 24.dp, top = 16.dp)
                         )
                     },

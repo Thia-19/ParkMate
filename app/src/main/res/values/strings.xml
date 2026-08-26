@@ -1,7 +1,47 @@
 <resources>
-    <string name="app_name">ParkMate</string>
+    <string name="app_name" translatable="false">ParkMate</string>
 
     <string name="parking_type_free">Free Parking</string>
     <string name="parking_type_hourly">Hourly Paid</string>
     <string name="parking_type_fixed">Fixed Ticket</string>
+
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="OK">OK</string>
+    <string name="undo">Undo</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="active">ACTIVE</string>
+    <string name="concluded">CONCLUDED</string>
+    <string name="parking_type">Parking type</string>
+    <string name="total">Total</string>
+
+<!--    Saved Locations-->
+    <string name="locationCoordinates">Location coordinates</string>
+    <string name="saved_locations_desc">Saved locations are useful if you want to take note of locations or parking spots you visit frequently, such as your home garage, and then easily select them when starting a parking session. Start by adding one with the button below!</string>
+    <string name="saved_locations_alt">No saved locations found</string>
+    <string name="saved_locations_title">Your saved locations</string>
+    <string name="edit_location">Edit Location</string>
+    <string name="create_location">Create Location</string>
+    <string name="location_name">Name (e.g. Home, Work)</string>
+    <string name="location_map">Tap on map to set position</string>
+    <string name="location_icon">Select icon</string>
+    <string name="save_location">Save Location</string>
+
+<!--    History-->
+    <string name="history_label">History</string>
+    <string name="history_list">List</string>
+    <string name="history_analytics">Analytics</string>
+    <string name="history_heatmap">Heatmap</string>
+    <string name="history_list_alt">No parking session found</string>
+    <string name="history_alt">In this section, you can view aggregated data from your concluded parking sessions.</string>
+    <string name="history_filter">Filter Sessions</string>
+    <string name="history_range">Range</string>
+    <string name="history_select_range">Select Range</string>
+    <string name="history_range_default">All ranges</string>
+    <string name="history_vehicles">Vehicles</string>
+    <string name="history_vehicles_default">All vehicles</string>
+    <string name="history_reset_filters">Reset filters</string>
+    <string name="history_apply_filters">Apply</string>
+    <string name="history_vehicle">Vehicle name</string>
 </resources>

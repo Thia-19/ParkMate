@@ -39,9 +39,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.MarkerIconType
 import com.example.parkmate.core.domain.models.SavedLocation
 import com.example.parkmate.feature_home.util.bitmapDescriptorFromVector
@@ -116,7 +118,7 @@ fun SavedLocationCard(
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Edit") },
+                            text = { Text(text = stringResource(id = R.string.edit)) },
                             leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
                             onClick = {
                                 showMenu = false
@@ -124,7 +126,7 @@ fun SavedLocationCard(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Delete", color = MaterialTheme.colorScheme.error) },
+                            text = { Text(text = stringResource(id = R.string.delete), color = MaterialTheme.colorScheme.error) },
                             leadingIcon = {
                                 Icon(
                                     Icons.Default.Delete,
@@ -164,7 +166,7 @@ fun SavedLocationCard(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "Location coordinates",
+                            text = stringResource(R.string.locationCoordinates),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary
                         )

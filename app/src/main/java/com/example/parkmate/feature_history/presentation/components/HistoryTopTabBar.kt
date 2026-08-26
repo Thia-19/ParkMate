@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,10 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.parkmate.R
 import com.example.parkmate.feature_history.presentation.HistoryTab
+import com.patrykandpatrick.vico.compose.common.shader.color
 
 @Composable
 fun HistoryTopTabBar(
@@ -30,18 +34,13 @@ fun HistoryTopTabBar(
     onTabSelected: (HistoryTab) -> Unit,
     modifier: Modifier = Modifier
 ){
-    val backgroundColor = Color(0xFFCEC5E8)
-    val activeColor = Color(0xFF7A4CAF)
-    val activeTextColor = Color.White
-    val inactiveTextColor = Color(0xFF32275A)
-
     val tabs = HistoryTab.entries
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(backgroundColor)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(4.dp)
     ){
         Row(
@@ -53,15 +52,15 @@ fun HistoryTopTabBar(
                 val isSelected = selectedTab == tab
 
                 val animatedBgColor by animateColorAsState(
-                    targetValue = if (isSelected) activeColor else Color.Transparent,
+                    targetValue = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                     animationSpec = tween(durationMillis = 200),
                     label = "tabBgAnimation"
                 )
 
                 val label = when (tab) {
-                    HistoryTab.LIST -> "List"
-                    HistoryTab.ANALYTICS -> "Analytics"
-                    HistoryTab.MAP -> "Heatmap"
+                    HistoryTab.LIST -> stringResource(R.string.history_list)
+                    HistoryTab.ANALYTICS -> stringResource(R.string.history_analytics)
+                    HistoryTab.MAP -> stringResource(R.string.history_heatmap)
                 }
 
                 Box(
@@ -80,7 +79,7 @@ fun HistoryTopTabBar(
                 ){
                     Text(
                         text = label,
-                        color = if (isSelected) activeTextColor else inactiveTextColor,
+                        color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.secondary,
                         fontSize = 15.sp,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
                     )

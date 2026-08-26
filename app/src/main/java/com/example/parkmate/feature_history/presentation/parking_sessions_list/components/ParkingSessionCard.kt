@@ -1,5 +1,6 @@
 package com.example.parkmate.feature_history.presentation.parking_sessions_list.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.core.domain.models.ParkingType
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.utils.formatTimestamp
@@ -35,74 +39,60 @@ fun ParkingSessionCard(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Vehicle Name: ${item.vehicleName}",
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.history_vehicle)+": ${item.vehicleName}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
                 Surface(
                     shape = MaterialTheme.shapes.small,
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
-                        text = "CONCLUDED",
+                        text = stringResource(R.string.concluded),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
             }
+            HorizontalDivider()
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Start date: ${formatTimestamp(item.session.startTime)}",
+                text = stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
-                text = "Position: ${item.session.position.latitude}, ${item.session.position.longitude}",
-                style = MaterialTheme.typography.bodySmall
+                text = stringResource(R.string.end_date)+": ${formatTimestamp(item.session.endTime!!)}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Parking type: ${stringResource(id = item.session.parkingType.labelRes)}",
+                text = stringResource(R.string.parking_type)+": ${stringResource(id = item.session.parkingType.labelRes)}",
                 style = MaterialTheme.typography.bodyMedium
             )
-
-            // Opzionale, mi sembra troppo in una sola schermata
-            when (item.session.parkingType) {
-                ParkingType.HOURLY_PAID -> {
-                    item.session.hourlyRate?.let {
-                        Text(
-                            text = "Hourly Rate: €%.2f/h".format(it),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-                ParkingType.FIXED_TICKET -> {
-                    item.session.fixedCost?.let {
-                        Text(
-                            text = "Fixed cost: €%.2f".format(it),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-                ParkingType.FREE -> {  }
-            }
 
             item.session.finalCost?.let {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Total: €%.2f".format(it),
+                    text = stringResource(R.string.total)+": €%.2f".format(it),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
