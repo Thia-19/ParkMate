@@ -38,6 +38,9 @@ interface ParkingSessionDao {
     @Query("SELECT * FROM parkingsession WHERE vehicleId = :vehicleId AND isActive = 1 LIMIT 1")
     suspend fun getActiveSessionByVehicle(vehicleId: Int): ParkingSession?
 
+    @Query("SELECT * FROM parkingsession WHERE id = :id")
+    suspend fun getParkingSessionById(id: Int): ParkingSession?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertParkingSession(parkingSession: ParkingSession)
 

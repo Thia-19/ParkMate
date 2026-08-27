@@ -30,7 +30,7 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.vehicle.VehicleType
-import com.example.parkmate.core.domain.utils.formatTimestamp
+import com.example.parkmate.core.domain.util.formatTimestamp
 
 @Composable
 fun ParkingSessionCardHome(

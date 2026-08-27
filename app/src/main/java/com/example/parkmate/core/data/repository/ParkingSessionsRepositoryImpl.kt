@@ -19,6 +19,10 @@ class ParkingSessionsRepositoryImpl (private val parkingSessionDao: ParkingSessi
         return parkingSessionDao.getActiveSessionByVehicle(vehicleId)
     }
 
+    override suspend fun getParkingSessionById(id: Int): ParkingSession? {
+        return parkingSessionDao.getParkingSessionById(id)
+    }
+
     override suspend fun insertParkingSession(parkingSession: ParkingSession) {
         return parkingSessionDao.insertParkingSession(parkingSession)
     }

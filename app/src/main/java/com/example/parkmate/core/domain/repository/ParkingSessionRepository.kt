@@ -11,6 +11,8 @@ interface ParkingSessionRepository {
 
     suspend fun getActiveSessionByVehicle(vehicleId: Int): ParkingSession?
 
+    suspend fun getParkingSessionById(id: Int): ParkingSession?
+
     suspend fun insertParkingSession(parkingSession: ParkingSession)
 
     suspend fun deleteParkingSession(parkingSession: ParkingSession)

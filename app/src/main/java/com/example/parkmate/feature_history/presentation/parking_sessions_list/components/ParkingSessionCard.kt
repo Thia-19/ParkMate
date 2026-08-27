@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.labelRes
-import com.example.parkmate.core.domain.utils.formatTimestamp
+import com.example.parkmate.core.domain.util.formatTimestamp
 
 @Composable
 fun ParkingSessionCard(

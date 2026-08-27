@@ -51,21 +51,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.util.formatTimestamp
+import com.example.parkmate.feature_parkingEffort.dialog.StartRouteCalculationDialog
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import kotlin.math.max
 
@@ -322,10 +317,7 @@ fun ParkingSessionDetails(
 
                 if (item.session.isActive) {
                     Button(
-                        onClick = {
-                            onConcludeSession(item.session)
-                            onDismiss()
-                        },
+                        onClick = { showRouteCalculationDialog = true },
                         modifier = Modifier.weight(1.5f)
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
@@ -336,6 +328,23 @@ fun ParkingSessionDetails(
             }
         }
     }
+
+    if (showRouteCalculationDialog) {
+        StartRouteCalculationDialog(
+            sessionId = item.session.id,
+            onDismissRequest = {
+                onConcludeSession(item.session)
+                showRouteCalculationDialog = false
+                onDismiss()
+            },
+            onTrackingStarted = {
+                onConcludeSession(item.session)
+                showRouteCalculationDialog = false
+                onDismiss()
+            }
+        )
+    }
+
     if (showDeleteDialog){
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
