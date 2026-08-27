@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -100,7 +101,6 @@ fun HomeScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    // Aumentiamo la Peek Height a 140.dp per lasciare spazio al FAB sopra l'intestazione del sheet
     val peekHeight = 140.dp
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -222,8 +222,8 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Active Sessions",
-                                style = MaterialTheme.typography.titleMedium
+                                text = stringResource(R.string.home_active_sessions),
+                                style = MaterialTheme.typography.titleLarge
                             )
                             Surface(
                                 shape = CircleShape,
@@ -232,7 +232,7 @@ fun HomeScreen(
                                 Text(
                                     text = "${state.sessions.count()}",
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelLarge
                                 )
                             }
                         }
@@ -332,8 +332,6 @@ fun HomeScreen(
                             }
                         }
                     }
-
-                    // FAB posizionato subito sopra il BottomSheet collassato
                     FloatingActionButton(
                         onClick = onNavigateToAddSession,
                         shape = CircleShape,
@@ -376,7 +374,7 @@ fun HomeScreen(
                     ) {
                         Icon(
                             imageVector = icon,
-                            contentDescription = if (savedLocationsOn) "Nascondi luoghi salvati" else "Mostra luoghi salvati"
+                            contentDescription = if (savedLocationsOn) "Hide saved locations" else "Show saved locations"
                         )
                     }
                 }

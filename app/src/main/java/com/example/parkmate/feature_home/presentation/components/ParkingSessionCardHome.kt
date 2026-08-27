@@ -24,8 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
@@ -113,7 +115,7 @@ fun ParkingSessionCardHome(
                     }
                 }
                 Text(
-                    text = "Start Date: ${formatTimestamp(item.session.startTime)}",
+                    text = stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

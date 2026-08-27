@@ -51,9 +51,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
@@ -141,7 +143,7 @@ fun ParkingSessionDetails(
                         enabled = false,
                         label = {
                             Text(
-                                text = if (item.session.isActive) "Active" else "Concluded",
+                                text = if (item.session.isActive) stringResource(R.string.active) else stringResource(R.string.concluded),
                                 fontWeight = FontWeight.Medium
                             )
                         },
@@ -176,26 +178,26 @@ fun ParkingSessionDetails(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "RATE DETAILS",
+                        text = stringResource(R.string.home_rate_details),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                     when (item.session.parkingType) {
                         ParkingType.HOURLY_PAID -> {
                             Text(
-                                text = "Hourly rate: €${item.session.hourlyRate ?: "0.00"}",
+                                text = stringResource(R.string.home_hourly_rate)+": €${item.session.hourlyRate ?: "0.00"}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
 
                         ParkingType.FIXED_TICKET -> {
                             Text(
-                                text = "Fixed cost: €${item.session.fixedCost ?: "0.00"}",
+                                text = stringResource(R.string.home_fixed_cost)+": €${item.session.fixedCost ?: "0.00"}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             item.session.expiryTime?.let { expiry ->
                                 Text(
-                                    text = "Expiry date: ${formatTimestamp(expiry)}",
+                                    text = stringResource(R.string.home_expiry_date)+": ${formatTimestamp(expiry)}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )
@@ -204,7 +206,7 @@ fun ParkingSessionDetails(
 
                         ParkingType.FREE -> {
                             Text(
-                                text = "Free Parking",
+                                text = stringResource(R.string.home_free_parking),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
@@ -212,7 +214,7 @@ fun ParkingSessionDetails(
 
                     item.session.finalCost?.let { cost ->
                         Text(
-                            text = String.format("Final cost: €%.2f", item.session.finalCost),
+                            text = stringResource(R.string.home_final_cost)+": €%.2f ${item.session.finalCost}",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -221,13 +223,13 @@ fun ParkingSessionDetails(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "TIME",
+                        text = stringResource(R.string.home_time),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text("Start Time: ${formatTimestamp(item.session.startTime)}")
+                    Text(stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}")
                     item.session.endTime?.let { end ->
-                        Text("End Time: ${formatTimestamp(end)}")
+                        Text(stringResource(R.string.end_date)+": ${formatTimestamp(end)}")
                     }
                 }
 
@@ -257,7 +259,7 @@ fun ParkingSessionDetails(
                         )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Parking location",
+                                text = stringResource(R.string.home_parking_location),
                                 style = MaterialTheme.typography.titleSmall
                             )
                             Text(
@@ -277,7 +279,7 @@ fun ParkingSessionDetails(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "NOTE",
+                        text = stringResource(R.string.home_note),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -312,7 +314,7 @@ fun ParkingSessionDetails(
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
 
                 if (item.session.isActive) {
@@ -322,7 +324,7 @@ fun ParkingSessionDetails(
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Conclude Session")
+                        Text(stringResource(R.string.home_conclude))
                     }
                 }
             }
@@ -356,10 +358,10 @@ fun ParkingSessionDetails(
                 )
             },
             title = {
-                Text(text = "Delete Session")
+                Text(stringResource(R.string.home_delete_alert))
             },
             text = {
-                Text(text = "Are you sure you want to delete this parking session? This action cannot be undone.")
+                Text(stringResource(R.string.home_delete_alert_desc))
             },
             confirmButton = {
                 TextButton(
@@ -372,12 +374,12 @@ fun ParkingSessionDetails(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Undo")
+                    Text(stringResource(R.string.undo))
                 }
             },
             modifier = modifier
@@ -425,11 +427,11 @@ fun RateDetailsCard(
                     val accumulatedCost = elapsedHours * hourlyRate
 
                     Text(
-                        text = "Elapsed time: ${formatDuration(elapsedMillis)}",
+                        text = stringResource(R.string.home_elapsed_time)+": ${formatDuration(elapsedMillis)}",
                         style = MaterialTheme.typography.titleSmall
                     )
                     Text(
-                        text = "Accumulated cost: ${String.format(Locale.getDefault(), "%.2f €", accumulatedCost)}",
+                        text = stringResource(R.string.home_accumulated_cost)+": ${String.format(Locale.getDefault(), "%.2f €", accumulatedCost)}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -439,13 +441,13 @@ fun RateDetailsCard(
 
                     if (isExpired) {
                         Text(
-                            text = "Parking expired!",
+                            text = stringResource(R.string.home_expired)+"Parking expired!",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.error
                         )
                     } else {
                         Text(
-                            text = "Expires in: ${formatDuration(remainingMillis)}",
+                            text = stringResource(R.string.home_expires)+": ${formatDuration(remainingMillis)}",
                             style = MaterialTheme.typography.titleSmall
                         )
                     }
@@ -453,7 +455,7 @@ fun RateDetailsCard(
                     val elapsedMillis = max(0L, currentTime - startTime)
 
                     Text(
-                        text = "Elapsed time: ${formatDuration(elapsedMillis)}",
+                        text = stringResource(R.string.home_elapsed_time)+": ${formatDuration(elapsedMillis)}",
                         style = MaterialTheme.typography.titleSmall
                     )
                 }
