@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">ParkMate</string>
+    <string name="app_name">ParkMate</string>
 
     <string name="parking_type_free">Free Parking</string>
     <string name="parking_type_hourly">Hourly Paid</string>
@@ -16,7 +16,7 @@
     <string name="parking_type">Parking type</string>
     <string name="total">Total</string>
 
-<!--    Saved Locations-->
+    <!--    Saved Locations-->
     <string name="locationCoordinates">Location coordinates</string>
     <string name="saved_locations_desc">Saved locations are useful if you want to take note of locations or parking spots you visit frequently, such as your home garage, and then easily select them when starting a parking session. Start by adding one with the button below!</string>
     <string name="saved_locations_alt">No saved locations found</string>
@@ -28,7 +28,7 @@
     <string name="location_icon">Select icon</string>
     <string name="save_location">Save Location</string>
 
-<!--    History-->
+    <!--    History-->
     <string name="history_label">History</string>
     <string name="history_list">List</string>
     <string name="history_analytics">Analytics</string>
@@ -53,4 +53,28 @@
     <string name="history_sessions_month">Number of sessions per month</string>
     <string name="history_sessions_month_alt">No completed parking sessions recorded</string>
     <string name="history_vehicle_expense">Total vehicle expenses</string>
+
+    <!-- Feature: Parking Effort -->
+    <string name="pe_tab_leaderboard">Classifica</string>
+    <string name="pe_tab_score">Punteggio</string>
+
+    <string name="pe_dialog_yes">Sì</string>
+    <string name="pe_dialog_no">No</string>
+    <string name="pe_dialog_dest_icon_desc">Posizione destinazione</string>
+    <string name="pe_dialog_dest_title">Nuova destinazione</string>
+    <string name="pe_dialog_dest_message">Vuoi raggiungere questa destinazione?</string>
+
+    <string name="start_route_calculation_title">Vuoi iniziare il calcolo del percorso?</string>
+    <string name="start_route_calculation_message">Al termine del percorso potrai contribuire al punteggio di questa zona di parcheggio.</string>
+    <string name="start_route_calculation_no">No</string>
+    <string name="start_route_calculation_yes">Sì</string>
+
+    <string name="route_tracking_channel_name">Calcolo percorso</string>
+    <string name="route_tracking_channel_description">Mostra il calcolo del percorso dopo il parcheggio.</string>
+    <string name="route_tracking_notification_title">Calcolo del percorso attivo</string>
+    <string name="route_tracking_notification_message">Tocca “Sono arrivato” quando raggiungi la destinazione.</string>
+    <string name="route_tracking_arrived">Sono arrivato</string>
+    <string name="route_tracking_cancel">Annulla</string>
+    <string name="route_tracking_permissions_required">Sono necessarie le autorizzazioni per posizione, attività e notifiche.</string>
+    <string name="route_tracking_start_failed">Impossibile avviare il calcolo del percorso.</string>
 </resources>

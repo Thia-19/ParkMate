@@ -78,8 +78,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
 
-/* TODO: i cazzo di bottoni di merda vengono coperti dal bagaglio*/
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -126,7 +124,7 @@ fun HomeScreen(
             onDismiss = { selectedSessionForDetail = null },
             onConcludeSession = { sessionToEnd ->
                 onEvent(HomeEvent.CloseActiveSession(sessionToEnd))
-                selectedSessionForDetail = null
+                // selectedSessionForDetail = null
             },
             onDeleteSession = { sessionToDelete ->
                 onEvent(HomeEvent.DeleteSession(sessionToDelete))
@@ -386,3 +384,4 @@ fun HomeScreen(
         }
     }
 }
+

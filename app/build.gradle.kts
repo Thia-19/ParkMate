@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp(libs.room.compiler)
 
     // Hilt
@@ -92,6 +93,10 @@ dependencies {
     // Google Play Services Location
     implementation(libs.play.services.location)
 
+    dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+    }
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -104,4 +109,3 @@ dependencies {
     // Theme: fonts
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.8")
 }
-

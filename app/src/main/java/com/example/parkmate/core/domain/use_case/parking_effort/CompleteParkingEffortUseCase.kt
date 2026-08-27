@@ -1,33 +1,37 @@
 package com.example.parkmate.core.domain.use_case.parking_effort
 
+import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingEffort
 import com.example.parkmate.core.domain.repository.ParkingEffortRepository
 import javax.inject.Inject
 
 class CompleteParkingEffortUseCase @Inject constructor(
     private val repository: ParkingEffortRepository,
-    private val calculateScoreUseCase: CalculateParkingScoreUseCase
+    private val calculateScore: CalculateParkingScoreUseCase
 ) {
 
-    /**
-     * Calcola il punteggio basato su dati reali e salva l'effort.
-     */
     suspend operator fun invoke(
         sessionId: Int,
         distanceMeters: Double,
-        durationSeconds: Long
-    ) {
-        if (sessionId == -1) return
+        durationSeconds: Long,
+        destinationPosition: Position? = null
+    ): Result<ParkingEffort> {
+        if (sessionId <= 0) {
+            return Result.failure(IllegalArgumentException("A valid parking session ID is required."))
+        }
 
-        val score = calculateScoreUseCase(distanceMeters, durationSeconds)
+        val safeDistance = distanceMeters.coerceAtLeast(0.0)
+        val safeDuration = durationSeconds.coerceAtLeast(0L)
 
         val effort = ParkingEffort(
             sessionId = sessionId,
-            distanceMeters = distanceMeters,
-            durationSeconds = durationSeconds,
-            effortScore = score
+            distanceMeters = safeDistance,
+            durationSeconds = safeDuration,
+            effortScore = calculateScore(safeDistance, safeDuration),
+            destinationPosition = destinationPosition
         )
 
         repository.saveParkingEffort(effort)
+        return Result.success(effort)
     }
 }

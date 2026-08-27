@@ -1,52 +1,59 @@
 package com.example.parkmate.core.domain.use_case.parking_effort
 
+import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.parkingEffort.EffortWithPosition
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
-import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.utils.map.distanceTo
-import com.example.parkmate.core.domain.utils.map.getConvenienceColorHex
+import com.example.parkmate.core.domain.util.map.distanceTo
 import javax.inject.Inject
 
 class GenerateParkingZonesUseCase @Inject constructor() {
 
-    operator fun invoke(
-        efforts: List<EffortWithPosition>,
-        mergeRadiusMeters: Double = DEFAULT_MERGE_RADIUS_METERS
-    ): List<ParkingZone> {
+    operator fun invoke(efforts: List<EffortWithPosition>): List<ParkingZone> {
+        if (efforts.isEmpty()) return emptyList()
 
-        // 1. Creazione dei Cluster basati sulla distanza
+        val mutableEfforts = efforts.toMutableList()
         val clusters = mutableListOf<MutableList<EffortWithPosition>>()
 
-        for (effort in efforts) {
-            // Trova il primo cluster in cui la distanza tra il centro del cluster e la sessione è <= al raggio
-            val targetCluster = clusters.firstOrNull { cluster ->
-                val clusterCenterPos = cluster.first().position
-                effort.position.distanceTo(clusterCenterPos) <= mergeRadiusMeters
-            }
+        while (mutableEfforts.isNotEmpty()) {
+            val currentEffort = mutableEfforts.removeAt(0)
+            val cluster = mutableListOf(currentEffort)
 
-            if (targetCluster != null) {
-                targetCluster.add(effort)
-            } else {
-                clusters.add(mutableListOf(effort))
+            val iterator = mutableEfforts.iterator()
+            while (iterator.hasNext()) {
+                val otherEffort = iterator.next()
+                val distance = currentEffort.position.distanceTo(otherEffort.position)
+
+                if (distance <= CLUSTER_RADIUS_METERS) {
+                    cluster.add(otherEffort)
+                    iterator.remove()
+                }
             }
+            clusters.add(cluster)
         }
 
-        // 2. Mappatura dei cluster in ParkingZone (Heatmap)
-        return clusters.map { cluster ->
+        return clusters.mapIndexed { index, cluster ->
             val avgLat = cluster.map { it.position.latitude }.average()
-            val avgLng = cluster.map { it.position.longitude }.average()
-            val clusterAvgScore = cluster.map { it.effortScore }.average()
+            val avgLon = cluster.map { it.position.longitude }.average()
+            val avgScore = cluster.map { it.effortScore }.average()
+
+            val top10Destinations = cluster
+                .sortedByDescending { it.effortId }
+                .mapNotNull { it.destinationPosition }
+                .distinct()
+                .take(MAX_RECENT_DESTINATIONS)
 
             ParkingZone(
-                centerPosition = Position(avgLat, avgLng),
-                averageScore = clusterAvgScore,
+                id = "zone_$index",
+                centerPosition = Position(avgLat, avgLon),
+                averageScore = avgScore,
                 parkingCount = cluster.size,
-                colorHex = getConvenienceColorHex(clusterAvgScore)
+                recentDestinations = top10Destinations
             )
         }
     }
 
-    companion object {
-        private const val DEFAULT_MERGE_RADIUS_METERS = 150.0
+    private companion object {
+        const val CLUSTER_RADIUS_METERS = 300.0
+        const val MAX_RECENT_DESTINATIONS = 10
     }
 }
