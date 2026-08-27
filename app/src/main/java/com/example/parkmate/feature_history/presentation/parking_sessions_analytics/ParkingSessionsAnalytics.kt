@@ -174,7 +174,7 @@ fun ParkingSessionsAnalytics(
                 )
                 if (vehicleData.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.history_sessions_month_alt),
+                        text = stringResource(R.string.history_exp_alt_2),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 } else {
