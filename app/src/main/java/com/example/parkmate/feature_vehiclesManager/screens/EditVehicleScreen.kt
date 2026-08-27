@@ -22,7 +22,7 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.core.domain.models.vehicle.VehicleType
-import com.example.parkmate.core.domain.utils.images.rememberImagePicker
+import com.example.parkmate.core.domain.util.images.rememberImagePicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -7,13 +7,15 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingEffort
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.core.domain.models.SavedLocation
+import com.example.parkmate.core.domain.models.parkingEffort.RouteTracking
 
 @Database(
     entities = [
         ParkingSession::class,
         Vehicle::class,
         ParkingEffort::class,
-        SavedLocation::class
+        SavedLocation::class,
+        RouteTracking::class
     ],
     version = 1,
     exportSchema = false

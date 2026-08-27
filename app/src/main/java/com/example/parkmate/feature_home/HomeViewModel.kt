@@ -44,6 +44,8 @@ class HomeViewModel @Inject constructor(
             initialValue = HomeState(isLoading = true)
         )
 
+
+
     fun onEvent(event: HomeEvent) {
         when(event){
             is HomeEvent.AddSession -> {

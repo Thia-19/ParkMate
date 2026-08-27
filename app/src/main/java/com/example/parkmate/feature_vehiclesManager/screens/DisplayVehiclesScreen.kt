@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterAlt
-import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -49,10 +47,6 @@ fun DisplayVehiclesScreen(
     val vehiclesList by viewModel.vehicles.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
-    var isGridView by remember {
-        mutableStateOf(false)
-    }
-
     var showEditDialog by remember {
         mutableStateOf(false)
     }
@@ -62,43 +56,29 @@ fun DisplayVehiclesScreen(
     }
 
     val searchBarState = rememberSearchBarState()
-
-    // Needed to call suspend animation functions
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
-
         topBar = {
             TopAppBar(
-
                 title = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         SearchBar(
                             state = searchBarState,
-
                             inputField = {
                                 SearchBarDefaults.InputField(
-
                                     query = searchQuery,
-
-                                    onQueryChange = { query ->
-                                        viewModel.updateSearchQuery(query)
-                                    },
-
+                                    onQueryChange = viewModel::updateSearchQuery,
                                     onSearch = {
                                         coroutineScope.launch {
                                             searchBarState.animateToCollapsed()
                                         }
                                     },
-
-                                    expanded =
-                                        searchBarState.currentValue ==
-                                                SearchBarValue.Expanded,
-
+                                    expanded = searchBarState.currentValue ==
+                                            SearchBarValue.Expanded,
                                     onExpandedChange = { isExpanded ->
                                         coroutineScope.launch {
                                             if (isExpanded) {
@@ -108,20 +88,17 @@ fun DisplayVehiclesScreen(
                                             }
                                         }
                                     },
-
                                     placeholder = {
                                         Text("Cerca...")
                                     },
-
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.Search,
-                                            contentDescription = "Search"
+                                            contentDescription = "Cerca veicoli"
                                         )
                                     }
                                 )
                             },
-
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 8.dp)
@@ -129,31 +106,12 @@ fun DisplayVehiclesScreen(
 
                         IconButton(
                             onClick = {
-                                // TODO: Open filters
+                                // TODO: Apri filtri
                             }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.FilterAlt,
-                                contentDescription = "Filter",
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-
-                        IconButton(
-                            onClick = {
-                                isGridView = !isGridView
-                            }
-                        ) {
-                            Icon(
-                                imageVector =
-                                    if (isGridView) {
-                                        Icons.Default.ViewList
-                                    } else {
-                                        Icons.Default.GridView
-                                    },
-
-                                contentDescription = "Toggle View",
-
+                                contentDescription = "Filtra veicoli",
                                 modifier = Modifier.size(32.dp)
                             )
                         }
@@ -161,79 +119,57 @@ fun DisplayVehiclesScreen(
                 }
             )
         },
-
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
                     vehicleToEdit = null
                     showEditDialog = true
                 },
-
-                containerColor =
-                    MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Vehicle"
+                    contentDescription = "Aggiungi veicolo"
                 )
             }
         }
-
     ) { paddingValues ->
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-
             VehiclesList(
                 vehicles = vehiclesList,
-
-                isGridView = isGridView,
-
                 onEditVehicle = { parkedVehicle ->
                     vehicleToEdit = parkedVehicle.vehicle
                     showEditDialog = true
                 },
-
                 onDeleteVehicle = { parkedVehicle ->
-                    viewModel.deleteVehicle(
-                        parkedVehicle.vehicle
-                    )
+                    viewModel.deleteVehicle(parkedVehicle.vehicle)
                 },
-
                 modifier = Modifier.fillMaxSize()
             )
 
             if (showEditDialog) {
-
                 EditVehicleScreen(
-
                     vehicleToEdit = vehicleToEdit,
-
                     onDismiss = {
                         showEditDialog = false
                         vehicleToEdit = null
                     },
-
                     onSave = { name, type, imageUriString ->
-
-                        val vehicleToSave =
-                            vehicleToEdit?.copy(
-                                name = name,
-                                type = type
-                            )
-                                ?: Vehicle(
-                                    name = name,
-                                    type = type
-                                )
-
-                        val uri = imageUriString?.toUri()
+                        val vehicleToSave = vehicleToEdit?.copy(
+                            name = name,
+                            type = type
+                        ) ?: Vehicle(
+                            name = name,
+                            type = type
+                        )
 
                         viewModel.saveVehicle(
-                            vehicleToSave,
-                            uri
+                            vehicle = vehicleToSave,
+                            imageUri = imageUriString?.toUri()
                         )
 
                         showEditDialog = false

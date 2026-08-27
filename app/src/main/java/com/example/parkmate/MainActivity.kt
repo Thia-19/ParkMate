@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            // Inizializziamo il MapsRenderer in background per non bloccare la UI
             LaunchedEffect(Unit) {
                 withContext(Dispatchers.IO) {
                     MapsInitializer.initialize(applicationContext, MapsInitializer.Renderer.LATEST) { renderer ->
@@ -35,7 +34,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            // Il tema e la UI devono stare DENTRO setContent
             ParkMateTheme {
                 MainScreen()
             }

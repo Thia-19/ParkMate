@@ -1,4 +1,4 @@
-package com.example.parkmate.core.domain.utils.images
+package com.example.parkmate.core.domain.util.images
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest

@@ -78,8 +78,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
 
-/* TODO: i cazzo di bottoni di merda vengono coperti dal bagaglio*/
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -101,6 +99,10 @@ fun HomeScreen(
     }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    // Aumentiamo la Peek Height a 140.dp per lasciare spazio al FAB sopra l'intestazione del sheet
+    val peekHeight = 140.dp
+
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.PartiallyExpanded,
@@ -109,8 +111,12 @@ fun HomeScreen(
     )
 
     val scope = rememberCoroutineScope()
-    var selectedSessionForDetail by rememberSaveable { mutableStateOf<ParkingSessionWithVehicleInfo?>(null) }
-    var savedLocationsOn by rememberSaveable{ mutableStateOf(false)}
+    var selectedSessionForDetail by rememberSaveable {
+        mutableStateOf<ParkingSessionWithVehicleInfo?>(
+            null
+        )
+    }
+    var savedLocationsOn by rememberSaveable { mutableStateOf(false) }
 
     selectedSessionForDetail?.let { session ->
         ParkingSessionDetails(
@@ -118,7 +124,7 @@ fun HomeScreen(
             onDismiss = { selectedSessionForDetail = null },
             onConcludeSession = { sessionToEnd ->
                 onEvent(HomeEvent.CloseActiveSession(sessionToEnd))
-                selectedSessionForDetail = null
+                // selectedSessionForDetail = null
             },
             onDeleteSession = { sessionToDelete ->
                 onEvent(HomeEvent.DeleteSession(sessionToDelete))
@@ -149,12 +155,7 @@ fun HomeScreen(
                 DrawHeader()
                 DrawerBody(
                     items = listOf(
-                        MenuItem(
-                            "settings",
-                            "Settings",
-                            "Go to settings",
-                            Icons.Default.Settings
-                        ),
+                        MenuItem("settings", "Settings", "Go to settings", Icons.Default.Settings),
                         MenuItem(
                             "notifications",
                             "Notifications",
@@ -190,8 +191,10 @@ fun HomeScreen(
         ) { paddingValues ->
             BottomSheetScaffold(
                 scaffoldState = bottomSheetScaffoldState,
-                modifier = Modifier.padding(paddingValues),
-                sheetPeekHeight = 96.dp,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding()),
+                sheetPeekHeight = peekHeight,
                 sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 sheetShadowElevation = 16.dp,
                 sheetContainerColor = MaterialTheme.colorScheme.surface,
@@ -238,7 +241,7 @@ fun HomeScreen(
 
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(bottom = 88.dp),
+                            contentPadding = PaddingValues(bottom = 32.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             itemsIndexed(
@@ -264,15 +267,15 @@ fun HomeScreen(
                         }
                     }
                 }
-            ) {
+            ) { innerMapPadding ->
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(innerMapPadding)
                 ) {
                     GoogleMap(
                         modifier = Modifier.fillMaxSize(),
                         cameraPositionState = cameraPositionState,
-                        // contentPadding = PaddingValues(bottom = 96.dp)
                     ) {
                         val context = LocalContext.current
                         val parkingIcon = remember(context) {
@@ -280,8 +283,14 @@ fun HomeScreen(
                         }
 
                         state.sessions.forEach { session ->
-                            val position = remember(session.session.position.latitude, session.session.position.longitude) {
-                                LatLng(session.session.position.latitude, session.session.position.longitude)
+                            val position = remember(
+                                session.session.position.latitude,
+                                session.session.position.longitude
+                            ) {
+                                LatLng(
+                                    session.session.position.latitude,
+                                    session.session.position.longitude
+                                )
                             }
                             Marker(
                                 state = rememberMarkerState(
@@ -318,21 +327,19 @@ fun HomeScreen(
                                         position = position
                                     ),
                                     icon = iconDescriptor,
-                                    anchor = Offset(
-                                        0.5f,
-                                        1.0f
-                                    )
+                                    anchor = Offset(0.5f, 1.0f)
                                 )
                             }
                         }
                     }
 
+                    // FAB posizionato subito sopra il BottomSheet collassato
                     FloatingActionButton(
                         onClick = onNavigateToAddSession,
                         shape = CircleShape,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(bottom = 50.dp)
+                            .padding(bottom = 16.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -343,7 +350,7 @@ fun HomeScreen(
                     val containerColor = if (savedLocationsOn) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
-                        MaterialTheme.colorScheme.surfaceContainerHigh // o surface
+                        MaterialTheme.colorScheme.surfaceContainerHigh
                     }
 
                     val contentColor = if (savedLocationsOn) {
@@ -377,3 +384,4 @@ fun HomeScreen(
         }
     }
 }
+

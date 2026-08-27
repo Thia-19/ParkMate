@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,14 +21,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Money
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,26 +42,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.util.formatTimestamp
+import com.example.parkmate.feature_parkingEffort.dialog.StartRouteCalculationDialog
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import kotlin.math.max
 
@@ -79,6 +71,7 @@ fun ParkingSessionDetails(
     modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showRouteCalculationDialog by rememberSaveable { mutableStateOf(false) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -99,7 +92,6 @@ fun ParkingSessionDetails(
                         .fillMaxWidth()
                         .height(200.dp)
                 ) {
-                    /* TODO, non so che funzione ha usato la zzara */
                     AsyncImage(
                         model = item.session.photoUri,
                         contentDescription = "Parking session photo",
@@ -136,7 +128,7 @@ fun ParkingSessionDetails(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(item.session.parkingType.labelRes),
+                        text = item.vehicleName,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -165,6 +157,18 @@ fun ParkingSessionDetails(
                 }
 
                 HorizontalDivider()
+
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = "VEHICLE TYPE",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "${item.vehicleType}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
@@ -204,7 +208,7 @@ fun ParkingSessionDetails(
 
                     item.session.finalCost?.let { cost ->
                         Text(
-                            text = "Final cost: €\$cost",
+                            text = "Final cost: €$cost",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -224,9 +228,9 @@ fun ParkingSessionDetails(
                 }
 
                 RateDetailsCard(
-                    item.session.startTime,
-                    item.session.hourlyRate,
-                    item.session.expiryTime
+                    startTime = item.session.startTime,
+                    hourlyRate = item.session.hourlyRate,
+                    expiryTime = item.session.expiryTime
                 )
 
                 OutlinedCard(
@@ -262,8 +266,7 @@ fun ParkingSessionDetails(
 
             item.session.note?.takeIf { it.isNotBlank() }?.let { note ->
                 Column(
-                    modifier = Modifier
-                        .padding(20.dp),
+                    modifier = Modifier.padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
@@ -307,10 +310,7 @@ fun ParkingSessionDetails(
 
                 if (item.session.isActive) {
                     Button(
-                        onClick = {
-                            onConcludeSession(item.session)
-                            onDismiss()
-                        },
+                        onClick = { showRouteCalculationDialog = true },
                         modifier = Modifier.weight(1.5f)
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
@@ -321,7 +321,23 @@ fun ParkingSessionDetails(
             }
         }
     }
-    if (showDeleteDialog){
+
+    if (showRouteCalculationDialog) {
+        StartRouteCalculationDialog(
+            sessionId = item.session.id,
+            onDismissRequest = {
+                showRouteCalculationDialog = false
+                onDismiss()
+            },
+            onTrackingStarted = {
+                onConcludeSession(item.session)
+                showRouteCalculationDialog = false
+                onDismiss()
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             icon = {
@@ -331,17 +347,13 @@ fun ParkingSessionDetails(
                     tint = MaterialTheme.colorScheme.error
                 )
             },
-            title = {
-                Text(text = "Delete Session")
-            },
-            text = {
-                Text(text = "Are you sure you want to delete this parking session? This action cannot be undone.")
-            },
+            title = { Text(text = "Delete Session") },
+            text = { Text(text = "Are you sure you want to delete this parking session? This action cannot be undone.") },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showDeleteDialog = false
-                        onDeleteSession (item.session)
+                        onDeleteSession(item.session)
                         onDismiss()
                     },
                     colors = ButtonDefaults.textButtonColors(
@@ -370,7 +382,6 @@ fun RateDetailsCard(
 ) {
     var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
 
-    // Update currentTime every 1 sec
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = System.currentTimeMillis()
@@ -405,7 +416,13 @@ fun RateDetailsCard(
                         style = MaterialTheme.typography.titleSmall
                     )
                     Text(
-                        text = "Accumulated cost: ${String.format(Locale.getDefault(), "%.2f €", accumulatedCost)}",
+                        text = "Accumulated cost: ${
+                            String.format(
+                                Locale.getDefault(),
+                                "%.2f €",
+                                accumulatedCost
+                            )
+                        }",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -438,7 +455,7 @@ fun RateDetailsCard(
     }
 }
 
-// Utility function
+// Utility Function
 private fun formatDuration(millis: Long): String {
     val totalSeconds = millis / 1000
     val hours = totalSeconds / 3600
@@ -446,3 +463,4 @@ private fun formatDuration(millis: Long): String {
     val seconds = totalSeconds % 60
     return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
 }
+

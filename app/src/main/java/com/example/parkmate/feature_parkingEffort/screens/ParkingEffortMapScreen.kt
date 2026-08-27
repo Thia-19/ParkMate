@@ -1,78 +1,132 @@
 package com.example.parkmate.feature_parkingEffort.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.toColorInt
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.Circle
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.rememberCameraPositionState
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
-import com.example.parkmate.core.domain.models.Position
+import com.example.parkmate.feature_parkingEffort.dialog.DestinationConfirmationDialog
+import com.example.parkmate.feature_parkingEffort.components.bottomSheet.ParkingEffortBottomSheetContent
+import com.example.parkmate.feature_parkingEffort.components.ParkingEffortMap
+import com.example.parkmate.feature_parkingEffort.view_model.ParkingEffortViewModel
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ParkingEffortMapScreen() {
+fun ParkingEffortMapScreen(
+    viewModel: ParkingEffortViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
 
-    /* MOCK DATA */
-    val mockZones = listOf(
-
-        ParkingZone(
-            centerPosition = Position(41.8902, 12.4922),
-            averageScore = 80.0,
-            parkingCount = 3,
-            colorHex = "#4CAF50"
-        ),
-
-        ParkingZone(
-            centerPosition = Position(41.8950, 12.4960),
-            averageScore = 40.0,
-            parkingCount = 1,
-            colorHex = "#FFEB3B"
-        ),
-
-        ParkingZone(
-            centerPosition = Position(41.8850, 12.4880),
-            averageScore = 10.0,
-            parkingCount = 5,
-            colorHex = "#F44336"
-        )
+    val bottomSheetState = rememberStandardBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        skipHiddenState = false
+    )
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = bottomSheetState
     )
 
-    // Centro della fotocamera (Colosseo)
-    val defaultLocation = LatLng(41.8902, 12.4922)
+    var selectedZone by remember { mutableStateOf<ParkingZone?>(null) }
+    var clickedLocation by remember { mutableStateOf<LatLng?>(null) }
 
-    val cameraPositionState = rememberCameraPositionState {
-
-        position = CameraPosition.fromLatLngZoom(defaultLocation, 14f)
-    }
-
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        properties = MapProperties(isMyLocationEnabled = false),
-        uiSettings = MapUiSettings(zoomControlsEnabled = false)
-    ) {
-
-        // Itero sulla lista per disegnare tutti i cerchi
-        mockZones.forEach { zone ->
-            val centerLatLng = LatLng(zone.centerPosition.latitude, zone.centerPosition.longitude)
-
-
-            val composeFillColor = Color(zone.colorHex.toColorInt()).copy(alpha = 0.4f)
-            val composeStrokeColor = Color(zone.colorHex.toColorInt())
-
-            Circle(
-                center = centerLatLng,
-                radius = 150.0,
-                fillColor = composeFillColor,
-                strokeColor = composeStrokeColor,
-                strokeWidth = 3f
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 10.dp,
+        sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        sheetContainerColor = MaterialTheme.colorScheme.surface,
+        sheetDragHandle = {
+            BottomSheetDefaults.DragHandle(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+            )
+        },
+        sheetContent = {
+            ParkingEffortBottomSheetContent(
+                zone = selectedZone,
+                topZones = state.topZones
             )
         }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when {
+                state.isLoading -> LoadingContent()
+                state.errorMessage != null -> ErrorContent(state.errorMessage!!)
+                else -> {
+                    ParkingEffortMap(
+                        zones = state.zones,
+                        selectedZone = selectedZone,
+                        onZoneSelected = { zone ->
+                            selectedZone = zone
+                            scope.launch {
+                                if (zone != null) bottomSheetState.expand() else bottomSheetState.hide()
+                            }
+                        },
+                        onMapClick = { latLng ->
+                            clickedLocation = latLng
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+    }
+
+    if (clickedLocation != null) {
+        DestinationConfirmationDialog(
+            onDismissRequest = { clickedLocation = null },
+            onConfirmRequest = {
+                val location = clickedLocation!!
+                clickedLocation = null
+
+                val nearest = viewModel.getNearestZone(location.latitude, location.longitude)
+
+                if (nearest != null) {
+                    selectedZone = nearest
+
+                    scope.launch {
+                        bottomSheetState.expand()
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun LoadingContent() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun ErrorContent(message: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(message)
     }
 }

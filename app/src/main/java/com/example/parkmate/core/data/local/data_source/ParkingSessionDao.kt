@@ -47,3 +47,5 @@ interface ParkingSessionDao {
     suspend fun closeActiveParkingSession(vehicleId: Int, endTime: Long, finalCost: Double)
 }
 
+
+
