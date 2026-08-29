@@ -1,6 +1,7 @@
 package com.example.parkmate.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -19,8 +20,28 @@ import com.example.parkmate.feature_savedLocations.SavedLocationsViewModel
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    pendingNavigationAction: String? = null,
+    onNavigationHandled: () -> Unit = {}
 ) {
+    LaunchedEffect(pendingNavigationAction) {
+        when (pendingNavigationAction) {
+            "new_parking" -> {
+                navController.navigate(AddSessionRoute) {
+                    launchSingleTop = true
+                }
+                onNavigationHandled()
+            }
+            "home_parkings" -> {
+                navController.navigate(HomeRoute) {
+                    popUpTo(HomeRoute) { inclusive = true }
+                    launchSingleTop = true
+                }
+                onNavigationHandled()
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = HomeRoute,
@@ -41,22 +62,22 @@ fun AppNavHost(
         }
 
         composable<AddSessionRoute> {
-            AddSessionScreen (
+            AddSessionScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }
             )
         }
 
-        composable<SettingsRoute>{
-            SettingsScreen (
+        composable<SettingsRoute> {
+            SettingsScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }
             )
         }
 
-        composable<SavedLocationsRoute>{
+        composable<SavedLocationsRoute> {
             val viewModel: SavedLocationsViewModel = hiltViewModel()
 
             SavedLocationsScreen(
@@ -70,13 +91,13 @@ fun AppNavHost(
             )
         }
 
-        composable<VehicleListRoute>{
+        composable<VehicleListRoute> {
             DisplayVehiclesScreen()
         }
-        composable<ParkingEffortRoute>{
+        composable<ParkingEffortRoute> {
             ParkingEffortMapScreen()
         }
-        composable<HistoryRoute>{
+        composable<HistoryRoute> {
             HistoryScreen()
         }
     }

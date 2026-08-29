@@ -20,8 +20,10 @@ import com.example.parkmate.ui.navigation.VehicleListRoute
 
 @Composable
 fun MainScreen(
-    navController: NavHostController = rememberNavController()
-){
+    navController: NavHostController = rememberNavController(),
+    pendingNavigationAction: String? = null,
+    onNavigationHandled: () -> Unit = {}
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
@@ -39,10 +41,9 @@ fun MainScreen(
                 currentRoute = currentRoute,
                 onNavigateToRoute = { targetRoute ->
                     navController.navigate(targetRoute) {
-                        popUpTo(navController.graph.findStartDestination().id){
+                        popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -52,7 +53,9 @@ fun MainScreen(
     ) { innerPadding ->
         AppNavHost(
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            pendingNavigationAction = pendingNavigationAction,
+            onNavigationHandled = onNavigationHandled
         )
     }
 }

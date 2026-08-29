@@ -1,25 +1,36 @@
 package com.example.parkmate.notifications
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.ui.res.stringResource
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import com.example.parkmate.MainActivity
 import com.example.parkmate.R
+import com.example.parkmate.notifications.NotificationsHelper.createActionPendingIntent
 import com.example.parkmate.service.receiver.RouteTrackingActionReceiver
 import com.example.parkmate.service.RouteTrackingService
-
 object NotificationsHelper {
 
     const val CHANNEL_ID = "route_tracking_channel"
     const val NOTIFICATION_ID = 7_201
     const val SAVED_ROUTE_NOTIFICATION_ID = 7_202
 
+    // Activity Recognition: vehicle to pedestrian parking session
+    const val TRANSITION_CHANNEL_ID = "vehicle_transition_channel"
+    const val TRANSITION_CHANNEL_NAME = "Vehicle-pedestrian transition"
+    const val TRANSITION_NOTIFICATION_ID = 2001
+
+    // Creations
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -35,6 +46,28 @@ object NotificationsHelper {
         }
     }
 
+    fun createTransitionNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                TRANSITION_CHANNEL_ID,
+                TRANSITION_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH // Banner visibile e suono!
+            ).apply {
+                description = "Notifiche per la registrazione e chiusura della sosta"
+                setShowBadge(true)
+            }
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    // Cancel
+    fun cancelNotification(context: Context, notificationId: Int = TRANSITION_NOTIFICATION_ID) {
+        NotificationManagerCompat.from(context).cancel(notificationId)
+    }
+
+    // Notification builds
+
     fun buildTrackingNotification(context: Context, sessionId: Int): Notification {
         return baseBuilder(context)
             .setContentTitle(context.getString(R.string.route_tracking_notification_title))
@@ -48,6 +81,54 @@ object NotificationsHelper {
                 R.drawable.ic_route_tracking,
                 "Cancel",
                 createActionPendingIntent(context, RouteTrackingActionReceiver.ACTION_CANCEL, sessionId)
+            )
+            .build()
+    }
+
+    fun buildVehicleTransitionNotification (
+        context: Context,
+        hasActiveSessions: Boolean
+    ): Notification {
+        val destinationRoute = if (hasActiveSessions) "home_parkings" else "new_parking"
+        val requestCode = if (hasActiveSessions) 201 else 202
+
+        val openAppIntent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigate_to", destinationRoute)
+        }
+
+        val contentPendingIntent = PendingIntent.getActivity(
+            context,
+            requestCode,
+            openAppIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = context.getString(R.string.home_AR_title)
+        val contentText = if (hasActiveSessions){
+            context.getString(R.string.home_AR_action)
+        } else {
+            context.getString(R.string.home_AR_action_2)
+        }
+        val primaryButtonLabel = if (hasActiveSessions) context.getString(R.string.home_AR_handle_parkings) else context.getString(R.string.home_AR_add)
+
+        return NotificationCompat.Builder(context, TRANSITION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_park)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setAutoCancel(true)
+            .setContentIntent(contentPendingIntent)
+            .addAction(
+                R.drawable.ic_park,
+                primaryButtonLabel,
+                contentPendingIntent
+            )
+            .addAction(
+                0,
+                context.getString(R.string.home_AR_dismiss),
+                createDismissPendingIntent(context)
             )
             .build()
     }
@@ -68,11 +149,6 @@ object NotificationsHelper {
             )
             .build()
     }
-
-    fun cancelNotification(context: Context, notificationId: Int = NOTIFICATION_ID) {
-        NotificationManagerCompat.from(context).cancel(notificationId)
-    }
-
     private fun baseBuilder(context: Context): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_route_tracking)
@@ -81,6 +157,15 @@ object NotificationsHelper {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
     }
+
+    fun buildWorkerNotification(context: Context, title: String, content: String): Notification {
+        return baseBuilder(context)
+            .setContentTitle(title)
+            .setContentText(content)
+            .build()
+    }
+
+    // Intent Creation
 
     private fun createActionPendingIntent(context: Context, action: String, sessionId: Int): PendingIntent {
         val intent = Intent(context, RouteTrackingActionReceiver::class.java).apply {
@@ -96,14 +181,19 @@ object NotificationsHelper {
         )
     }
 
-    fun buildWorkerNotification(context: Context, title: String, content: String): Notification {
-        return baseBuilder(context)
-            .setContentTitle(title)
-            .setContentText(content)
-            .build()
+    private fun createDismissPendingIntent(context: Context): PendingIntent {
+        val dismissIntent = Intent(context, RouteTrackingActionReceiver::class.java).apply {
+            action = RouteTrackingActionReceiver.ACTION_DISMISS_PROMPT
+        }
+        return PendingIntent.getBroadcast(
+            context,
+            102,
+            dismissIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
-    // NOTIFICA
+    // NOTIFICA - show
     fun showRouteSavedNotification(context: Context) {
         createNotificationChannel(context)
 
@@ -120,6 +210,23 @@ object NotificationsHelper {
         } catch (e: SecurityException) {
             // Fallback nel caso in cui i permessi non siano garantiti
             e.printStackTrace()
+        }
+    }
+
+    fun showVehicleTransitionNotification(
+        context: Context,
+        hasActiveSessions: Boolean
+    ) {
+        createTransitionNotificationChannel(context)
+
+        val notification = buildVehicleTransitionNotification(context, hasActiveSessions)
+
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+        ) {
+            NotificationManagerCompat.from(context).notify(TRANSITION_NOTIFICATION_ID, notification)
         }
     }
 }

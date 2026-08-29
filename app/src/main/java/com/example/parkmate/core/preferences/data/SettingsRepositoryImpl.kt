@@ -14,4 +14,12 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun setUseCurrentPosition(enabled: Boolean) {
         dataStore.setUseCurrentPosition(enabled)
     }
+
+    override fun getActivityRecognitionHome(): Flow<Boolean> {
+        return dataStore.activityRecognitionHomeFlow
+    }
+
+    override suspend fun setActivityRecognitionHome(enabled: Boolean) {
+        dataStore.setActivityRecognitionHome(enabled)
+    }
 }

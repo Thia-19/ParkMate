@@ -56,25 +56,35 @@ class RouteTrackingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand with action: ${intent?.action}")
 
+        val action = intent?.action
+
+        if (action == ACTION_DISMISS_TRANSITION_PROMPT) {
+            NotificationsHelper.cancelNotification(this, NotificationsHelper.TRANSITION_NOTIFICATION_ID)
+            return START_NOT_STICKY
+        }
+
         val sessionId = intent?.getIntExtra(EXTRA_SESSION_ID, NO_SESSION_ID) ?: NO_SESSION_ID
-        if (sessionId == NO_SESSION_ID) {
+        if (sessionId == NO_SESSION_ID && action != ACTION_PROMPT_NEW_PARK) {
             stopSelf(startId)
             return START_NOT_STICKY
         }
 
-        val action = intent?.action
         startOrUpdateForeground(action, sessionId)
 
         when (action) {
             ACTION_START -> serviceScope.launch { handleStart(sessionId, startId) }
             ACTION_MANUAL_ARRIVED -> serviceScope.launch { handleComplete(sessionId, startId) }
             ACTION_CANCEL -> serviceScope.launch { handleCancel(sessionId, startId) }
+            ACTION_PROMPT_NEW_PARK -> handlePromptNewPark()
             ACTION_PROMPT_CONFIRMATION,
-            ACTION_RESUME_TRACKING -> {
-            }
+            ACTION_RESUME_TRACKING -> { }
             else -> stopSelf(startId)
         }
         return START_NOT_STICKY
+    }
+
+    private fun handlePromptNewPark() {
+        NotificationsHelper.cancelNotification(this, NotificationsHelper.TRANSITION_NOTIFICATION_ID)
     }
 
     private fun startOrUpdateForeground(action: String?, sessionId: Int) {
@@ -179,5 +189,8 @@ class RouteTrackingService : Service() {
         const val ACTION_CANCEL = "action_cancel"
         const val ACTION_PROMPT_CONFIRMATION = "action_prompt_confirmation"
         const val ACTION_RESUME_TRACKING = "action_resume_tracking"
+
+        const val ACTION_PROMPT_NEW_PARK = "action_prompt_new_park"
+        const val ACTION_DISMISS_TRANSITION_PROMPT = "action_dismiss_transition_prompt"
     }
 }

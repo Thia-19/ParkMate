@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 interface SettingsRepository {
     fun getUseCurrentPosition(): Flow<Boolean>
     suspend fun setUseCurrentPosition(enabled: Boolean)
+    fun getActivityRecognitionHome(): Flow<Boolean>
+    suspend fun setActivityRecognitionHome(enabled: Boolean)
 }

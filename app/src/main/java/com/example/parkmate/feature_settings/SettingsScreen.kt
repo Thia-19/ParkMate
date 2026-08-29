@@ -1,5 +1,6 @@
 package com.example.parkmate.feature_settings
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,10 +38,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.parkmate.R
+import com.example.parkmate.notifications.NotificationsHelper
+import com.example.parkmate.service.receiver.VehicleToPedestrianReceiver
 
 @Composable
 fun SettingsScreen (
@@ -70,7 +76,6 @@ private fun SettingsContent(
     onNavigateBack: () -> Unit
 ){
     val snackbarHostState = remember { SnackbarHostState() }
-    var positionChecked by remember { mutableStateOf(true) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -93,28 +98,13 @@ private fun SettingsContent(
             )
         },
         bottomBar = {
+            val context = LocalContext.current
+
             Surface(
                 tonalElevation = 3.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(
-                    onClick = { onEvent(SettingsEvent.OnSaveSettings) },
-                    enabled = !state.isLoading,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(50.dp)
-                ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(text = "Save", style = MaterialTheme.typography.titleMedium)
-                    }
-                }
+
             }
         }
     ) { paddingValues ->
@@ -126,14 +116,20 @@ private fun SettingsContent(
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            Text(
+                text = stringResource(R.string.settings_position),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
             Row (
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Enable current position acquisition?",
-                    style = MaterialTheme.typography.titleMedium,
+                    text = stringResource(R.string.settings_enable_position),
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
                 )
 
@@ -143,6 +139,37 @@ private fun SettingsContent(
                         onEvent(SettingsEvent.SetCurrentPosition(isChecked))
                     }
                 )
+
+                // metti una desc?
+            }
+
+            HorizontalDivider()
+
+            Text(
+                text = stringResource(R.string.settings_position),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_AR_enable),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Switch(
+                    checked = state.activityRecognitionHome,
+                    onCheckedChange = { isChecked ->
+                        onEvent(SettingsEvent.SetActivityRecognitionHome(isChecked))
+                    }
+                )
+
+                // metti una desc?
             }
 
             HorizontalDivider()

@@ -36,6 +36,14 @@
     <string name="home_expired">Parking expired</string>
     <string name="home_expires">Expires in</string>
 
+    <!-- Home notifications -->
+    <string name="home_AR_title">Transaction completed!</string>
+    <string name="home_AR_action">You are on foot: do you want to manage or end one of your active parking sessions, or start a new one?</string>
+    <string name="home_AR_action_2">It looks like you have parked. Do you want to start a new parking session?</string>
+    <string name="home_AR_dismiss">Dismiss</string>
+    <string name="home_AR_handle_parkings">Handle sessions</string>
+    <string name="home_AR_add">Add</string>
+
     <!--    Saved Locations-->
     <string name="locationCoordinates">Location coordinates</string>
     <string name="saved_locations_desc">Saved locations are useful if you want to take note of locations or parking spots you visit frequently, such as your home garage, and then easily select them when starting a parking session. Start by adding one with the button below!</string>
@@ -97,4 +105,10 @@
     <string name="route_tracking_cancel">Annulla</string>
     <string name="route_tracking_permissions_required">Sono necessarie le autorizzazioni per posizione, attività e notifiche.</string>
     <string name="route_tracking_start_failed">Impossibile avviare il calcolo del percorso.</string>
+
+    <!-- Settings -->
+    <string name="settings_position">Position</string>
+    <string name="settings_enable_position">Enable current position acquisition?</string>
+    <string name="settings_AR">Activity Recognition</string>
+    <string name="settings_AR_enable">Enable activity recognition for parking sessions</string>
 </resources>

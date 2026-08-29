@@ -1,10 +1,17 @@
 package com.example.parkmate.feature_home
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
 import com.example.parkmate.core.domain.use_case.saved_locations.SavedLocationUseCases
+import com.example.parkmate.core.preferences.domain.use_case.SettingsUseCases
+import com.example.parkmate.notifications.NotificationsHelper
+import com.example.parkmate.permissions.RouteTrackingPermissions
+import com.example.parkmate.service.activity_recognition.VehicleToPedestrianActivityRecognitionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -15,15 +22,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val useCases: ParkingSessionsUseCases,
-    private val savedLocationsUseCases: SavedLocationUseCases
-) : ViewModel(){
+    private val savedLocationsUseCases: SavedLocationUseCases,
+    private val settingsUseCases: SettingsUseCases,
+    private val vehicleActivityRecognitionManager: VehicleToPedestrianActivityRecognitionManager
+) : ViewModel() {
+
+    init {
+        observeActivityRecognitionSetting()
+    }
 
     val state: StateFlow<HomeState> = combine(
         useCases.getActiveParkingSessions(),
         savedLocationsUseCases.getAllSavedLocations()
-    ){ sessions, savedLocations ->
-        HomeState (
+    ) { sessions, savedLocations ->
+        HomeState(
             sessions = sessions,
             savedLocations = savedLocations,
             isLoading = false,
@@ -32,7 +46,7 @@ class HomeViewModel @Inject constructor(
     }
         .catch { e ->
             emit(
-                HomeState (
+                HomeState(
                     isLoading = false,
                     errorMessage = e.localizedMessage ?: "Unknown error"
                 )
@@ -44,10 +58,33 @@ class HomeViewModel @Inject constructor(
             initialValue = HomeState(isLoading = true)
         )
 
+    private fun observeActivityRecognitionSetting() {
+        viewModelScope.launch {
+            settingsUseCases.getActivityRecognitionHome().collect { isEnabled ->
+                val hasPermission = RouteTrackingPermissions.hasRequiredPermissions(context)
 
+                if (isEnabled && hasPermission) {
+                    try {
+                        vehicleActivityRecognitionManager.startMonitoring()
+                    } catch (e: SecurityException) {
+                        Log.e("HomeViewModel", "Permessi insufficienti per startMonitoring", e)
+                    }
+                } else {
+                    // Per lo stop, invochiamo solo se abbiamo il permesso o gestiamo l'eccezione se revoked
+                    if (hasPermission) {
+                        try {
+                            vehicleActivityRecognitionManager.stopMonitoring()
+                        } catch (e: SecurityException) {
+                            Log.e("HomeViewModel", "Permessi insufficienti per stopMonitoring", e)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fun onEvent(event: HomeEvent) {
-        when(event){
+        when (event) {
             is HomeEvent.AddSession -> {
                 viewModelScope.launch {
                     useCases.addParkingSession(event.session)

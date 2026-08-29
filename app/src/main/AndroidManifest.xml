@@ -52,7 +52,23 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <receiver
         android:name=".service.receiver.RouteTrackingActionReceiver"
-        android:exported="false" />
+        android:exported="false">
+        <intent-filter>
+        <action android:name="action_prompt_new_park" />
+        <action android:name="action_dismiss_prompt" />
+        <action android:name="route_tracking_arrived" />
+        <action android:name="route_tracking_cancel" />
+        <action android:name="route_tracking_resume" />
+        </intent-filter>
+    </receiver>
+
+    <receiver
+        android:name=".service.receiver.VehicleToPedestrianReceiver"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="action_vehicle_to_pedestrian_transition" />
+        </intent-filter>
+    </receiver>
 
     <provider
         android:name="androidx.core.content.FileProvider"

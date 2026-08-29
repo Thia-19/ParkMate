@@ -15,12 +15,13 @@ class RouteTrackingActionReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val sessionId = intent.getIntExtra(EXTRA_SESSION_ID, -1)
-        if (sessionId == -1) return
 
         when (intent.action) {
-            ACTION_ARRIVED -> backgroundTaskManager.markAsArrived(sessionId)
-            ACTION_CANCEL -> backgroundTaskManager.stopRouteTracking(sessionId)
-            ACTION_RESUME -> backgroundTaskManager.resumeTracking(sessionId)
+            ACTION_ARRIVED -> if (sessionId == -1) return backgroundTaskManager.markAsArrived(sessionId)
+            ACTION_CANCEL -> if (sessionId == -1) return backgroundTaskManager.stopRouteTracking(sessionId)
+            ACTION_RESUME -> if (sessionId == -1) return backgroundTaskManager.resumeTracking(sessionId)
+            ACTION_PROMPT_NEW_PARK -> backgroundTaskManager.handlePromptNewPark(sessionId)
+            ACTION_DISMISS_PROMPT -> backgroundTaskManager.dismissVehicleTransitionPrompt()
         }
     }
 
@@ -29,5 +30,7 @@ class RouteTrackingActionReceiver : BroadcastReceiver() {
         const val ACTION_CANCEL = "route_tracking_cancel"
         const val ACTION_RESUME = "route_tracking_resume"
         const val EXTRA_SESSION_ID = "extra_session_id"
+        const val ACTION_PROMPT_NEW_PARK = "action_prompt_new_park"
+        const val ACTION_DISMISS_PROMPT = "action_dismiss_prompt"
     }
 }

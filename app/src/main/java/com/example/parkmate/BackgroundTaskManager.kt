@@ -3,6 +3,9 @@ package com.example.parkmate
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
+import com.example.parkmate.notifications.NotificationsHelper
+import com.example.parkmate.notifications.NotificationsHelper.TRANSITION_NOTIFICATION_ID
+import com.example.parkmate.notifications.NotificationsHelper.cancelNotification
 import com.example.parkmate.service.RouteTrackingService
 import com.example.parkmate.permissions.RouteTrackingPermissions
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -38,10 +41,20 @@ class BackgroundTaskManager @Inject constructor(
         sendCommandToService(RouteTrackingService.ACTION_RESUME_TRACKING, sessionId)
     }
 
-    private fun sendCommandToService(action: String, sessionId: Int) {
+    fun handlePromptNewPark(sessionId: Int) {
+       sendCommandToService(RouteTrackingService.ACTION_PROMPT_NEW_PARK)
+    }
+
+    fun dismissVehicleTransitionPrompt() {
+        sendCommandToService(RouteTrackingService.ACTION_DISMISS_TRANSITION_PROMPT)
+    }
+
+    private fun sendCommandToService(action: String, sessionId: Int = RouteTrackingService.NO_SESSION_ID) {
         val intent = Intent(context, RouteTrackingService::class.java).apply {
             this.action = action
-            putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
+            if (sessionId != RouteTrackingService.NO_SESSION_ID) {
+                putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
+            }
         }
         ContextCompat.startForegroundService(context, intent)
     }

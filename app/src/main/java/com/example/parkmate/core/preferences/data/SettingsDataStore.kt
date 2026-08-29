@@ -19,6 +19,7 @@ class SettingsDataStore @Inject constructor(
 ) {
     private object PreferencesKeys {
         val USE_CURRENT_POSITION = booleanPreferencesKey("use_current_position")
+        val ACTIVITY_RECOGNITION_HOME = booleanPreferencesKey("activity_recognition_home")
     }
 
     val useCurrentPositionFlow: Flow<Boolean> = context.dataStore.data
@@ -33,9 +34,27 @@ class SettingsDataStore @Inject constructor(
             preferences[PreferencesKeys.USE_CURRENT_POSITION] ?: true
         }
 
+    val activityRecognitionHomeFlow: Flow<Boolean> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException){
+                emit (emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[PreferencesKeys.ACTIVITY_RECOGNITION_HOME] ?: false
+        }
+
     suspend fun setUseCurrentPosition(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.USE_CURRENT_POSITION] = enabled
+        }
+    }
+
+    suspend fun setActivityRecognitionHome(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ACTIVITY_RECOGNITION_HOME] = enabled
         }
     }
 }
