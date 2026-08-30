@@ -255,14 +255,6 @@ fun HomeScreen(
                                         onSessionClick(item.session)
                                     }
                                 )
-
-                                if (index < state.sessions.lastIndex) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.padding(top = 12.dp),
-                                        thickness = 1.dp,
-                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                                    )
-                                }
                             }
                         }
                     }

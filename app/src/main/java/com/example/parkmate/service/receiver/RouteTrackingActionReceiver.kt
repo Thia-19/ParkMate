@@ -17,9 +17,21 @@ class RouteTrackingActionReceiver : BroadcastReceiver() {
         val sessionId = intent.getIntExtra(EXTRA_SESSION_ID, -1)
 
         when (intent.action) {
-            ACTION_ARRIVED -> if (sessionId == -1) return backgroundTaskManager.markAsArrived(sessionId)
-            ACTION_CANCEL -> if (sessionId == -1) return backgroundTaskManager.stopRouteTracking(sessionId)
-            ACTION_RESUME -> if (sessionId == -1) return backgroundTaskManager.resumeTracking(sessionId)
+            ACTION_ARRIVED -> {
+                if (sessionId != -1) {
+                    backgroundTaskManager.markAsArrived(sessionId)
+                }
+            }
+            ACTION_CANCEL -> {
+                if (sessionId != -1) {
+                    backgroundTaskManager.stopRouteTracking(sessionId)
+                }
+            }
+            ACTION_RESUME -> {
+                if (sessionId != -1) {
+                    backgroundTaskManager.resumeTracking(sessionId)
+                }
+            }
             ACTION_PROMPT_NEW_PARK -> backgroundTaskManager.handlePromptNewPark(sessionId)
             ACTION_DISMISS_PROMPT -> backgroundTaskManager.dismissVehicleTransitionPrompt()
         }

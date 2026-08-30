@@ -23,6 +23,9 @@ data class AddSessionState(
     val note: String = "",
     val photoUri: String? = null,
 
+    val isNotificationEnabled: Boolean = false,
+    val isNotificationExpiryEnabled: Boolean = false,
+
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isSaved: Boolean = false

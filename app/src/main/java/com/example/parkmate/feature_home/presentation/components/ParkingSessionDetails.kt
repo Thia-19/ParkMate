@@ -213,8 +213,11 @@ fun ParkingSessionDetails(
                     }
 
                     item.session.finalCost?.let { cost ->
+                        val costFormatted = String.format(java.util.Locale.getDefault(), "%.2f", item.session.finalCost)
+                        val finalText = "${stringResource(R.string.home_final_cost)}: €$costFormatted"
+
                         Text(
-                            text = stringResource(R.string.home_final_cost)+": €%.2f ${item.session.finalCost}",
+                            text = finalText,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -441,7 +444,7 @@ fun RateDetailsCard(
 
                     if (isExpired) {
                         Text(
-                            text = stringResource(R.string.home_expired)+"Parking expired!",
+                            text = stringResource(R.string.home_expired),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.error
                         )

@@ -35,6 +35,18 @@ interface ParkingSessionDao {
     """)
     fun getConcludedParkingSessionsWithVehicle(): Flow<List<ParkingSessionWithVehicleInfo>>
 
+
+    @Query("""
+    SELECT 
+        p.*, 
+        v.name AS vehicleName, 
+        v.type AS vehicleType 
+    FROM parkingsession p
+    INNER JOIN vehicles v ON p.vehicleId = v.id
+    WHERE p.id = :id
+    """)
+    suspend fun getParkingSessionWithVehicleById(id: Int): ParkingSessionWithVehicleInfo?
+
     @Query("SELECT * FROM parkingsession WHERE vehicleId = :vehicleId AND isActive = 1 LIMIT 1")
     suspend fun getActiveSessionByVehicle(vehicleId: Int): ParkingSession?
 
@@ -42,7 +54,7 @@ interface ParkingSessionDao {
     suspend fun getParkingSessionById(id: Int): ParkingSession?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertParkingSession(parkingSession: ParkingSession)
+    suspend fun insertParkingSession(parkingSession: ParkingSession): Long
 
     @Delete
     suspend fun deleteParkingSession(parkingSession: ParkingSession)
@@ -51,7 +63,7 @@ interface ParkingSessionDao {
     suspend fun closeActiveParkingSession(sessionId: Int, endTime: Long, finalCost: Double)
 
     @Transaction
-    suspend fun startNewSessionCloseActive (newSession: ParkingSession){
+    suspend fun startNewSessionCloseActive (newSession: ParkingSession): Long{
         val activeSession = getActiveSessionByVehicle(newSession.vehicleId)
 
         if (activeSession != null){
@@ -60,6 +72,6 @@ interface ParkingSessionDao {
             closeActiveParkingSession(activeSession.id, endTime, finalCost)
         }
 
-        insertParkingSession(newSession)
+        return insertParkingSession(newSession)
     }
 }

@@ -11,14 +11,16 @@ interface ParkingSessionRepository {
 
     suspend fun getActiveSessionByVehicle(vehicleId: Int): ParkingSession?
 
+    suspend fun getParkingSessionWithVehicleById(id: Int): ParkingSessionWithVehicleInfo?
+
     suspend fun getParkingSessionById(id: Int): ParkingSession?
 
-    suspend fun insertParkingSession(parkingSession: ParkingSession)
+    suspend fun insertParkingSession(parkingSession: ParkingSession): Long
 
     suspend fun deleteParkingSession(parkingSession: ParkingSession)
 
     suspend fun closeActiveSessionForVehicle(sessionId: Int, endTime: Long, finalCost: Double)
 
-    suspend fun startNewSessionCloseActive (newSession: ParkingSession)
+    suspend fun startNewSessionCloseActive (newSession: ParkingSession): Long
 
 }

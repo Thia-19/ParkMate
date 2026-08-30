@@ -59,16 +59,13 @@ class RouteTrackingService : Service() {
         val action = intent?.action
 
         if (action == ACTION_DISMISS_TRANSITION_PROMPT) {
-            NotificationsHelper.cancelNotification(this, NotificationsHelper.TRANSITION_NOTIFICATION_ID)
+            NotificationsHelper.cancelTransitionNotification(this)
             return START_NOT_STICKY
         }
 
         val sessionId = intent?.getIntExtra(EXTRA_SESSION_ID, NO_SESSION_ID) ?: NO_SESSION_ID
-        if (sessionId == NO_SESSION_ID && action != ACTION_PROMPT_NEW_PARK) {
-            stopSelf(startId)
-            return START_NOT_STICKY
-        }
 
+        // Aggiorna o avvia il Foreground Service prima di elaborare le azioni
         startOrUpdateForeground(action, sessionId)
 
         when (action) {
@@ -84,7 +81,7 @@ class RouteTrackingService : Service() {
     }
 
     private fun handlePromptNewPark() {
-        NotificationsHelper.cancelNotification(this, NotificationsHelper.TRANSITION_NOTIFICATION_ID)
+        NotificationsHelper.cancelTransitionNotification(this)
     }
 
     private fun startOrUpdateForeground(action: String?, sessionId: Int) {
@@ -167,7 +164,7 @@ class RouteTrackingService : Service() {
     @RequiresPermission(Manifest.permission.ACTIVITY_RECOGNITION)
     private suspend fun cleanup(sessionId: Int, startId: Int) {
         activityRecognition.stop(sessionId)
-        NotificationsHelper.cancelNotification(this)
+        NotificationsHelper.cancelTrackingNotification(this) // <- Cancella SPECIFICATAMENTE la 7201!
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         stopSelf(startId)
     }

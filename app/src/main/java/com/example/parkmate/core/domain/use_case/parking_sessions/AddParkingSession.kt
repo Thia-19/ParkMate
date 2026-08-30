@@ -6,7 +6,6 @@ import javax.inject.Inject
 
 class AddParkingSession @Inject constructor(private val repository: ParkingSessionRepository){
     suspend operator fun invoke(parkingSession: ParkingSession){
-        // TODO: Eccezione per invalid parking Session
         repository.insertParkingSession(parkingSession)
     }
 }

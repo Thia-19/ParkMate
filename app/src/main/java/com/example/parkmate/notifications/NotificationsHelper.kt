@@ -21,6 +21,15 @@ import com.example.parkmate.service.receiver.RouteTrackingActionReceiver
 import com.example.parkmate.service.RouteTrackingService
 object NotificationsHelper {
 
+    // Expiry Alerts: fixed tickets
+    const val PARKING_EXPIRY_CHANNEL_ID = "parking_expiry_channel"
+    const val PARKING_EXPIRY_NOTIFICATION_ID_BASE = 5_000
+
+    // Ongoing parkings
+    const val ONGOING_PARKING_CHANNEL_ID = "ongoing_parking_channel"
+    const val ONGOING_PARKING_NOTIFICATION_ID = 6_000
+
+    // Activity Recognition: parking effort
     const val CHANNEL_ID = "route_tracking_channel"
     const val NOTIFICATION_ID = 7_201
     const val SAVED_ROUTE_NOTIFICATION_ID = 7_202
@@ -61,9 +70,50 @@ object NotificationsHelper {
         }
     }
 
+    fun createParkingExpiryNotificationChannel(context: Context){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Avvisi scadenza parcheggi"
+            val descriptionText = "Notifiche per pre-scadenza e scadenza dei ticketz"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(PARKING_EXPIRY_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+                enableVibration(true)
+            }
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    fun createOngoingParkingNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                ONGOING_PARKING_CHANNEL_ID,
+                "Promemoria Parcheggio Attivo",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Notifiche periodiche sullo stato del parcheggio attivo"
+                setShowBadge(false)
+            }
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     // Cancel
-    fun cancelNotification(context: Context, notificationId: Int = TRANSITION_NOTIFICATION_ID) {
-        NotificationManagerCompat.from(context).cancel(notificationId)
+    // In NotificationsHelper.kt
+
+    // 1. Cancella la notifica di transizione veicolo->pedone (Home)
+    fun cancelTransitionNotification(context: Context) {
+        NotificationManagerCompat.from(context).cancel(TRANSITION_NOTIFICATION_ID)
+    }
+
+    fun cancelOngoingParkingNotification(context: Context) {
+        NotificationManagerCompat.from(context).cancel(ONGOING_PARKING_NOTIFICATION_ID)
+    }
+
+    // 2. Cancella la notifica del tracciamento percorso
+    fun cancelTrackingNotification(context: Context) {
+        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
     }
 
     // Notification builds
@@ -130,6 +180,32 @@ object NotificationsHelper {
                 context.getString(R.string.home_AR_dismiss),
                 createDismissPendingIntent(context)
             )
+            .build()
+    }
+
+    fun buildOngoingParkingNotification(
+        context: Context,
+        title: String,
+        contentText: String
+    ): Notification {
+        createOngoingParkingNotificationChannel(context)
+
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            ONGOING_PARKING_NOTIFICATION_ID,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return NotificationCompat.Builder(context, ONGOING_PARKING_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_park)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setContentIntent(pendingIntent)
             .build()
     }
 
@@ -220,13 +296,62 @@ object NotificationsHelper {
         createTransitionNotificationChannel(context)
 
         val notification = buildVehicleTransitionNotification(context, hasActiveSessions)
-
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
         ) {
             NotificationManagerCompat.from(context).notify(TRANSITION_NOTIFICATION_ID, notification)
+        }
+    }
+
+    fun showExpiryNotification(
+        context: Context,
+        notificationId: Int,
+        title: String,
+        content: String
+    ){
+        createParkingExpiryNotificationChannel(context)
+
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, PARKING_EXPIRY_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_parking_marker)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notificationId, notification)
+    }
+
+    fun showOngoingParkingNotification(
+        context: Context,
+        title: String,
+        contentText: String
+    ) {
+        val notification = buildOngoingParkingNotification(context, title, contentText)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        ) {
+            NotificationManagerCompat.from(context).notify(
+                ONGOING_PARKING_NOTIFICATION_ID,
+                notification
+            )
         }
     }
 }

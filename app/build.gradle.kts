@@ -60,6 +60,10 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
+    // Hilt WorkManager Integration (NUOVE RIGHE)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
     // Manage images
     implementation("io.coil-kt:coil-compose:2.6.0")
 

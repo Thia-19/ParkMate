@@ -2,6 +2,7 @@ package com.example.parkmate.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.example.parkmate.core.data.local.data_source.ParkMateDatabase
 import com.example.parkmate.core.data.local.data_source.ParkingEffortDao
 import com.example.parkmate.core.data.local.data_source.ParkingSessionDao
@@ -72,6 +73,14 @@ object AppModule {
     @Singleton
     fun provideParkingEffortDao(db: ParkMateDatabase): ParkingEffortDao {
         return db.parkingEffortDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(
+        @ApplicationContext context: Context
+    ): WorkManager {
+        return WorkManager.getInstance(context)
     }
 
 }

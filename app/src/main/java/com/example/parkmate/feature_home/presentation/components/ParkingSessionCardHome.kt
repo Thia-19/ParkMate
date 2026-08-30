@@ -40,15 +40,56 @@ fun ParkingSessionCardHome(
     onClick: (ParkingSession) -> Unit,
     modifier: Modifier = Modifier
 ){
+    val isExpired = item.session.parkingType == ParkingType.FIXED_TICKET &&
+            item.session.expiryTime != null &&
+            item.session.expiryTime < System.currentTimeMillis()
+
+    val containerColor = if (isExpired) {
+        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    }
+
+    val contentColor = if (isExpired) {
+        MaterialTheme.colorScheme.onErrorContainer
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    val vehicleIconContainer = if (isExpired) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.primaryContainer
+    }
+
+    val vehicleIconTint = if (isExpired) {
+        MaterialTheme.colorScheme.onError
+    } else {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    }
+
+    val badgeContainer = if (isExpired) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.secondaryContainer
+    }
+
+    val badgeTint = if (isExpired) {
+        MaterialTheme.colorScheme.onError
+    } else {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    }
+
     Card(
         onClick = { onClick(item.session) },
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            containerColor = containerColor,
+            contentColor = contentColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Un look flat moderno spesso funziona meglio
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         shape = MaterialTheme.shapes.medium
     ) {
         Row(
@@ -60,7 +101,7 @@ fun ParkingSessionCardHome(
         ) {
             Surface(
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = vehicleIconContainer,
                 modifier = Modifier.size(56.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -73,7 +114,7 @@ fun ParkingSessionCardHome(
                     Icon(
                         imageVector = icon,
                         contentDescription = item.vehicleType.name,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        tint = vehicleIconTint,
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -88,16 +129,36 @@ fun ParkingSessionCardHome(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = item.vehicleName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = item.vehicleName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = contentColor
+                        )
+
+                        if (isExpired) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.error,
+                                shape = MaterialTheme.shapes.extraSmall,
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.home_expired_badge),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onError,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
 
                     Surface(
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        color = badgeContainer,
                         modifier = Modifier.size(32.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -108,16 +169,17 @@ fun ParkingSessionCardHome(
                             Icon(
                                 imageVector = parkingIcon,
                                 contentDescription = item.session.parkingType.name,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                tint = badgeTint,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
                     }
                 }
+
                 Text(
-                    text = stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}",
+                    text = stringResource(R.string.start_date) + ": ${formatTimestamp(item.session.startTime)}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = contentColor.copy(alpha = 0.8f)
                 )
             }
         }

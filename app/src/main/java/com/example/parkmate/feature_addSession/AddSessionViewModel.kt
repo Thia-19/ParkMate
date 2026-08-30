@@ -101,6 +101,13 @@ class AddSessionViewModel @Inject constructor(
             AddSessionEvent.FetchLocationRequested -> {
                 fetchLocationIfEnabled()
             }
+            is AddSessionEvent.OnNotificationToggleChanged -> {
+                _state.update { it.copy(isNotificationEnabled = event.isEnabled) }
+            }
+            is AddSessionEvent.OnExpiryNotificationToggleChanged -> {
+                _state.update { it.copy(isNotificationExpiryEnabled = event.isExpiryEnabled) }
+            }
+
             AddSessionEvent.OnSaveSession -> {
                 saveSession()
             }
@@ -180,7 +187,11 @@ class AddSessionViewModel @Inject constructor(
                     finalCost = null
                 )
 
-                useCases.startSessionCloseActive(newSession)
+                useCases.startSessionCloseActive(
+                    newSession = newSession,
+                    isNotificationEnabled = currentState.isNotificationEnabled,
+                    isNotificationExpiryEnabled = currentState.isNotificationExpiryEnabled
+                )
 
                 _state.update { it.copy(isLoading = false, isSaved = true) }
             } catch (e: Exception) {

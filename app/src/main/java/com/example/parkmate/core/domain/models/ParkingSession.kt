@@ -1,5 +1,8 @@
 package com.example.parkmate.core.domain.models
 
+import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -58,17 +61,38 @@ data class ParkingSession(
             ParkingType.FREE -> 0.0
         }
     }
-}
 
-fun ParkingSession.calculateFinalCost(endTime: Long = System.currentTimeMillis()): Double {
-    return when (this.parkingType) {
-        ParkingType.FREE -> 0.0
-        ParkingType.FIXED_TICKET -> this.fixedCost ?: 0.0
-        ParkingType.HOURLY_PAID -> {
-            val rate = this.hourlyRate ?: 0.0
-            val durationInMillis = (endTime - this.startTime).coerceAtLeast(0L)
-            val hours = durationInMillis.toDouble() / (1000 * 60 * 60)
-            hours * rate
+    fun getOngoingReminderMessage(
+        context: Context,
+        currentTime: Long = System.currentTimeMillis()
+    ): Pair<String, String> {
+        val durationMs = currentTime - startTime
+        val hours = durationMs / (1000 * 60 * 60)
+        val minutes = (durationMs / (1000 * 60)) % 60
+
+        val elapsedTimeString = when {
+            hours > 0 -> "${hours}h ${minutes}m"
+            else -> "${minutes}m"
         }
+
+        val title = "${context.getString(R.string.notifications_title_alert)} ($elapsedTimeString)"
+
+        val content = when (parkingType) {
+            ParkingType.HOURLY_PAID -> {
+                val estimatedCost = calculateFinalCost(currentTime)
+                val costString = String.format("%.2f €", estimatedCost)
+                "${context.getString(R.string.home_elapsed_time)}: $elapsedTimeString • ${context.getString(R.string.home_accumulated_cost)}: $costString"
+            }
+            ParkingType.FIXED_TICKET -> {
+                val remainingMs = (expiryTime ?: currentTime) - currentTime
+                val remMinutes = maxOf(0L, remainingMs / (1000 * 60))
+                "${context.getString(R.string.home_elapsed_time)}: $elapsedTimeString • ${context.getString(R.string.notifications_remaining_time)}: ${remMinutes}m"
+            }
+            ParkingType.FREE -> {
+                "${context.getString(R.string.home_elapsed_time)}: $elapsedTimeString ${context.getString(R.string.home_free_parking)}"
+            }
+        }
+
+        return Pair(title, content)
     }
 }

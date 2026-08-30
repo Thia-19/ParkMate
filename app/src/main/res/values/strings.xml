@@ -35,6 +35,13 @@
     <string name="home_delete_alert_desc">Are you sure you want to delete this parking session? This action cannot be undone.</string>
     <string name="home_expired">Parking expired</string>
     <string name="home_expires">Expires in</string>
+    <string name="home_expired_badge">EXPIRED</string>
+
+    <!-- Add Session -->
+    <string name="add_session_notification">Enable notification reminders</string>
+    <string name="add_session_notification_desc">Receive periodic updates on time and accumulated cost.</string>
+    <string name="add_session_notification_expiry">Enable expiry reminders</string>
+    <string name="add_session_notification_expiry_desc">Receive an alert ten minutes before a fixed ticket is about to expiry and an alert the exact time of the expiration</string>
 
     <!-- Home notifications -->
     <string name="home_AR_title">Transaction completed!</string>
@@ -107,8 +114,16 @@
     <string name="route_tracking_start_failed">Impossibile avviare il calcolo del percorso.</string>
 
     <!-- Settings -->
-    <string name="settings_position">Position</string>
-    <string name="settings_enable_position">Enable current position acquisition?</string>
+    <string name="settings_position">Enable current position acquisition</string>
+    <string name="settings_enable_position">Allow ParkMate to access your real-time location. This is recommended if you wish to record parking sessions linked to your current GPS location or use the parking session feature.</string>
     <string name="settings_AR">Activity Recognition</string>
     <string name="settings_AR_enable">Enable activity recognition for parking sessions</string>
+
+    <!-- Notifications -->
+    <string name="notifications_expired">Ticket expired!</string>
+    <string name="notifications_expired_desc">The ticket for the vehicle has just expired. Renew it to avoid financial penalties.</string>
+    <string name="notifications_expiry">Ticket expiry</string>
+    <string name="notifications_expiry_desc">The ticket for the vehicle will soon expire!</string>
+    <string name="notifications_remaining_time">Remaining time</string>
+    <string name="notifications_title_alert">Ongoing parking session</string>
 </resources>

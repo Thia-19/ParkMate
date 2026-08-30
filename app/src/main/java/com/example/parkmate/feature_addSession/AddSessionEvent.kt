@@ -22,4 +22,8 @@ sealed interface AddSessionEvent {
     // Position handling
     data class OnPositionFetched(val position: Position) : AddSessionEvent
     data object FetchLocationRequested : AddSessionEvent
+
+    // Notifications
+    data class OnNotificationToggleChanged(val isEnabled: Boolean) : AddSessionEvent
+    data class OnExpiryNotificationToggleChanged(val isExpiryEnabled: Boolean) : AddSessionEvent
 }
