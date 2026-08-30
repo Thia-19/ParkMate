@@ -20,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.SavedLocation
 import kotlin.collections.forEach
 
@@ -34,7 +36,7 @@ fun SavedLocationsDropdownSelector(
     var expanded by remember { mutableStateOf(false) }
     val selectedLocation = locations.find { it.id == selectedLocationId }
 
-    val textToShow = selectedLocation?.name ?: "Current Position (GPS)"
+    val textToShow = selectedLocation?.name ?: stringResource(R.string.add_session_current_position)
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -45,7 +47,7 @@ fun SavedLocationsDropdownSelector(
             value = textToShow,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Select Saved Location") },
+            label = { Text(stringResource(R.string.add_session_saved_location)) },
             leadingIcon = {
                 Icon(
                     imageVector = if (selectedLocationId == null) Icons.Default.MyLocation else Icons.Default.Place,
@@ -66,7 +68,7 @@ fun SavedLocationsDropdownSelector(
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Current Position (GPS)") },
+                text = { Text(stringResource(R.string.add_session_current_position)) },
                 onClick = {
                     onLocationSelected(null)
                     expanded = false

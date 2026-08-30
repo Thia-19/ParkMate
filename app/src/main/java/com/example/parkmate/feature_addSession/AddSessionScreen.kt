@@ -222,7 +222,7 @@ private fun AddSessionContent (
             TopAppBar(
                 title = {
                     Text(
-                        text = "Open Parking Session",
+                        text = stringResource(R.string.add_session_title),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -256,7 +256,7 @@ private fun AddSessionContent (
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text(text = "Save", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.add_session_save), style = MaterialTheme.typography.titleMedium)
                     }
                 }
             }
@@ -271,7 +271,7 @@ private fun AddSessionContent (
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = "Vehicle",
+                text = stringResource(R.string.add_session_vehicle),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -287,7 +287,7 @@ private fun AddSessionContent (
             HorizontalDivider()
 
             Text(
-                text = "Position",
+                text = stringResource(R.string.add_session_position),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -305,7 +305,7 @@ private fun AddSessionContent (
             )
 
             Text(
-                text = "Or adjust current position via map interface",
+                text = stringResource(R.string.add_session_adjust_position),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold
             )
@@ -316,7 +316,6 @@ private fun AddSessionContent (
                     .height(300.dp),
                 cameraPositionState = cameraPositionState,
                 onMapClick = { latLng ->
-                    // Notifica il ViewModel quando l'utente clicca sulla mappa
                     onEvent(
                         AddSessionEvent.OnCustomPositionSelected(
                             Position(latLng.latitude, latLng.longitude)
@@ -331,7 +330,7 @@ private fun AddSessionContent (
             }
 
             Text(
-                text = "If no location is selected, this parking session's location will be associated to your current position",
+                text = stringResource(R.string.add_session_position_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -339,7 +338,7 @@ private fun AddSessionContent (
             HorizontalDivider()
 
             Text(
-                text = "Parking Type",
+                text = stringResource(R.string.add_session_parking_type),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -360,7 +359,7 @@ private fun AddSessionContent (
                             val rate = value.toDoubleOrNull()
                             onEvent(AddSessionEvent.OnHourlyRateChanged(rate))
                         },
-                        label = { Text("Hourly rate (€/h)") },
+                        label = { Text(stringResource(R.string.add_session_hourly_rate)) },
                         leadingIcon = { Icon(Icons.Default.Euro, contentDescription = null) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
@@ -376,7 +375,7 @@ private fun AddSessionContent (
                                 val cost = value.toDoubleOrNull()
                                 onEvent(AddSessionEvent.OnFixedCostChanged(cost))
                             },
-                            label = { Text("Fixed ticket cost (€)") },
+                            label = { Text(stringResource(R.string.add_session_fixed)) },
                             leadingIcon = { Icon(Icons.Default.Euro, contentDescription = null) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             singleLine = true,
@@ -388,7 +387,7 @@ private fun AddSessionContent (
                                 value = formatTimestampToTime(state.expiryTime),
                                 onValueChange = {},
                                 readOnly = true,
-                                label = { Text("Expiry time") },
+                                label = { Text(stringResource(R.string.add_session_expiry_time)) },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Schedule,
@@ -417,7 +416,7 @@ private fun AddSessionContent (
 
                 ParkingType.FREE -> {
                     Text(
-                        text = "No rate required.",
+                        text = stringResource(R.string.add_session_free),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -427,11 +426,10 @@ private fun AddSessionContent (
             HorizontalDivider()
 
             Text(
-                text = "Additional information",
+                text = stringResource(R.string.add_session_additional_info),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(modifier = Modifier.height(4.dp))
 
             if (state.photoUri != null) {
                 Box(
@@ -463,7 +461,7 @@ private fun AddSessionContent (
                 ) {
                     Icon(imageVector = Icons.Default.AddAPhoto, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Take a picture")
+                    Text(stringResource(R.string.add_session_take_pic))
                 }
             }
 
@@ -472,13 +470,19 @@ private fun AddSessionContent (
                 onValueChange = { newNote ->
                     onEvent(AddSessionEvent.OnNoteChanged(newNote))
                 },
-                label = { Text("Note (e.g. First floor, seat 67)") },
+                label = { Text(stringResource(R.string.add_session_note)) },
                 minLines = 3,
                 maxLines = 5,
                 modifier = Modifier.fillMaxWidth()
             )
 
             HorizontalDivider()
+
+            Text(
+                text = stringResource(R.string.add_session_notifications),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
 
             Card(
                 colors = CardDefaults.cardColors(
@@ -514,8 +518,6 @@ private fun AddSessionContent (
                     )
                 }
             }
-
-            HorizontalDivider()
 
             if (state.parkingType == ParkingType.FIXED_TICKET) {
                 showExpiryCard(

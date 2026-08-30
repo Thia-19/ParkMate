@@ -1,5 +1,13 @@
 <resources>
-    <string name="app_name">ParkMate</string>
+    <string name="app_name" translatable="false">ParkMate</string>
+
+    <!-- features -->
+    <string name="feature_home" translatable="false">Home</string>
+    <string name="feature_vehicles">Vehicles</string>
+    <string name="feature_effort" translatable="false">Effort</string>
+    <string name="feature_history">History</string>
+    <string name="feature_settings">Settings</string>
+    <string name="feature_saved_locations" translatable="false">Saved Locations</string>
 
     <string name="parking_type_free">Free Parking</string>
     <string name="parking_type_hourly">Hourly Paid</string>
@@ -38,11 +46,32 @@
     <string name="home_expired_badge">EXPIRED</string>
 
     <!-- Add Session -->
+    <string name="add_session_title">Open a Parking Session</string>
+    <string name="add_session_save">Save</string>
+
+    <string name="add_session_vehicle">Vehicle</string>
+    <string name="add_session_position">Position</string>
+    <string name="add_session_adjust_position">Or adjust position via map interface</string>
+    <string name="add_session_position_desc">If no location is selected, this parking session\'s location will be associated to your current position</string>
+    <string name="add_session_current_position">Current Position (GPS)</string>
+    <string name="add_session_saved_location">Select Location</string>
+    <string name="add_session_parking_type">Parking Type</string>
+    <string name="add_session_hourly_rate">Hourly rate (€/h)</string>
+    <string name="add_session_fixed">Fixed ticket cost (€)</string>
+    <string name="add_session_expiry_time">Expiry time</string>
+    <string name="add_session_free">No rate required.</string>
+
+    <string name="add_session_additional_info">Additional information</string>
+    <string name="add_session_take_pic">Take a picture</string>
+    <string name="add_session_note">Note (e.g. First floor, seat 67)</string>
+
+    <string name="add_session_notifications">Notifications</string>
     <string name="add_session_notification">Enable notification reminders</string>
     <string name="add_session_notification_desc">Receive periodic updates on time and accumulated cost.</string>
     <string name="add_session_notification_expiry">Enable expiry reminders</string>
     <string name="add_session_notification_expiry_desc">Receive an alert ten minutes before a fixed ticket is about to expiry and an alert the exact time of the expiration</string>
 
+    <string name="add_session_date_picker_hour">Select expiry hour</string>
     <!-- Home notifications -->
     <string name="home_AR_title">Transaction completed!</string>
     <string name="home_AR_action">You are on foot: do you want to manage or end one of your active parking sessions, or start a new one?</string>
@@ -90,33 +119,33 @@
     <string name="history_vehicle_expense">Total vehicle expenses</string>
 
     <!-- Feature: Parking Effort -->
-    <string name="pe_tab_leaderboard">Classifica</string>
-    <string name="pe_tab_score">Punteggio</string>
+    <string name="pe_tab_leaderboard" translatable="false">Classifica</string>
+    <string name="pe_tab_score" translatable="false">Punteggio</string>
 
-    <string name="pe_dialog_yes">Sì</string>
-    <string name="pe_dialog_no">No</string>
-    <string name="pe_dialog_dest_icon_desc">Posizione destinazione</string>
-    <string name="pe_dialog_dest_title">Nuova destinazione</string>
-    <string name="pe_dialog_dest_message">Vuoi raggiungere questa destinazione?</string>
+    <string name="pe_dialog_yes" translatable="false">Sì</string>
+    <string name="pe_dialog_no" translatable="false">No</string>
+    <string name="pe_dialog_dest_icon_desc" translatable="false">Posizione destinazione</string>
+    <string name="pe_dialog_dest_title" translatable="false">Nuova destinazione</string>
+    <string name="pe_dialog_dest_message" translatable="false">Vuoi raggiungere questa destinazione?</string>
 
-    <string name="start_route_calculation_title">Vuoi iniziare il calcolo del percorso?</string>
-    <string name="start_route_calculation_message">Al termine del percorso potrai contribuire al punteggio di questa zona di parcheggio.</string>
-    <string name="start_route_calculation_no">No</string>
-    <string name="start_route_calculation_yes">Sì</string>
+    <string name="start_route_calculation_title" translatable="false">Vuoi iniziare il calcolo del percorso?</string>
+    <string name="start_route_calculation_message" translatable="false">Al termine del percorso potrai contribuire al punteggio di questa zona di parcheggio.</string>
+    <string name="start_route_calculation_no" translatable="false">No</string>
+    <string name="start_route_calculation_yes" translatable="false">Sì</string>
 
-    <string name="route_tracking_channel_name">Calcolo percorso</string>
-    <string name="route_tracking_channel_description">Mostra il calcolo del percorso dopo il parcheggio.</string>
-    <string name="route_tracking_notification_title">Calcolo del percorso attivo</string>
-    <string name="route_tracking_notification_message">Tocca “Sono arrivato” quando raggiungi la destinazione.</string>
-    <string name="route_tracking_arrived">Sono arrivato</string>
-    <string name="route_tracking_cancel">Annulla</string>
-    <string name="route_tracking_permissions_required">Sono necessarie le autorizzazioni per posizione, attività e notifiche.</string>
-    <string name="route_tracking_start_failed">Impossibile avviare il calcolo del percorso.</string>
+    <string name="route_tracking_channel_name" translatable="false">Calcolo percorso</string>
+    <string name="route_tracking_channel_description" translatable="false">Mostra il calcolo del percorso dopo il parcheggio.</string>
+    <string name="route_tracking_notification_title" translatable="false">Calcolo del percorso attivo</string>
+    <string name="route_tracking_notification_message" translatable="false">Tocca “Sono arrivato” quando raggiungi la destinazione.</string>
+    <string name="route_tracking_arrived" translatable="false">Sono arrivato</string>
+    <string name="route_tracking_cancel" translatable="false">Annulla</string>
+    <string name="route_tracking_permissions_required" translatable="false">Sono necessarie le autorizzazioni per posizione, attività e notifiche.</string>
+    <string name="route_tracking_start_failed" translatable="false">Impossibile avviare il calcolo del percorso.</string>
 
     <!-- Settings -->
     <string name="settings_position">Enable current position acquisition</string>
     <string name="settings_enable_position">Allow ParkMate to access your real-time location. This is recommended if you wish to record parking sessions linked to your current GPS location or use the parking session feature.</string>
-    <string name="settings_AR">Activity Recognition</string>
+    <string name="settings_AR" translatable="false">Activity Recognition</string>
     <string name="settings_AR_enable">Enable activity recognition for parking sessions</string>
 
     <!-- Notifications -->

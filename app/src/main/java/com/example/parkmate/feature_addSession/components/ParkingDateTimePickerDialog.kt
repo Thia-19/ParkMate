@@ -23,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -57,12 +59,12 @@ fun ParkingDateTimePickerDialog(
                     onClick = { showTimePicker = true },
                     enabled = datePickerState.selectedDateMillis != null
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.OK))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text("Undo")
+                    Text(stringResource(R.string.undo))
                 }
             }
         ) {
@@ -79,7 +81,7 @@ fun ParkingDateTimePickerDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Select expiry hour",
+                        text = stringResource(R.string.add_session_date_picker_hour),
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier
                             .align(Alignment.Start)
@@ -95,7 +97,7 @@ fun ParkingDateTimePickerDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = { showTimePicker = false }) {
-                            Text("Undo")
+                            Text(stringResource(R.string.undo))
                         }
                         TextButton(
                             onClick = {
@@ -118,7 +120,7 @@ fun ParkingDateTimePickerDialog(
                                 onDateTimeSelected(finalCalendar.timeInMillis)
                             }
                         ) {
-                            Text("OK")
+                            Text(stringResource(R.string.OK))
                         }
                     }
                 }

@@ -39,6 +39,7 @@ fun ParkingSessionsMapSection(
     modifier: Modifier = Modifier
 ){
     var selectedTimeRange by remember { mutableStateOf(TimeRange.ALL_TIME) }
+    val defaultPosition = LatLng(44.4939, 11.3428)
     val filteredPoints = remember (state.allSessions, selectedTimeRange){
         val startTimestamp = selectedTimeRange.getStartTimestamp()
 
@@ -72,7 +73,7 @@ fun ParkingSessionsMapSection(
         }
     }
 
-    val cameraPositionState = rememberCameraPositionState()
+    val cameraPositionState = rememberCameraPositionState{defaultPosition}
 
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(

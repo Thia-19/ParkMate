@@ -6,6 +6,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.example.parkmate.ui.navigation.TopLevelRoute
 import com.example.parkmate.ui.navigation.bottomBarItems
 
@@ -31,11 +32,11 @@ fun AppBottomBar(
                 icon = {
                     Icon(
                         imageVector = item.icon,
-                        contentDescription = item.label
+                        contentDescription = null
                     )
                 },
                 label = {
-                    Text(text = item.label)
+                    Text(text = stringResource(id = item.labelRes))
                 }
             )
         }
