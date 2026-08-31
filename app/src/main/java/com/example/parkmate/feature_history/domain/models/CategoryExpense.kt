@@ -1,6 +1,8 @@
 package com.example.parkmate.feature_history.domain.models
 
+import android.content.Context
 import androidx.compose.ui.graphics.Color
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 
@@ -12,7 +14,7 @@ data class CategoryExpense(
     val color: Color
 )
 
-fun List<ParkingSessionWithVehicleInfo>.aggregateByCategory(): List<CategoryExpense>{
+fun List<ParkingSessionWithVehicleInfo>.aggregateByCategory(context: Context): List<CategoryExpense>{
     val paidSessions = this.filter { it.session.finalCost != 0.0 }
     val total = paidSessions.sumOf { it.session.finalCost ?: 0.0 }
 
@@ -24,10 +26,16 @@ fun List<ParkingSessionWithVehicleInfo>.aggregateByCategory(): List<CategoryExpe
             val cost = sessions.sumOf { it.session.finalCost ?: 0.0 }
             if (cost <= 0) return@mapNotNull null
 
-            val (label, color) = when (type) {
-                ParkingType.HOURLY_PAID -> "Hourly Paid" to Color(0xFF1E88E5)
-                ParkingType.FIXED_TICKET -> "Fixed Ticket" to Color(0xFFFB8C00)
-                ParkingType.FREE -> "Free" to Color(0xFF4CAF50)
+            val label = when (type) {
+                ParkingType.HOURLY_PAID -> context.getString(R.string.parking_type_hourly)
+                ParkingType.FIXED_TICKET -> context.getString(R.string.parking_type_fixed)
+                ParkingType.FREE -> context.getString(R.string.parking_type_free)
+            }
+
+            val color = when (type) {
+                ParkingType.HOURLY_PAID -> Color(0xFF1E88E5)
+                ParkingType.FIXED_TICKET -> Color(0xFFFB8C00)
+                ParkingType.FREE -> Color(0xFF4CAF50)
             }
 
             CategoryExpense(

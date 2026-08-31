@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -82,18 +81,21 @@ fun SavedLocationsScreen(
             }
         }
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.40f)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp
+
+        if(state.locations.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.40f)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp
+                        )
                     )
-                )
-                .background(MaterialTheme.colorScheme.inversePrimary.copy(alpha=0.5f))
-        )
+                    .background(MaterialTheme.colorScheme.inversePrimary.copy(alpha = 0.5f))
+            )
+        }
 
         SavedLocationContent(
             locations = state.locations,

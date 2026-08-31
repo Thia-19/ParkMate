@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.use_case.parking_sessions.ParkingSessionsUseCases
 import com.example.parkmate.core.domain.use_case.saved_locations.SavedLocationUseCases
 import com.example.parkmate.core.preferences.domain.use_case.SettingsUseCases
-import com.example.parkmate.notifications.NotificationsHelper
 import com.example.parkmate.permissions.RouteTrackingPermissions
 import com.example.parkmate.service.activity_recognition.VehicleToPedestrianActivityRecognitionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,15 +66,14 @@ class HomeViewModel @Inject constructor(
                     try {
                         vehicleActivityRecognitionManager.startMonitoring()
                     } catch (e: SecurityException) {
-                        Log.e("HomeViewModel", "Permessi insufficienti per startMonitoring", e)
+                        Log.e("HomeViewModel", "No permissions x startMonitoring", e)
                     }
                 } else {
-                    // Per lo stop, invochiamo solo se abbiamo il permesso o gestiamo l'eccezione se revoked
                     if (hasPermission) {
                         try {
                             vehicleActivityRecognitionManager.stopMonitoring()
                         } catch (e: SecurityException) {
-                            Log.e("HomeViewModel", "Permessi insufficienti per stopMonitoring", e)
+                            Log.e("HomeViewModel", "No x permissions startMonitoring", e)
                         }
                     }
                 }
@@ -102,7 +100,7 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.OnSessionClick -> {
                 viewModelScope.launch {
-                    // to do
+
                 }
             }
         }

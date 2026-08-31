@@ -1,7 +1,6 @@
 package com.example.parkmate.feature_home.util
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat

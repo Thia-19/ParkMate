@@ -13,7 +13,6 @@ import com.example.parkmate.feature_home.HomeScreen
 import com.example.parkmate.feature_parkingEffort.screens.ParkingEffortMapScreen
 import com.example.parkmate.feature_settings.SettingsScreen
 import com.example.parkmate.feature_vehiclesManager.screens.DisplayVehiclesScreen
-import com.example.parkmate.feature_savedLocations.SavedLocationsEvent
 import com.example.parkmate.feature_savedLocations.SavedLocationsScreen
 import com.example.parkmate.feature_savedLocations.SavedLocationsViewModel
 

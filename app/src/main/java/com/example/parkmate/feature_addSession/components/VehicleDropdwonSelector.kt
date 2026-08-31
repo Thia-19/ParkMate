@@ -17,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.parkmate.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,8 +40,8 @@ fun VehicleDropdownSelector(
             value = selectedVehicle?.name ?: "",
             onValueChange = {},
             readOnly = true,
-            label = { Text("Select Vehicle") },
-            placeholder = { Text("Choose a vehicle...") },
+            label = { Text(stringResource(R.string.add_session_select_vehicle)) },
+            placeholder = { Text(stringResource(R.string.add_session_choose_a_vehicle)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.DirectionsCar,
@@ -61,7 +63,7 @@ fun VehicleDropdownSelector(
         ) {
             if (vehicles.isEmpty()) {
                 DropdownMenuItem(
-                    text = { Text("No saved vehicle") },
+                    text = { Text(stringResource(R.string.add_session_no_saved_vehicle)) },
                     onClick = { expanded = false },
                     enabled = false
                 )

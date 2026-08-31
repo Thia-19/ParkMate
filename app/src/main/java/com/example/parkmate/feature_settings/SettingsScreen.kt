@@ -98,16 +98,6 @@ private fun SettingsContent(
                     }
                 }
             )
-        },
-        bottomBar = {
-            val context = LocalContext.current
-
-            Surface(
-                tonalElevation = 3.dp,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-            }
         }
     ) { paddingValues ->
         Column(
@@ -154,7 +144,6 @@ private fun SettingsContent(
             }
 
             HorizontalDivider()
-            Spacer(modifier = Modifier.height(6.dp))
 
             Card(
                 colors = CardDefaults.cardColors(

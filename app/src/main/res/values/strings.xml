@@ -50,6 +50,9 @@
     <string name="add_session_save">Save</string>
 
     <string name="add_session_vehicle">Vehicle</string>
+    <string name="add_session_select_vehicle">Select Vehicle</string>
+    <string name="add_session_choose_a_vehicle">Choose a vehicle...</string>
+    <string name="add_session_no_saved_vehicle">No saved vehicle</string>
     <string name="add_session_position">Position</string>
     <string name="add_session_adjust_position">Or adjust position via map interface</string>
     <string name="add_session_position_desc">If no location is selected, this parking session\'s location will be associated to your current position</string>
@@ -72,6 +75,8 @@
     <string name="add_session_notification_expiry_desc">Receive an alert ten minutes before a fixed ticket is about to expiry and an alert the exact time of the expiration</string>
 
     <string name="add_session_date_picker_hour">Select expiry hour</string>
+    <string name="add_session_toast">Parking Session saved with no notification</string>
+
     <!-- Home notifications -->
     <string name="home_AR_title">Transaction completed!</string>
     <string name="home_AR_action">You are on foot: do you want to manage or end one of your active parking sessions, or start a new one?</string>
@@ -117,6 +122,14 @@
     <string name="history_sessions_month">Number of sessions per month</string>
     <string name="history_sessions_month_alt">No completed parking sessions recorded</string>
     <string name="history_vehicle_expense">Total vehicle expenses</string>
+    <string name="history_KPI">Key Perfomance Indicators</string>
+    <string name="history_KPI_average_expense">Average Expense</string>
+    <string name="history_KPI_average_duraion">Average Duration</string>
+    <string name="history_KPI_vehicle">Most used vehicle</string>
+    <string name="history_KPI_parking_type">Favourite Parking Type</string>
+    <string name="history_last_month">Last Month</string>
+    <string name="history_last_6">Last 6 Months</string>
+    <string name="history_all_time">All time</string>
 
     <!-- Feature: Parking Effort -->
     <string name="pe_tab_leaderboard" translatable="false">Classifica</string>
@@ -146,7 +159,7 @@
     <string name="settings_position">Enable current position acquisition</string>
     <string name="settings_enable_position">Allow ParkMate to access your real-time location. This is recommended if you wish to record parking sessions linked to your current GPS location or use the parking session feature.</string>
     <string name="settings_AR" translatable="false">Activity Recognition</string>
-    <string name="settings_AR_enable">Enable activity recognition for parking sessions</string>
+    <string name="settings_AR_enable">Enable activity recognition for parking sessions. By enabling this option, ParkMate will be able to track you physical activity, prompting you through notifications to handle you parking sessions.</string>
 
     <!-- Notifications -->
     <string name="notifications_expired">Ticket expired!</string>

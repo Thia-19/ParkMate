@@ -7,7 +7,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.example.parkmate.feature_history.presentation.HistoryEvent
 import com.example.parkmate.feature_history.presentation.HistoryState
 import com.google.maps.android.compose.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -28,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.feature_history.domain.models.TimeRange
 import com.example.parkmate.feature_history.presentation.parking_sessions_map.components.TimeRangeSelector
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.heatmaps.Gradient
 import com.google.maps.android.compose.*
 
@@ -35,7 +35,6 @@ import com.google.maps.android.compose.*
 @Composable
 fun ParkingSessionsMapSection(
     state: HistoryState,
-    onEvent: (HistoryEvent) -> Unit,
     modifier: Modifier = Modifier
 ){
     var selectedTimeRange by remember { mutableStateOf(TimeRange.ALL_TIME) }
@@ -73,7 +72,9 @@ fun ParkingSessionsMapSection(
         }
     }
 
-    val cameraPositionState = rememberCameraPositionState{defaultPosition}
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(defaultPosition, 12f)
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(
@@ -101,7 +102,6 @@ fun ParkingSessionsMapSection(
                 }
             )
 
-            // no parkings
             if (filteredPoints.isEmpty()) {
                 Surface(
                     modifier = Modifier.padding(16.dp),

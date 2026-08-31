@@ -13,10 +13,8 @@ data class AddSessionState(
     val parkingType: ParkingType = ParkingType.FREE,
     val position: Position? = null,
 
-    // HOURLY PAID
     val hourlyRate: Double? = null,
-
-    // FIXED TICKET
+    
     val fixedCost: Double? = null,
     val expiryTime: Long? = null,
 

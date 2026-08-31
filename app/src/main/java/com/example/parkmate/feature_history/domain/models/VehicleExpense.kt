@@ -10,7 +10,6 @@ data class VehicleExpense(
     val color: Color
 )
 
-// i colori secondo me andranno poi messi nel res
 val VehiclePalette = listOf(
     Color(0xFF4285F4),
     Color(0xFFEA4335),

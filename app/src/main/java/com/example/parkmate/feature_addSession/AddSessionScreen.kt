@@ -2,10 +2,9 @@ package com.example.parkmate.feature_addSession
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Build
-import android.text.format.DateUtils
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -51,7 +50,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,7 +72,6 @@ import coil.compose.AsyncImage
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.utils.images.createImageUri
 import com.example.parkmate.feature_addSession.components.ParkingDateTimePickerDialog
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
@@ -115,8 +112,11 @@ fun AddSessionScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if(!isGranted){
-            // Opzionale: puoi inviare un evento al ViewModel o mostrare un Toast/Snackbar
-            // per informare l'utente che la sosta verrà salvata ma senza promemoria visivi.
+            Toast.makeText(
+                context,
+                context.getString((R.string.add_session_toast)),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

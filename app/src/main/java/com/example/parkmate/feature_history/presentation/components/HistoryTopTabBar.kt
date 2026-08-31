@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.parkmate.R
 import com.example.parkmate.feature_history.presentation.HistoryTab
-import com.patrykandpatrick.vico.compose.common.shader.color
 
 @Composable
 fun HistoryTopTabBar(

@@ -92,13 +92,7 @@ fun HistoryScreen(
                 onEvent(HistoryEvent.DeleteSession(sessionToDelete))
                 selectedSessionForDetail = null
             },
-            onOpenMapClick = {
-                /* position ->
-                val mapUri = Uri.parse("geo:${position.latitude},${position.longitude}?q=${position.latitude},${position.longitude}(Parcheggio)")
-                val mapIntent = Intent(Intent.ACTION_VIEW, mapUri)
-                context.startActivity(mapIntent)
-
-                 */
+            onOpenMapClick = { // NULL
             }
         )
     }
@@ -138,7 +132,6 @@ fun HistoryContent(
                 HistoryTab.ANALYTICS -> {
                     ParkingSessionsAnalytics(
                         state = state,
-                        onEvent = onEvent,
                         vehicles = state.userVehicles
                     )
                 }
@@ -149,7 +142,6 @@ fun HistoryContent(
                      } else {
                          ParkingSessionsMapSection(
                              state = state,
-                             onEvent = onEvent
                          )
                      }
                 }

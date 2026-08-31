@@ -2,7 +2,6 @@ package com.example.parkmate
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,18 +23,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Legge l'intent all'avvio a freddo dell'app
         pendingNavigationAction.value = intent?.getStringExtra("navigate_to")
 
         setContent {
             LaunchedEffect(Unit) {
                 withContext(Dispatchers.IO) {
-                    MapsInitializer.initialize(applicationContext, MapsInitializer.Renderer.LATEST) { renderer ->
-                        when (renderer) {
-                            MapsInitializer.Renderer.LATEST -> Log.d("MapsApp", "Google Maps Renderer caricato: LATEST")
-                            MapsInitializer.Renderer.LEGACY -> Log.d("MapsApp", "Google Maps Renderer caricato: LEGACY")
-                        }
-                    }
+                    MapsInitializer.initialize(applicationContext, MapsInitializer.Renderer.LATEST) {}
                 }
             }
 
@@ -51,7 +44,6 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        // Aggiorna lo stato se l'app era già aperta o in background
         pendingNavigationAction.value = intent.getStringExtra("navigate_to")
     }
 }

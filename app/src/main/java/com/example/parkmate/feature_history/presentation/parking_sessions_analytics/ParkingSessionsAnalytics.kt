@@ -20,28 +20,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.feature_history.domain.models.aggregateByCategory
-import com.example.parkmate.feature_history.presentation.HistoryEvent
 import com.example.parkmate.feature_history.presentation.HistoryState
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.TotExpensesBarChart
 import com.example.parkmate.feature_history.domain.models.aggregateByMonth
 import com.example.parkmate.feature_history.domain.models.aggregateByMonthSessions
 import com.example.parkmate.feature_history.domain.models.aggregateByVehicle
+import com.example.parkmate.feature_history.domain.models.calculateMetrics
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.CategoryExpensesPieChart
+import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.ParkingMetricsCard
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.SessionsPerMonth
 import com.example.parkmate.feature_history.presentation.parking_sessions_analytics.components.VehicleExpensesPieChart
+import java.util.Locale
 
 @Composable
 fun ParkingSessionsAnalytics(
     state: HistoryState,
     vehicles: List<Vehicle>,
-    onEvent: (HistoryEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     var selectedFilter by remember { mutableStateOf(AnalyticsFilter.BY_MONTH) }
     val monthlyData = remember(state.allSessions){
         state.allSessions.aggregateByMonth()
@@ -52,7 +56,7 @@ fun ParkingSessionsAnalytics(
     }
 
     val categoryData = remember (state.allSessions){
-        state.allSessions.aggregateByCategory()
+        state.allSessions.aggregateByCategory(context)
     }
 
     val vehicleData = remember (state.allSessions, vehicles){
@@ -61,6 +65,10 @@ fun ParkingSessionsAnalytics(
 
     val totalSpent = remember (state.allSessions){
         state.allSessions.filter { !it.session.isActive }.sumOf { it.session.finalCost ?: 0.0 }
+    }
+
+    val kpiMetrics = remember (state.allSessions, vehicles){
+        state.allSessions.calculateMetrics(vehicles)
     }
 
     Column(
@@ -83,12 +91,14 @@ fun ParkingSessionsAnalytics(
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "€ ${String.format("%.2f", totalSpent)}",
+                    text = "€ ${"%.2f".format(Locale.getDefault(), totalSpent)}",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
+
+        ParkingMetricsCard(metrics = kpiMetrics)
 
         Card(
             modifier = Modifier.fillMaxWidth(),

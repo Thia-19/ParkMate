@@ -1,7 +1,6 @@
 package com.example.parkmate.feature_addSession
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.models.ParkingSession
@@ -16,7 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -198,7 +196,7 @@ class AddSessionViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.localizedMessage ?: "Errore durante il salvataggio"
+                        errorMessage = e.localizedMessage ?: "Error while saving"
                     )
                 }
             }

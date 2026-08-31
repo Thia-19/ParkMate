@@ -38,6 +38,7 @@
     <string name="add_session_title">Apri una sessione di parcheggio</string>
     <string name="add_session_save">Salva</string>
     <string name="add_session_vehicle">Veicolo</string>
+    <string name="add_session_no_saved_vehicle">Nessun veicolo salvato</string>
     <string name="add_session_position">Posizione</string>
     <string name="add_session_adjust_position">O aggiusta la posizione tramite la mappa</string>
     <string name="add_session_position_desc">La posizione associata a questa sessione di parcheggiò coinciderà con la posizione corrente da GPS, se non specificato altrimenti</string>
@@ -57,6 +58,7 @@
     <string name="add_session_notification_expiry">Abilita gli avvisi di scadenza</string>
     <string name="add_session_notification_expiry_desc">Ricevi un avviso dieci minuti prima che un biglietto sia prossimo alla scadenza ed un avviso al momento esatto della scadenza</string>
     <string name="add_session_date_picker_hour">Seleziona l\'ora di scadenza</string>
+    <string name="add_session_toast">Sessione salvata senza promemoria</string>
     <string name="home_AR_title">Transizione completata!</string>
     <string name="home_AR_action">Sei a piedi: vuoi gestire o porre fine ad una delle tue sessioni di parcheggio attive, o iniziarne una nuova?</string>
     <string name="home_AR_action_2">Sembra che tu abbia parcheggiato. Vuoi aprire una sessione di parcheggio?</string>
@@ -99,11 +101,21 @@
     <string name="history_vehicle_expense">Spese totali dei veicoli</string>
     <string name="settings_position">Attiva acquisizione della Posizione Corrente</string>
     <string name="settings_enable_position">Consenti a ParkMate di accedere alla tua posizione in real-time, consigliato se si desidera registrare una sessione di parcheggio associata alla posizione corrente (GPS) o per utilizzare la funzionalità Parking Effort.</string>
-    <string name="settings_AR_enable">Attiva activity recognition per le sessioni di parcheggio</string>
+    <string name="settings_AR_enable">Attiva activity recognition per le sessioni di parcheggio. Acconsentendo, ParkMate rileverà la tua attività fisica, ricordandoti tramite notifica di gestire le sessioni di parcheggio.</string>
     <string name="notifications_expired">Biglietto scaduto!</string>
     <string name="notifications_expired_desc">Il biglietto per il veicolo è appena scaduto. Rinnovalo per evitare sanzioni fiscali!</string>
     <string name="notifications_expiry">Scadenza biglietto</string>
     <string name="notifications_expiry_desc">Il biglietto per il veicolo scadrà a breve!</string>
     <string name="notifications_remaining_time">Tempo rimanente</string>
     <string name="notifications_title_alert">Sessione di parcheggio in corso</string>
+    <string name="history_KPI">"Indicatori chiave "</string>
+    <string name="history_KPI_average_expense">Spesa media</string>
+    <string name="history_KPI_average_duraion">Durata media</string>
+    <string name="history_KPI_vehicle">Veicolo più usato</string>
+    <string name="history_KPI_parking_type">Tipo di parcheggio preferito</string>
+    <string name="add_session_select_vehicle">Seleziona un veicolo</string>
+    <string name="add_session_choose_a_vehicle">Scegli il veicolo...</string>
+    <string name="history_last_month">Mese scorso</string>
+    <string name="history_last_6">Ultimi 6 mesi</string>
+    <string name="history_all_time">Sempre</string>
 </resources>

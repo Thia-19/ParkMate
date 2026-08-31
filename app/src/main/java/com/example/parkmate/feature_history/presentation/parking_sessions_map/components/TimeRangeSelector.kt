@@ -8,6 +8,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.feature_history.domain.models.TimeRange
 
@@ -27,7 +28,7 @@ fun TimeRangeSelector(
             FilterChip(
                 selected = (range == selectedRange),
                 onClick = { onRangeSelected(range) },
-                label = { Text(range.label) },
+                label = { Text(text = stringResource(id = range.labelResId)) },
             )
         }
     }
