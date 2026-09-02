@@ -595,11 +595,7 @@ private fun ParkingTypeSelector (
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = ParkingType.entries.size)
             ) {
                 Text(
-                    text = when (type) {
-                        ParkingType.FREE -> "Free"
-                        ParkingType.HOURLY_PAID -> "Hourly Paid"
-                        ParkingType.FIXED_TICKET -> "Fixed"
-                    }
+                    text = stringResource(id = type.labelRes)
                 )
             }
         }

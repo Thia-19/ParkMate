@@ -1,6 +1,7 @@
 package com.example.parkmate.feature_home.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.parkmate.R
@@ -56,6 +58,7 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
+import com.example.parkmate.core.domain.util.formatTimestamp
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.math.max
@@ -190,7 +193,7 @@ fun ParkingSessionDetails(
                             )
                             item.session.expiryTime?.let { expiry ->
                                 Text(
-                                    text = stringResource(R.string.home_expiry_date)+": ${formatDuration(expiry)}",
+                                    text = stringResource(R.string.home_expiry_date)+": ${formatTimestamp(expiry)}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )
@@ -223,9 +226,9 @@ fun ParkingSessionDetails(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text(stringResource(R.string.start_date)+": ${formatDuration(item.session.startTime)}")
+                    Text(stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}")
                     item.session.endTime?.let { end ->
-                        Text(stringResource(R.string.end_date)+": ${formatDuration(end)}")
+                        Text(stringResource(R.string.end_date)+": ${formatTimestamp(end)}")
                     }
                 }
 
@@ -293,12 +296,13 @@ fun ParkingSessionDetails(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(20.dp)
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
@@ -310,7 +314,11 @@ fun ParkingSessionDetails(
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.delete))
+                    Text(
+                        stringResource(R.string.delete),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 if (item.session.isActive) {
@@ -319,11 +327,15 @@ fun ParkingSessionDetails(
                             onConcludeSession(item.session)
                             onDismiss()
                         },
-                        modifier = Modifier.weight(1.5f)
+                        modifier = Modifier.weight(1.2f)
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Conclude Session")
+                        Text(
+                            stringResource(R.string.home_conclude),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }

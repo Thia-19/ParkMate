@@ -46,12 +46,12 @@
     <string name="home_expired_badge">EXPIRED</string>
 
     <!-- Add Session -->
-    <string name="add_session_title">Open a Parking Session</string>
+    <string name="add_session_title">New Session</string>
     <string name="add_session_save">Save</string>
 
     <string name="add_session_vehicle">Vehicle</string>
     <string name="add_session_select_vehicle">Select Vehicle</string>
-    <string name="add_session_choose_a_vehicle">Choose a vehicle...</string>
+    <string name="add_session_choose_a_vehicle">Choose a vehicle…</string>
     <string name="add_session_no_saved_vehicle">No saved vehicle</string>
     <string name="add_session_position">Position</string>
     <string name="add_session_adjust_position">Or adjust position via map interface</string>
@@ -112,7 +112,7 @@
     <string name="history_vehicles_default">All vehicles</string>
     <string name="history_reset_filters">Reset filters</string>
     <string name="history_apply_filters">Apply</string>
-    <string name="history_vehicle">Vehicle name</string>
+    <string name="history_vehicle">Vehicle</string>
     <string name="history_total_amount">Total historical spent amount</string>
     <string name="history_exp_analytics">Expenses Analytics</string>
     <string name="history_month">Month</string>
@@ -122,7 +122,7 @@
     <string name="history_sessions_month">Number of sessions per month</string>
     <string name="history_sessions_month_alt">No completed parking sessions recorded</string>
     <string name="history_vehicle_expense">Total vehicle expenses</string>
-    <string name="history_KPI">Key Perfomance Indicators</string>
+    <string name="history_KPI">Key Performance Indicators</string>
     <string name="history_KPI_average_expense">Average Expense</string>
     <string name="history_KPI_average_duraion">Average Duration</string>
     <string name="history_KPI_vehicle">Most used vehicle</string>

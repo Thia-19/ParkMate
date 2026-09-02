@@ -3,9 +3,9 @@
     <string name="feature_vehicles">Veicoli</string>
     <string name="feature_history">Storico</string>
     <string name="feature_settings">Impostazioni</string>
-    <string name="parking_type_free">Parcheggio gratis</string>
-    <string name="parking_type_hourly">Parcheggio a ore</string>
-    <string name="parking_type_fixed">Biglietto fisso</string>
+    <string name="parking_type_free">Gratis</string>
+    <string name="parking_type_hourly">A ore</string>
+    <string name="parking_type_fixed">Tariffa fissa</string>
     <string name="edit">Modifica</string>
     <string name="delete">Elimina</string>
     <string name="OK">Ok</string>
@@ -30,12 +30,12 @@
     <string name="home_final_cost">Costo finale</string>
     <string name="home_parking_location">Posizione del parcheggio</string>
     <string name="home_conclude">Concludi</string>
-    <string name="home_delete_alert">Elimna Sessione</string>
+    <string name="home_delete_alert">Elimina Sessione</string>
     <string name="home_delete_alert_desc">"Sei sicuro di voler eliminare questa sessione di parcheggio? L'azione non potrà essere annullata. "</string>
     <string name="home_expired">Parcheggio scaduto</string>
     <string name="home_expires">Scade tra</string>
     <string name="home_expired_badge">SCADUTO</string>
-    <string name="add_session_title">Apri una sessione di parcheggio</string>
+    <string name="add_session_title">Avvia parcheggio</string>
     <string name="add_session_save">Salva</string>
     <string name="add_session_vehicle">Veicolo</string>
     <string name="add_session_no_saved_vehicle">Nessun veicolo salvato</string>
@@ -89,7 +89,7 @@
     <string name="history_vehicles_default">Tutti i veicoli</string>
     <string name="history_reset_filters">Resetta</string>
     <string name="history_apply_filters">Applica</string>
-    <string name="history_vehicle">Nome del veicolo</string>
+    <string name="history_vehicle">Veicolo</string>
     <string name="history_total_amount">Spesa storica totale</string>
     <string name="history_exp_analytics">Specifiche delle spese</string>
     <string name="history_month">Mese</string>
@@ -114,7 +114,7 @@
     <string name="history_KPI_vehicle">Veicolo più usato</string>
     <string name="history_KPI_parking_type">Tipo di parcheggio preferito</string>
     <string name="add_session_select_vehicle">Seleziona un veicolo</string>
-    <string name="add_session_choose_a_vehicle">Scegli il veicolo...</string>
+    <string name="add_session_choose_a_vehicle">Scegli il veicolo…</string>
     <string name="history_last_month">Mese scorso</string>
     <string name="history_last_6">Ultimi 6 mesi</string>
     <string name="history_all_time">Sempre</string>
