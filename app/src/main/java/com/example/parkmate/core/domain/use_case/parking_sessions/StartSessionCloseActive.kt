@@ -14,7 +14,7 @@ class StartSessionCloseActive @Inject constructor(
         newSession: ParkingSession,
         isNotificationEnabled: Boolean,
         isNotificationExpiryEnabled: Boolean
-    ) {
+    ): Int {
         val insertedId = repository.startNewSessionCloseActive(newSession)
         val savedSession = newSession.copy(id = insertedId.toInt())
 
@@ -28,5 +28,6 @@ class StartSessionCloseActive @Inject constructor(
                 warningMinutes = 10
             )
         }
+        return insertedId.toInt()
     }
 }

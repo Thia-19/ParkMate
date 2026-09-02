@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Money
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -45,11 +43,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,8 +56,6 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.util.formatTimestamp
-import com.example.parkmate.feature_parkingEffort.dialog.StartRouteCalculationDialog
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.math.max
@@ -77,7 +71,6 @@ fun ParkingSessionDetails(
     modifier: Modifier = Modifier
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
-    var showRouteCalculationDialog by rememberSaveable { mutableStateOf(false) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -197,7 +190,7 @@ fun ParkingSessionDetails(
                             )
                             item.session.expiryTime?.let { expiry ->
                                 Text(
-                                    text = stringResource(R.string.home_expiry_date)+": ${formatTimestamp(expiry)}",
+                                    text = stringResource(R.string.home_expiry_date)+": ${formatDuration(expiry)}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )
@@ -230,9 +223,9 @@ fun ParkingSessionDetails(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text(stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}")
+                    Text(stringResource(R.string.start_date)+": ${formatDuration(item.session.startTime)}")
                     item.session.endTime?.let { end ->
-                        Text(stringResource(R.string.end_date)+": ${formatTimestamp(end)}")
+                        Text(stringResource(R.string.end_date)+": ${formatDuration(end)}")
                     }
                 }
 
@@ -322,33 +315,21 @@ fun ParkingSessionDetails(
 
                 if (item.session.isActive) {
                     Button(
-                        onClick = { showRouteCalculationDialog = true },
+                        onClick = {
+                            onConcludeSession(item.session)
+                            onDismiss()
+                        },
                         modifier = Modifier.weight(1.5f)
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.home_conclude))
+                        Text("Conclude Session")
                     }
                 }
             }
         }
     }
 
-    if (showRouteCalculationDialog) {
-        StartRouteCalculationDialog(
-            sessionId = item.session.id,
-            onDismissRequest = {
-                onConcludeSession(item.session)
-                showRouteCalculationDialog = false
-                onDismiss()
-            },
-            onTrackingStarted = {
-                onConcludeSession(item.session)
-                showRouteCalculationDialog = false
-                onDismiss()
-            }
-        )
-    }
 
     if (showDeleteDialog){
         AlertDialog(

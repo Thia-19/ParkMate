@@ -1,6 +1,7 @@
 package com.example.parkmate.di
 
 import android.content.Context
+import android.hardware.SensorManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Module
@@ -12,13 +13,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object LocationModule {
+object LocationAndSensorModule {
 
     @Provides
     @Singleton
     fun provideFusedLocationProviderClient(
         @ApplicationContext context: Context
-    ): FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(context)
-    }
+    ): FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+
+    @Provides
+    @Singleton
+    fun provideSensorManager(
+        @ApplicationContext context: Context
+    ): SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 }

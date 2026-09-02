@@ -48,6 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.R
 import com.example.parkmate.feature_addSession.AddSessionEvent
 import com.example.parkmate.notifications.NotificationsHelper
+import com.example.parkmate.permissions.RouteTrackingPermissions
+import com.example.parkmate.service.launchers.rememberPermissionLaunchers
 import com.example.parkmate.service.receiver.VehicleToPedestrianReceiver
 
 @Composable
@@ -77,6 +79,16 @@ private fun SettingsContent(
     onEvent: (SettingsEvent) -> Unit,
     onNavigateBack: () -> Unit
 ){
+
+    val context = LocalContext.current
+
+    val permissionLaunchers = rememberPermissionLaunchers(
+        onPermissionsUpdated = {
+            val granted = RouteTrackingPermissions.isActivityRecognitionEnabled(context)
+            onEvent(SettingsEvent.SetActivityRecognitionHome(granted))
+        }
+    )
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
@@ -185,7 +197,15 @@ private fun SettingsContent(
                     Switch(
                         checked = state.activityRecognitionHome,
                         onCheckedChange = { isChecked ->
-                            onEvent(SettingsEvent.SetActivityRecognitionHome(isChecked))
+                            if (isChecked) {
+                                if (RouteTrackingPermissions.isActivityRecognitionEnabled(context)) {
+                                    onEvent(SettingsEvent.SetActivityRecognitionHome(true))
+                                } else {
+                                    permissionLaunchers.requestActivityRecognitionPermission()
+                                }
+                            } else {
+                                onEvent(SettingsEvent.SetActivityRecognitionHome(false))
+                            }
                         }
                     )
                 }

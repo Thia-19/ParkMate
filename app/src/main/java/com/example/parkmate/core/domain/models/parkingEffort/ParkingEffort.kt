@@ -20,20 +20,23 @@ import com.example.parkmate.core.domain.models.Position
     ],
     indices = [Index(value = ["sessionId"])]
 )
-data class ParkingEffort(
-    @PrimaryKey(autoGenerate = true) val effortId: Int = 0,
-    val sessionId: Int,
+data class ParkingEffort (
+    @PrimaryKey val sessionId: Int,
     val distanceMeters: Double,
-    val durationSeconds: Long,
-    val effortScore: Double,
+    val timeFrame: Long,
+    val steps: Int = 0,
+    val elevationGain: Double = 0.0,
+    val effortScore: Double = 0.0,
     @Embedded(prefix = "destination_")
-    val destinationPosition: Position? = null
+    val destination: Position? = null
 )
 
 data class EffortWithPosition(
     val effortId: Int = 0,
     @Embedded val position: Position,
-    val effortScore: Double,
+    val effortScore: Double = 0.0,
     @Embedded(prefix = "destination_")
     val destinationPosition: Position? = null
 )
+
+

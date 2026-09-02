@@ -180,20 +180,26 @@ class AddSessionViewModel @Inject constructor(
                     fixedCost = if (currentState.parkingType == ParkingType.FIXED_TICKET) currentState.fixedCost else null,
                     expiryTime = if (currentState.parkingType == ParkingType.FIXED_TICKET) currentState.expiryTime else null,
 
-                    note = currentState.note?.ifBlank { null },
+                    note = currentState.note.ifBlank { null },
                     photoUri = currentState.photoUri,
 
                     endTime = null,
                     finalCost = null
                 )
 
-                useCases.startSessionCloseActive(
+                val insertedId = useCases.startSessionCloseActive(
                     newSession = newSession,
                     isNotificationEnabled = currentState.isNotificationEnabled,
                     isNotificationExpiryEnabled = currentState.isNotificationExpiryEnabled
                 )
 
-                _state.update { it.copy(isLoading = false, isSaved = true) }
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        isSaved = true,
+                        savedSessionId = insertedId
+                    )
+                }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(

@@ -5,15 +5,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.Column
+import com.example.parkmate.feature_vehiclesManager.components.VehicleFilters
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
@@ -46,6 +45,7 @@ fun DisplayVehiclesScreen(
 ) {
     val vehiclesList by viewModel.vehicles.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val filterState by viewModel.filterState.collectAsStateWithLifecycle()
 
     var showEditDialog by remember {
         mutableStateOf(false)
@@ -103,18 +103,6 @@ fun DisplayVehiclesScreen(
                                 .weight(1f)
                                 .padding(end = 8.dp)
                         )
-
-                        IconButton(
-                            onClick = {
-                                // TODO: Apri filtri
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FilterAlt,
-                                contentDescription = "Filtra veicoli",
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
                     }
                 }
             )
@@ -134,22 +122,37 @@ fun DisplayVehiclesScreen(
             }
         }
     ) { paddingValues ->
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            VehiclesList(
-                vehicles = vehiclesList,
-                onEditVehicle = { parkedVehicle ->
-                    vehicleToEdit = parkedVehicle.vehicle
-                    showEditDialog = true
-                },
-                onDeleteVehicle = { parkedVehicle ->
-                    viewModel.deleteVehicle(parkedVehicle.vehicle)
-                },
+
+            Column(
                 modifier = Modifier.fillMaxSize()
-            )
+            ) {
+
+                VehicleFilters(
+                    filterState = filterState,
+                    onStatusFilterSelected = viewModel::setStatusFilter,
+                    onTypeFilterSelected = viewModel::setTypeFilter
+                )
+
+                VehiclesList(
+                    vehicles = vehiclesList,
+                    onEditVehicle = { parkedVehicle ->
+                        vehicleToEdit = parkedVehicle.vehicle
+                        showEditDialog = true
+                    },
+                    onDeleteVehicle = { parkedVehicle ->
+                        viewModel.deleteVehicle(parkedVehicle.vehicle)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
 
             if (showEditDialog) {
                 EditVehicleScreen(
@@ -159,6 +162,7 @@ fun DisplayVehiclesScreen(
                         vehicleToEdit = null
                     },
                     onSave = { name, type, imageUriString ->
+
                         val vehicleToSave = vehicleToEdit?.copy(
                             name = name,
                             type = type

@@ -1,10 +1,11 @@
 package com.example.parkmate.core.domain.use_case.parking_effort
 
+import android.location.Location
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.parkingEffort.EffortWithPosition
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
-import com.example.parkmate.core.domain.util.map.distanceTo
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class GenerateParkingZonesUseCase @Inject constructor() {
 
@@ -13,6 +14,7 @@ class GenerateParkingZonesUseCase @Inject constructor() {
 
         val mutableEfforts = efforts.toMutableList()
         val clusters = mutableListOf<MutableList<EffortWithPosition>>()
+        val results = FloatArray(1)
 
         while (mutableEfforts.isNotEmpty()) {
             val currentEffort = mutableEfforts.removeAt(0)
@@ -21,9 +23,16 @@ class GenerateParkingZonesUseCase @Inject constructor() {
             val iterator = mutableEfforts.iterator()
             while (iterator.hasNext()) {
                 val otherEffort = iterator.next()
-                val distance = currentEffort.position.distanceTo(otherEffort.position)
 
-                if (distance <= CLUSTER_RADIUS_METERS) {
+                Location.distanceBetween(
+                    currentEffort.position.latitude,
+                    currentEffort.position.longitude,
+                    otherEffort.position.latitude,
+                    otherEffort.position.longitude,
+                    results
+                )
+
+                if (results[0] <= CLUSTER_RADIUS_METERS) {
                     cluster.add(otherEffort)
                     iterator.remove()
                 }
@@ -34,9 +43,11 @@ class GenerateParkingZonesUseCase @Inject constructor() {
         return clusters.mapIndexed { index, cluster ->
             val avgLat = cluster.map { it.position.latitude }.average()
             val avgLon = cluster.map { it.position.longitude }.average()
-            val avgScore = cluster.map { it.effortScore }.average()
 
-            val top10Destinations = cluster
+            val rawAvgScore = cluster.map { it.effortScore }.average()
+            val roundedAvgScore = (rawAvgScore * 100.0).roundToInt() / 100.0
+
+            val topDestinations = cluster
                 .sortedByDescending { it.effortId }
                 .mapNotNull { it.destinationPosition }
                 .distinct()
@@ -45,9 +56,9 @@ class GenerateParkingZonesUseCase @Inject constructor() {
             ParkingZone(
                 id = "zone_$index",
                 centerPosition = Position(avgLat, avgLon),
-                averageScore = avgScore,
+                averageScore = roundedAvgScore,
                 parkingCount = cluster.size,
-                recentDestinations = top10Destinations
+                recentDestinations = topDestinations
             )
         }
     }

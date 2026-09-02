@@ -31,7 +31,6 @@ android {
         }
     }
 
-    // Aggiornato a Java 17 (Requisito consigliato per Kotlin 2.0 + Android SDK 35)
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -47,30 +46,13 @@ android {
 }
 
 dependencies {
-    implementation(libs.play.services.maps)
-    // Room (Usa correttamente libs dal toml)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.work.runtime.ktx)
-    ksp(libs.room.compiler)
-
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
-
-    // Hilt WorkManager Integration (NUOVE RIGHE)
-    implementation(libs.androidx.hilt.work)
-    ksp(libs.androidx.hilt.compiler)
-
-    // Manage images
-    implementation("io.coil-kt:coil-compose:2.6.0")
-
-    // AndroidX & Compose (Dal TOML)
+    // AndroidX Core & LifeCycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.datastore.preferences)
+
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -78,28 +60,38 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.coil.compose)
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.8")
 
-    // VICO
+    // Room Database
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.material3)
+    ksp(libs.room.compiler)
+
+    // Hilt & WorkManager Integration
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
+    // Google Play Services & Maps
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+    implementation("com.google.android.gms:play-services-maps:18.9.2")
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.maps.android:maps-compose-utils:4.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
+    // Images & Serialization
+    implementation(libs.coil.compose)
+    implementation(libs.kotlinx.serialization.json)
+
+    // VICO Charts
     implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.22")
     implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.22")
     implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.22")
-
-    // Google Maps
-    implementation("com.google.maps.android:maps-compose:4.3.3")
-    implementation("com.google.maps.android:maps-compose-utils:4.3.0")
-    implementation("com.google.android.gms:play-services-maps:18.9.2")
-
-    // DataStore Preferences
-    implementation(libs.androidx.datastore.preferences)
-
-    // Google Play Services Location
-    implementation(libs.play.services.location)
-
-    dependencies {
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
-    }
 
     // Testing
     testImplementation(libs.junit)
@@ -109,7 +101,4 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Theme: fonts
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.8")
 }

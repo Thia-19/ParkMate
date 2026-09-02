@@ -2,10 +2,8 @@ package com.example.parkmate.feature_addSession
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Build
-import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -80,6 +78,8 @@ import com.example.parkmate.feature_addSession.components.ParkingDateTimePickerD
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
 import com.example.parkmate.feature_addSession.components.VehicleDropdownSelector
 import com.example.parkmate.feature_addSession.components.formatTimestampToTime
+import com.example.parkmate.feature_parkingEffort.dialog.RouteTrackingEntryDialog
+import com.example.parkmate.notifications.NotificationsHelper
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -87,6 +87,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+
 
 @Composable
 fun AddSessionScreen(
@@ -158,11 +159,6 @@ fun AddSessionScreen(
         }
     }
 
-    LaunchedEffect(state.isSaved) {
-        if (state.isSaved) {
-            onNavigateBack()
-        }
-    }
 
     AddSessionContent(
         state = state,
@@ -199,6 +195,8 @@ private fun AddSessionContent (
         )
     }
 
+
+
     if (showTimePicker) {
         ParkingDateTimePickerDialog(
             onDismiss = { showTimePicker = false },
@@ -207,6 +205,15 @@ private fun AddSessionContent (
                 onEvent(AddSessionEvent.OnExpiryTimeChanged(timestamp))
             }
         )
+    }
+
+    if (state.isSaved) {
+        state.savedSessionId?.let { id ->
+            RouteTrackingEntryDialog(
+                sessionId = id,
+                onDismissRequest = {onNavigateBack()}
+            )
+        }
     }
 
     LaunchedEffect(state.errorMessage) {

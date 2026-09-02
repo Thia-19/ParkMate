@@ -25,9 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.parkingEffort.RankedParkingZone
 import java.util.Locale
 
@@ -38,7 +40,10 @@ fun ParkingEffortLeaderboard(
 ) {
     if (topZones.isEmpty()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Text("Nessuna zona disponibile", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = stringResource(id = R.string.pe_leaderboard_empty),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         return
     }
@@ -92,7 +97,7 @@ private fun LeaderboardItem(zone: RankedParkingZone) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = zone.address,
+                    text = zone.address.ifEmpty { stringResource(id = R.string.pe_address_unknown) },
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -101,7 +106,7 @@ private fun LeaderboardItem(zone: RankedParkingZone) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Punteggio",
+                        contentDescription = "Score Star",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(16.dp)
                     )

@@ -38,8 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -51,12 +53,13 @@ import kotlin.coroutines.resume
 @Composable
 fun ParkingEffortScoreSection(
     zone: ParkingZone?,
+    isConnected: Boolean,
     modifier: Modifier = Modifier
 ) {
     if (zone == null) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Text(
-                text = "Nessuna parking zone selezionata",
+                text = stringResource(id = R.string.pe_score_no_zone_selected),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -65,10 +68,21 @@ fun ParkingEffortScoreSection(
     }
 
     val context = LocalContext.current
-    var zoneAddress by remember(zone.id) { mutableStateOf("Ricerca indirizzo in corso...") }
+    val loadingAddressText = stringResource(id = R.string.pe_score_address_loading)
+    val unknownAddressText = stringResource(id = R.string.pe_address_unknown)
+    val notFoundAddressText = stringResource(id = R.string.pe_address_not_found)
 
-    LaunchedEffect(zone.id) {
-        zoneAddress = resolveAddress(context, zone.centerPosition.latitude, zone.centerPosition.longitude)
+    var zoneAddress by remember(zone.id) { mutableStateOf(loadingAddressText) }
+
+    LaunchedEffect(zone.id, isConnected) {
+        zoneAddress = resolveAddress(
+            context = context,
+            latitude = zone.centerPosition.latitude,
+            longitude = zone.centerPosition.longitude,
+            isConnected = isConnected,
+            unknownText = unknownAddressText,
+            notFoundText = notFoundAddressText
+        )
     }
 
     Column(
@@ -87,7 +101,7 @@ fun ParkingEffortScoreSection(
                 Row(verticalAlignment = Alignment.Top) {
                     Icon(
                         imageVector = Icons.Default.Place,
-                        contentDescription = "Posizione",
+                        contentDescription = "Location Icon",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.padding(top = 2.dp)
                     )
@@ -103,13 +117,16 @@ fun ParkingEffortScoreSection(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Punteggio",
+                        contentDescription = "Score star",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Punteggio: ${String.format("%.1f", zone.averageScore)}",
+                        text = stringResource(
+                            id = R.string.pe_score_format,
+                            String.format(Locale.getDefault(), "%.1f", zone.averageScore)
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -121,7 +138,7 @@ fun ParkingEffortScoreSection(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Destinazioni raggiunte a piedi",
+            text = stringResource(id = R.string.pe_score_destinations_title),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -132,7 +149,7 @@ fun ParkingEffortScoreSection(
 
         if (destinations.isEmpty()) {
             Text(
-                text = "Nessuna destinazione registrata per questo parcheggio.",
+                text = stringResource(id = R.string.pe_score_no_destinations),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -148,7 +165,8 @@ fun ParkingEffortScoreSection(
                     DestinationItem(
                         index = index + 1,
                         latitude = dest.latitude,
-                        longitude = dest.longitude
+                        longitude = dest.longitude,
+                        isConnected = isConnected
                     )
                 }
             }
@@ -157,12 +175,28 @@ fun ParkingEffortScoreSection(
 }
 
 @Composable
-private fun DestinationItem(index: Int, latitude: Double, longitude: Double) {
+private fun DestinationItem(
+    index: Int,
+    latitude: Double,
+    longitude: Double,
+    isConnected: Boolean
+) {
     val context = LocalContext.current
-    var address by remember(latitude, longitude) { mutableStateOf("Ricerca indirizzo...") }
+    val loadingText = stringResource(id = R.string.pe_score_address_loading)
+    val unknownText = stringResource(id = R.string.pe_address_unknown)
+    val notFoundText = stringResource(id = R.string.pe_address_not_found)
 
-    LaunchedEffect(latitude, longitude) {
-        address = resolveAddress(context, latitude, longitude)
+    var address by remember(latitude, longitude) { mutableStateOf(loadingText) }
+
+    LaunchedEffect(latitude, longitude, isConnected) {
+        address = resolveAddress(
+            context = context,
+            latitude = latitude,
+            longitude = longitude,
+            isConnected = isConnected,
+            unknownText = unknownText,
+            notFoundText = notFoundText
+        )
     }
 
     Row(
@@ -188,7 +222,7 @@ private fun DestinationItem(index: Int, latitude: Double, longitude: Double) {
 
         Column {
             Text(
-                text = "Destinazione $index",
+                text = stringResource(id = R.string.pe_score_destination_item_title, index),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -201,10 +235,21 @@ private fun DestinationItem(index: Int, latitude: Double, longitude: Double) {
     }
 }
 
-
-private suspend fun resolveAddress(context: Context, latitude: Double, longitude: Double): String {
-    val geocoder = Geocoder(context, Locale.getDefault())
+private suspend fun resolveAddress(
+    context: Context,
+    latitude: Double,
+    longitude: Double,
+    isConnected: Boolean,
+    unknownText: String,
+    notFoundText: String
+): String {
     val fallbackText = "Coordinate: ${String.format(Locale.getDefault(), "%.4f", latitude)}, ${String.format(Locale.getDefault(), "%.4f", longitude)}"
+
+    if (!isConnected) {
+        return fallbackText
+    }
+
+    val geocoder = Geocoder(context, Locale.getDefault())
 
     return try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -212,10 +257,10 @@ private suspend fun resolveAddress(context: Context, latitude: Double, longitude
                 geocoder.getFromLocation(latitude, longitude, 1, object : Geocoder.GeocodeListener {
                     override fun onGeocode(addresses: MutableList<Address>) {
                         if (addresses.isNotEmpty()) {
-                            val addressLine = addresses[0].getAddressLine(0) ?: "Indirizzo sconosciuto"
+                            val addressLine = addresses[0].getAddressLine(0) ?: unknownText
                             continuation.resume(addressLine)
                         } else {
-                            continuation.resume("Indirizzo non trovato")
+                            continuation.resume(notFoundText)
                         }
                     }
 
@@ -229,9 +274,9 @@ private suspend fun resolveAddress(context: Context, latitude: Double, longitude
                 @Suppress("DEPRECATION")
                 val addresses = geocoder.getFromLocation(latitude, longitude, 1)
                 if (!addresses.isNullOrEmpty()) {
-                    addresses[0].getAddressLine(0) ?: "Indirizzo sconosciuto"
+                    addresses[0].getAddressLine(0) ?: unknownText
                 } else {
-                    "Indirizzo non trovato"
+                    notFoundText
                 }
             }
         }

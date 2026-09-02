@@ -106,4 +106,70 @@
     <string name="notifications_expiry_desc">Il biglietto per il veicolo scadrà a breve!</string>
     <string name="notifications_remaining_time">Tempo rimanente</string>
     <string name="notifications_title_alert">Sessione di parcheggio in corso</string>
+
+
+    <!--Error Handling-->
+    <string name="permissions_denied_system">Permissions denied by the System.</string>
+
+
+    <!-- Start Route Calculation Dialog -->
+    <string name="srcd_rate_parking_title">Would you like to rate your parking?</string>
+    <string name="srcd_enable_permissions_info">The following permissions are required to continue.</string>
+    <string name="srcd_permission_notifications">Notifications</string>
+    <string name="srcd_permission_activity_tracking">Activity Tracking</string>
+    <string name="srcd_permission_location">Location</string>
+    <string name="srcd_action_start_tracking">Start tracking</string>
+    <string name="srcd_cannot_revoke_permission">Permissions can only be revoked from Android settings.</string>
+    <string name="srcd_route_tracking_start_failed">Route tracking start failed</string>
+    <string name="srcd_content_desc_close_dialog">Close Dialog</string>
+
+
+    <!-- Settings Permissions-->
+    <string name="grant_ActRecognition_permission_toContinue">Please, grant Activity Recognition permission to continue.</string>
+    <string name="grant_notifications_permission_toContinue">Please, grant notifications permission to continue.</string>
+
+    <!-- Parking Effort ViewModel errors-->
+    <string name="pe_error_loading_zones">An error has occurred while loading parking zones</string>
+    <string name="route_tracking_on">Route tracking on</string>
+    <string name="sensors_in_action">Recording location, steps, and altitude.</string>
+
+    <!-- RouteTrackingService Errors-->
+    <string name="permissions_revoked"> Unable to continue route tracking: permissions revoked or GPS disabled.</string>
+    <string name="route_tracking_stopped">"Route Tracking stopped "</string>
+    <string name="error_saving_route_tracking">Error saving path to database.</string>
+
+    <!-- Parking Effort Screen-->
+    <string name="pe_leaderboard_empty">leaderboard is empty</string>
+    <string name="pe_tab_leaderboard">Leaderboard</string>
+    <string name="pe_tab_score">Tab Score</string>
+    <string name="pe_address_unknown">Unknown Address</string>
+    <string name="pe_score_no_zone_selected">No zone selected</string>
+    <string name="pe_score_address_loading">Address loading</string>
+    <string name="pe_address_not_found">Address not found</string>
+    <string name="pe_score_format">score_format</string>
+    <string name="pe_score_destinations_title">Destination Title</string>
+    <string name="pe_score_no_destinations">No destinations</string>
+    <string name="pe_score_destination_item_title">Destination Item Title</string>
+    <string name="pe_map_destination_marker_title">destination marker</string>
+    <string name="pe_map_destination_marker_snippet">dest marker snippet</string>
+    <string name="pe_map_cd_parking_zone">cd parking zone</string>
+
+    <!-- Destination Confirmation Dialog-->
+    <string name="pe_dialog_yes">Yes</string>
+    <string name="pe_dialog_no">No</string>
+    <string name="pe_dialog_dest_title">Dest title</string>
+    <string name="pe_dialog_dest_message">Dest message</string>
+
+    <!-- Vehicles Manager -->
+    <string name="status_parked">Parked</string>
+    <string name="status_available">Available</string>
+    <string name="all_types">All types</string>
+    <string name="vehicle_type_car">car</string>
+    <string name="vehicle_type_motorcycle">motorcycle</string>
+    <string name="vehicle_type_bicycle">bicycle</string>
+    <string name="vehicle_type_other">other</string>
+
+
+
+
 </resources>

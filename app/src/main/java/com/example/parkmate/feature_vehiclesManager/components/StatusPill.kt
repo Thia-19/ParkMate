@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.parkmate.R
 
 @Composable
 fun StatusPill(
@@ -21,7 +23,10 @@ fun StatusPill(
 ) {
     val backgroundColor = if (isParked) Color( 0xFFFFEBEE) else Color(0xFFE8F5E9)
     val textColor = if (isParked) Color(0xFFC62828) else Color(0xFF2E7D32)
-    val text = if (isParked) "Parked" else "Available"
+    val text = stringResource(
+        if (isParked) R.string.status_parked
+        else R.string.status_available
+    )
 
     Box(
         modifier = modifier
