@@ -169,7 +169,6 @@ private fun NoConcludedParkingSessions(){
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.20f)
             .clip(
                 RoundedCornerShape(
                     bottomStart = 16.dp,
@@ -180,11 +179,15 @@ private fun NoConcludedParkingSessions(){
     ) {
         Column {
             Text(
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    top = 16.dp
+                ),
                 text = stringResource(R.string.history_sessions_month_alt),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
+
             )
 
             HorizontalDivider()
@@ -192,7 +195,9 @@ private fun NoConcludedParkingSessions(){
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(
+                    16.dp
+                ),
                 text = stringResource(R.string.history_alt),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,

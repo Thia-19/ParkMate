@@ -131,30 +131,6 @@
     <string name="history_last_6">Last 6 Months</string>
     <string name="history_all_time">All time</string>
 
-    <!-- Feature: Parking Effort -->
-    <string name="pe_tab_leaderboard" translatable="false">Classifica</string>
-    <string name="pe_tab_score" translatable="false">Punteggio</string>
-
-    <string name="pe_dialog_yes" translatable="false">Sì</string>
-    <string name="pe_dialog_no" translatable="false">No</string>
-    <string name="pe_dialog_dest_icon_desc" translatable="false">Posizione destinazione</string>
-    <string name="pe_dialog_dest_title" translatable="false">Nuova destinazione</string>
-    <string name="pe_dialog_dest_message" translatable="false">Vuoi raggiungere questa destinazione?</string>
-
-    <string name="start_route_calculation_title" translatable="false">Vuoi iniziare il calcolo del percorso?</string>
-    <string name="start_route_calculation_message" translatable="false">Al termine del percorso potrai contribuire al punteggio di questa zona di parcheggio.</string>
-    <string name="start_route_calculation_no" translatable="false">No</string>
-    <string name="start_route_calculation_yes" translatable="false">Sì</string>
-
-    <string name="route_tracking_channel_name" translatable="false">Calcolo percorso</string>
-    <string name="route_tracking_channel_description" translatable="false">Mostra il calcolo del percorso dopo il parcheggio.</string>
-    <string name="route_tracking_notification_title" translatable="false">Calcolo del percorso attivo</string>
-    <string name="route_tracking_notification_message" translatable="false">Tocca “Sono arrivato” quando raggiungi la destinazione.</string>
-    <string name="route_tracking_arrived" translatable="false">Sono arrivato</string>
-    <string name="route_tracking_cancel" translatable="false">Annulla</string>
-    <string name="route_tracking_permissions_required" translatable="false">Sono necessarie le autorizzazioni per posizione, attività e notifiche.</string>
-    <string name="route_tracking_start_failed" translatable="false">Impossibile avviare il calcolo del percorso.</string>
-
     <!-- Settings -->
     <string name="settings_position">Enable current position acquisition</string>
     <string name="settings_enable_position">Allow ParkMate to access your real-time location. This is recommended if you wish to record parking sessions linked to your current GPS location or use the parking session feature.</string>
@@ -168,4 +144,67 @@
     <string name="notifications_expiry_desc">The ticket for the vehicle will soon expire!</string>
     <string name="notifications_remaining_time">Remaining time</string>
     <string name="notifications_title_alert">Ongoing parking session</string>
+
+    <!--Error Handling-->
+    <string name="permissions_denied_system">Permissions denied by the System.</string>
+
+
+    <!-- Start Route Calculation Dialog -->
+    <string name="srcd_rate_parking_title">Would you like to rate your parking?</string>
+    <string name="srcd_enable_permissions_info">The following permissions are required to continue.</string>
+    <string name="srcd_permission_notifications">Notifications</string>
+    <string name="srcd_permission_activity_tracking">Activity Tracking</string>
+    <string name="srcd_permission_location">Location</string>
+    <string name="srcd_action_start_tracking">Start tracking</string>
+    <string name="srcd_cannot_revoke_permission">Permissions can only be revoked from Android settings.</string>
+    <string name="srcd_route_tracking_start_failed">Route tracking start failed</string>
+    <string name="srcd_content_desc_close_dialog">Close Dialog</string>
+
+
+    <!-- Settings Permissions-->
+    <string name="grant_ActRecognition_permission_toContinue">Please, grant Activity Recognition permission to continue.</string>
+    <string name="grant_notifications_permission_toContinue">Please, grant notifications permission to continue.</string>
+
+    <!-- Parking Effort ViewModel errors-->
+    <string name="pe_error_loading_zones">An error has occurred while loading parking zones</string>
+    <string name="route_tracking_on">Route tracking on</string>
+    <string name="sensors_in_action">Recording location, steps, and altitude.</string>
+
+    <!-- RouteTrackingService Errors-->
+    <string name="permissions_revoked"> Unable to continue route tracking: permissions revoked or GPS disabled.</string>
+    <string name="route_tracking_stopped">"Route Tracking stopped "</string>
+    <string name="error_saving_route_tracking">Error saving path to database.</string>
+
+    <!-- Parking Effort Screen-->
+    <string name="pe_leaderboard_empty">leaderboard is empty</string>
+    <string name="pe_tab_leaderboard">Leaderboard</string>
+    <string name="pe_tab_score">Tab Score</string>
+    <string name="pe_address_unknown">Unknown Address</string>
+    <string name="pe_score_no_zone_selected">No zone selected</string>
+    <string name="pe_score_address_loading">Address loading</string>
+    <string name="pe_address_not_found">Address not found</string>
+    <string name="pe_score_format">score_format</string>
+    <string name="pe_score_destinations_title">Destination Title</string>
+    <string name="pe_score_no_destinations">No destinations</string>
+    <string name="pe_score_destination_item_title">Destination Item Title</string>
+    <string name="pe_map_destination_marker_title">destination marker</string>
+    <string name="pe_map_destination_marker_snippet">dest marker snippet</string>
+    <string name="pe_map_cd_parking_zone">cd parking zone</string>
+
+    <!-- Destination Confirmation Dialog-->
+    <string name="pe_dialog_yes">Yes</string>
+    <string name="pe_dialog_no">No</string>
+    <string name="pe_dialog_dest_title">Dest title</string>
+    <string name="pe_dialog_dest_message">Dest message</string>
+
+    <!-- Vehicles Manager -->
+    <string name="status_parked">Parked</string>
+    <string name="status_available">Available</string>
+    <string name="all_types">All types</string>
+    <string name="vehicle_type_car">car</string>
+    <string name="vehicle_type_motorcycle">motorcycle</string>
+    <string name="vehicle_type_bicycle">bicycle</string>
+    <string name="vehicle_type_other">other</string>
+
+
 </resources>

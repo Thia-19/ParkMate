@@ -15,8 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
 import com.example.parkmate.core.domain.util.map.getConvenienceColorHex
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -68,6 +70,8 @@ fun ParkingEffortMap(
         }
     }
 
+    val cdParkingZone = stringResource(id = R.string.pe_map_cd_parking_zone)
+
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
@@ -113,7 +117,7 @@ fun ParkingEffortMap(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Default.LocalParking,
-                            contentDescription = "Parking Zone",
+                            contentDescription = cdParkingZone,
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -128,8 +132,8 @@ fun ParkingEffortMap(
                     key = "dest_${selectedZone.id}_$index",
                     position = LatLng(destPos.latitude, destPos.longitude)
                 ),
-                title = "Destinazione ${index + 1}",
-                snippet = "Raggiunta a piedi"
+                title = stringResource(id = R.string.pe_map_destination_marker_title, index + 1),
+                snippet = stringResource(id = R.string.pe_map_destination_marker_snippet)
             )
         }
     }

@@ -21,13 +21,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
-import com.example.parkmate.feature_parkingEffort.dialog.DestinationConfirmationDialog
-import com.example.parkmate.feature_parkingEffort.components.bottomSheet.ParkingEffortBottomSheetContent
 import com.example.parkmate.feature_parkingEffort.components.ParkingEffortMap
+import com.example.parkmate.feature_parkingEffort.components.bottomSheet.ParkingEffortBottomSheetContent
+import com.example.parkmate.feature_parkingEffort.dialog.DestinationConfirmationDialog
 import com.example.parkmate.feature_parkingEffort.view_model.ParkingEffortViewModel
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
@@ -64,7 +65,8 @@ fun ParkingEffortMapScreen(
         sheetContent = {
             ParkingEffortBottomSheetContent(
                 zone = selectedZone,
-                topZones = state.topZones
+                topZones = state.topZones,
+                isConnected = state.isConnected
             )
         }
     ) { paddingValues ->
@@ -75,7 +77,7 @@ fun ParkingEffortMapScreen(
         ) {
             when {
                 state.isLoading -> LoadingContent()
-                state.errorMessage != null -> ErrorContent(state.errorMessage!!)
+                state.errorMessageResId != null -> ErrorContent(stringResource(id = state.errorMessageResId!!))
                 else -> {
                     ParkingEffortMap(
                         zones = state.zones,
@@ -107,7 +109,6 @@ fun ParkingEffortMapScreen(
 
                 if (nearest != null) {
                     selectedZone = nearest
-
                     scope.launch {
                         bottomSheetState.expand()
                     }
@@ -127,6 +128,6 @@ private fun LoadingContent() {
 @Composable
 private fun ErrorContent(message: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(message)
+        Text(text = message, style = MaterialTheme.typography.bodyLarge)
     }
 }

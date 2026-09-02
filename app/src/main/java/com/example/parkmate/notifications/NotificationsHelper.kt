@@ -1,6 +1,7 @@
 package com.example.parkmate.notifications
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,47 +10,58 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.net.toUri
+import androidx.core.content.ContextCompat
 import com.example.parkmate.MainActivity
 import com.example.parkmate.R
-import com.example.parkmate.notifications.NotificationsHelper.createActionPendingIntent
-import com.example.parkmate.service.receiver.RouteTrackingActionReceiver
 import com.example.parkmate.service.RouteTrackingService
-object NotificationsHelper {
+import com.example.parkmate.service.receiver.RouteTrackingActionReceiver
 
-    // Expiry Alerts: fixed tickets
+object NotificationsHelper {
+    const val TRANSITION_CHANNEL_NAME = "Vehicle-pedestrian transition"
+
+    /** ID CANALI **/
     const val PARKING_EXPIRY_CHANNEL_ID = "parking_expiry_channel"
+    const val ONGOING_PARKING_CHANNEL_ID = "ongoing_parking_channel"
+
+    const val ROUTE_TRACKING_CHANNEL_ID = "route_tracking_channel"
+    const val TRANSITION_CHANNEL_ID = "vehicle_transition_channel"
+
+    const val ERROR_CHANNEL_ID = "error_notification_channel"
+
+    /** ID NOTIFICHE **/
     const val PARKING_EXPIRY_NOTIFICATION_ID_BASE = 5_000
 
     // Ongoing parkings
-    const val ONGOING_PARKING_CHANNEL_ID = "ongoing_parking_channel"
     const val ONGOING_PARKING_NOTIFICATION_ID = 6_000
-
-    // Activity Recognition: parking effort
-    const val CHANNEL_ID = "route_tracking_channel"
-    const val NOTIFICATION_ID = 7_201
-    const val SAVED_ROUTE_NOTIFICATION_ID = 7_202
+    const val ROUTE_TRACKING_NOTIFICATION_ID = 7_201
+    const val SAVED_EFFORT_NOTIFICATION_ID = 7_202
+    const val CONFIRMATION_NOTIFICATION_ID = 7_203
+    const val PERMISSION_REVOKED_NOTIFICATION_ID = 7_204
 
     // Activity Recognition: vehicle to pedestrian parking session
-    const val TRANSITION_CHANNEL_ID = "vehicle_transition_channel"
-    const val TRANSITION_CHANNEL_NAME = "Vehicle-pedestrian transition"
     const val TRANSITION_NOTIFICATION_ID = 2001
+    const val ERROR_NOTIFICATION_ID = 8_000
 
-    // Creations
+    /** CREAZIONE CANALI **/
+
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Tracciamento Percorso"
+            val descriptionText = "Notifica persistente per il tracciamento offline del percorso e dei passi"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+
             val channel = NotificationChannel(
-                CHANNEL_ID,
-                context.getString(R.string.route_tracking_channel_name),
-                NotificationManager.IMPORTANCE_LOW
+                ROUTE_TRACKING_CHANNEL_ID,
+                name,
+                importance
             ).apply {
-                description = context.getString(R.string.route_tracking_channel_description)
+                description = descriptionText
                 setShowBadge(false)
             }
+
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
@@ -99,10 +111,22 @@ object NotificationsHelper {
         }
     }
 
-    // Cancel
-    // In NotificationsHelper.kt
+    fun createErrorNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                ERROR_CHANNEL_ID,
+                "Notifiche di Errore",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Canale dedicato alle segnalazioni di errore dell'applicazione"
+                enableVibration(true)
+            }
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 
-    // 1. Cancella la notifica di transizione veicolo->pedone (Home)
+    /** CANCELLAZIONE NOTIFICHE **/
     fun cancelTransitionNotification(context: Context) {
         NotificationManagerCompat.from(context).cancel(TRANSITION_NOTIFICATION_ID)
     }
@@ -111,27 +135,45 @@ object NotificationsHelper {
         NotificationManagerCompat.from(context).cancel(ONGOING_PARKING_NOTIFICATION_ID)
     }
 
-    // 2. Cancella la notifica del tracciamento percorso
     fun cancelTrackingNotification(context: Context) {
-        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
+        NotificationManagerCompat.from(context).cancel(ROUTE_TRACKING_NOTIFICATION_ID)
+        NotificationManagerCompat.from(context).cancel(CONFIRMATION_NOTIFICATION_ID)
     }
 
-    // Notification builds
+    fun cancelConfirmationNotification(context: Context) {
+        NotificationManagerCompat.from(context).cancel(CONFIRMATION_NOTIFICATION_ID)
+    }
+
+
+    /** BUILDERS **/
 
     fun buildTrackingNotification(context: Context, sessionId: Int): Notification {
+        createNotificationChannel(context)
+
+        val stopIntent = Intent(context, RouteTrackingService::class.java).apply {
+            action = RouteTrackingService.ACTION_STOP_AND_SAVE
+            putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
+        }
+        val stopPendingIntent = PendingIntent.getService(
+            context, 301, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val cancelIntent = Intent(context, RouteTrackingService::class.java).apply {
+            action = RouteTrackingService.ACTION_CANCEL
+            putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
+        }
+        val cancelPendingIntent = PendingIntent.getService(
+            context, 302, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         return baseBuilder(context)
-            .setContentTitle(context.getString(R.string.route_tracking_notification_title))
-            .setContentText(context.getString(R.string.route_tracking_notification_message))
-            .addAction(
-                R.drawable.ic_route_tracking,
-                "Arrived",
-                createActionPendingIntent(context, RouteTrackingActionReceiver.ACTION_ARRIVED, sessionId)
-            )
-            .addAction(
-                R.drawable.ic_route_tracking,
-                "Cancel",
-                createActionPendingIntent(context, RouteTrackingActionReceiver.ACTION_CANCEL, sessionId)
-            )
+            .setChannelId(ROUTE_TRACKING_CHANNEL_ID)
+            .setContentTitle(context.getString(R.string.route_tracking_on))
+            .setContentText(context.getString(R.string.sensors_in_action))
+            .setOngoing(true)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .addAction(R.drawable.ic_check_circle, "Arrivato a destinazione", stopPendingIntent)
+            .addAction(R.drawable.ic_cancel, "Annulla", cancelPendingIntent)
             .build()
     }
 
@@ -210,28 +252,33 @@ object NotificationsHelper {
     }
 
     fun buildConfirmationNotification(context: Context, sessionId: Int): Notification {
+        createTransitionNotificationChannel(context)
+
+        val confirmIntent = Intent(context, RouteTrackingService::class.java).apply {
+            action = RouteTrackingService.ACTION_STOP_AND_SAVE
+            putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
+        }
+        val confirmPendingIntent = PendingIntent.getService(
+            context, 401, confirmIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val resumeIntent = Intent(context, RouteTrackingService::class.java).apply {
+            action = RouteTrackingService.ACTION_RESUME_TRACKING
+            putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
+        }
+        val resumePendingIntent = PendingIntent.getService(
+            context, 402, resumeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         return baseBuilder(context)
-            .setContentTitle("Destination reached?")
-            .setContentText("We noticed you stopped walking. Have you arrived?")
-            .addAction(
-                R.drawable.ic_route_tracking,
-                "Yes, Arrived",
-                createActionPendingIntent(context, RouteTrackingActionReceiver.ACTION_ARRIVED, sessionId)
-            )
-            .addAction(
-                R.drawable.ic_route_tracking,
-                "No, Resume",
-                createActionPendingIntent(context, RouteTrackingActionReceiver.ACTION_RESUME, sessionId)
-            )
+            .setChannelId(TRANSITION_CHANNEL_ID)
+            .setContentTitle("Sei arrivato a destinazione?")
+            .setContentText("Abbiamo rilevato che sei fermo. Vuoi salvare il percorso?")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .addAction(R.drawable.ic_check_circle, "Sì, salva", confirmPendingIntent)
+            .addAction(R.drawable.ic_cancel, "No, continua", resumePendingIntent)
+            .setAutoCancel(true)
             .build()
-    }
-    private fun baseBuilder(context: Context): NotificationCompat.Builder {
-        return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_route_tracking)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
     }
 
     fun buildWorkerNotification(context: Context, title: String, content: String): Notification {
@@ -241,21 +288,14 @@ object NotificationsHelper {
             .build()
     }
 
-    // Intent Creation
+    /** HELPERS **/
 
-    private fun createActionPendingIntent(context: Context, action: String, sessionId: Int): PendingIntent {
-        val intent = Intent(context, RouteTrackingActionReceiver::class.java).apply {
-            this.action = action
-            data = "parkmate://route-tracking/notification/$action/$sessionId".toUri()
-            putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
-        }
-        return PendingIntent.getBroadcast(
-            context,
-            action.hashCode() + sessionId,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+    private fun baseBuilder(context: Context): NotificationCompat.Builder {
+        return NotificationCompat.Builder(context, ROUTE_TRACKING_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_route_tracking) // Assicurati che l'icona esista
+            .setColor(ContextCompat.getColor(context, R.color.black))
     }
+
 
     private fun createDismissPendingIntent(context: Context): PendingIntent {
         val dismissIntent = Intent(context, RouteTrackingActionReceiver::class.java).apply {
@@ -269,25 +309,6 @@ object NotificationsHelper {
         )
     }
 
-    // NOTIFICA - show
-    fun showRouteSavedNotification(context: Context) {
-        createNotificationChannel(context)
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_route_tracking) // Usa l'icona adatta
-            .setContentTitle("Mappa Aggiornata")
-            .setContentText("Il tuo percorso è stato salvato!")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true) // La notifica sparisce quando l'utente ci clicca o fa swipe
-            .build()
-
-        try {
-            NotificationManagerCompat.from(context).notify(SAVED_ROUTE_NOTIFICATION_ID, notification)
-        } catch (e: SecurityException) {
-            // Fallback nel caso in cui i permessi non siano garantiti
-            e.printStackTrace()
-        }
-    }
 
     fun showVehicleTransitionNotification(
         context: Context,
@@ -350,6 +371,49 @@ object NotificationsHelper {
         ) {
             NotificationManagerCompat.from(context).notify(
                 ONGOING_PARKING_NOTIFICATION_ID,
+                notification
+            )
+        }
+    }
+
+    fun showPermissionRevokedNotification(context: Context) {
+
+    }
+
+    fun showErrorNotification(
+        context: Context,
+        errorMessage: String,
+        title: String = "Errore"
+    ) {
+        createErrorNotificationChannel(context)
+
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            ERROR_NOTIFICATION_ID,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, ERROR_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_route_tracking)
+            .setContentTitle(title)
+            .setContentText(errorMessage)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(errorMessage))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ERROR)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        ) {
+            NotificationManagerCompat.from(context).notify(
+                ERROR_NOTIFICATION_ID,
                 notification
             )
         }

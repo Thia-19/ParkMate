@@ -11,7 +11,8 @@ import com.example.parkmate.core.domain.models.vehicle.Vehicle
 
 data class Position (
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val altitude: Double? = null
 )
 
 enum class ParkingType {

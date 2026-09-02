@@ -2,8 +2,10 @@ package com.example.parkmate.feature_addSession
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Build
+import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,6 +52,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -72,11 +75,14 @@ import coil.compose.AsyncImage
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
+import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.utils.images.createImageUri
 import com.example.parkmate.feature_addSession.components.ParkingDateTimePickerDialog
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector
 import com.example.parkmate.feature_addSession.components.VehicleDropdownSelector
 import com.example.parkmate.feature_addSession.components.formatTimestampToTime
+import com.example.parkmate.feature_parkingEffort.dialog.RouteTrackingEntryDialog
+import com.example.parkmate.notifications.NotificationsHelper
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -158,12 +164,6 @@ fun AddSessionScreen(
         }
     }
 
-    LaunchedEffect(state.isSaved) {
-        if (state.isSaved) {
-            onNavigateBack()
-        }
-    }
-
     AddSessionContent(
         state = state,
         onEvent = viewModel::onEvent,
@@ -207,6 +207,15 @@ private fun AddSessionContent (
                 onEvent(AddSessionEvent.OnExpiryTimeChanged(timestamp))
             }
         )
+    }
+
+    if (state.isSaved) {
+        state.savedSessionId?.let { id ->
+            RouteTrackingEntryDialog(
+                sessionId = id,
+                onDismissRequest = {onNavigateBack()}
+            )
+        }
     }
 
     LaunchedEffect(state.errorMessage) {

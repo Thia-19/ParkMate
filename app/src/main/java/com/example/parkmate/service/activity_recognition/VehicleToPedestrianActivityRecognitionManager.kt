@@ -40,7 +40,7 @@ class VehicleToPedestrianActivityRecognitionManager @Inject constructor(
 
     @RequiresPermission(Manifest.permission.ACTIVITY_RECOGNITION)
     fun startMonitoring() {
-        if (!RouteTrackingPermissions.hasRequiredPermissions(context)) return
+        if (!RouteTrackingPermissions.isActivityRecognitionEnabled(context)) return
 
         context.getSharedPreferences("ar_state_prefs", Context.MODE_PRIVATE)
             .edit()

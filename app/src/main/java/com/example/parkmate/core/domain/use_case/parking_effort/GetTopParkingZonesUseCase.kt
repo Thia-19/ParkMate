@@ -22,7 +22,7 @@ class GetTopParkingZonesUseCase @Inject constructor(
                 val address = geocoder(
                     longitude = zone.centerPosition.longitude,
                     latitude = zone.centerPosition.latitude
-                )
+                ) ?: ""
 
                 RankedParkingZone(
                     rank = index + 1,

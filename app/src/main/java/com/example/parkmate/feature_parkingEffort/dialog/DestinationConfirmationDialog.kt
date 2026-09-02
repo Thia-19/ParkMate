@@ -35,7 +35,7 @@ fun DestinationConfirmationDialog(
         icon = {
             Icon(
                 imageVector = Icons.Default.Place,
-                contentDescription = stringResource(id = R.string.pe_dialog_dest_icon_desc)
+                contentDescription = "Default icon"
             )
         },
         title = { Text(stringResource(id = R.string.pe_dialog_dest_title)) },

@@ -60,7 +60,7 @@ class HomeViewModel @Inject constructor(
     private fun observeActivityRecognitionSetting() {
         viewModelScope.launch {
             settingsUseCases.getActivityRecognitionHome().collect { isEnabled ->
-                val hasPermission = RouteTrackingPermissions.hasRequiredPermissions(context)
+                val hasPermission = RouteTrackingPermissions.isActivityRecognitionEnabled(context)
 
                 if (isEnabled && hasPermission) {
                     try {

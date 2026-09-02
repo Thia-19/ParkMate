@@ -1,8 +1,8 @@
 package com.example.parkmate.core.domain.use_case.parking_effort
 
+import android.location.Location
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
-import com.example.parkmate.core.domain.util.map.distanceTo
 import javax.inject.Inject
 
 class GetNearestParkingZoneUseCase @Inject constructor() {
@@ -13,6 +13,17 @@ class GetNearestParkingZoneUseCase @Inject constructor() {
 
     operator fun invoke(zones: List<ParkingZone>, targetPosition: Position): ParkingZone? {
         if (zones.isEmpty()) return null
-        return zones.minByOrNull { zone -> zone.centerPosition.distanceTo(targetPosition) }
+
+        val results = FloatArray(1)
+        return zones.minByOrNull { zone ->
+            Location.distanceBetween(
+                zone.centerPosition.latitude,
+                zone.centerPosition.longitude,
+                targetPosition.latitude,
+                targetPosition.longitude,
+                results
+            )
+            results[0]
+        }
     }
 }

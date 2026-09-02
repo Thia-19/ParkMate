@@ -27,6 +27,7 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,7 +43,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +56,6 @@ import com.example.parkmate.core.domain.models.ParkingSession
 import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.util.formatTimestamp
 import kotlinx.coroutines.delay
 import java.util.Locale
 import kotlin.math.max
@@ -160,7 +159,7 @@ fun ParkingSessionDetails(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)){
                     Text(
-                        text = stringResource(R.string.home_vehicle_type),
+                        text = "VEHICLE TYPE",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -191,7 +190,7 @@ fun ParkingSessionDetails(
                             )
                             item.session.expiryTime?.let { expiry ->
                                 Text(
-                                    text = stringResource(R.string.home_expiry_date)+": ${formatTimestamp(expiry)}",
+                                    text = stringResource(R.string.home_expiry_date)+": ${formatDuration(expiry)}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.error
                                 )
@@ -207,7 +206,7 @@ fun ParkingSessionDetails(
                     }
 
                     item.session.finalCost?.let { cost ->
-                        val costFormatted = String.format(Locale.getDefault(), "%.2f", item.session.finalCost)
+                        val costFormatted = String.format(java.util.Locale.getDefault(), "%.2f", item.session.finalCost)
                         val finalText = "${stringResource(R.string.home_final_cost)}: €$costFormatted"
 
                         Text(
@@ -224,9 +223,9 @@ fun ParkingSessionDetails(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text(stringResource(R.string.start_date)+": ${formatTimestamp(item.session.startTime)}")
+                    Text(stringResource(R.string.start_date)+": ${formatDuration(item.session.startTime)}")
                     item.session.endTime?.let { end ->
-                        Text(stringResource(R.string.end_date)+": ${formatTimestamp(end)}")
+                        Text(stringResource(R.string.end_date)+": ${formatDuration(end)}")
                     }
                 }
 
@@ -324,12 +323,13 @@ fun ParkingSessionDetails(
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.home_conclude))
+                        Text("Conclude Session")
                     }
                 }
             }
         }
     }
+
 
     if (showDeleteDialog){
         AlertDialog(
@@ -380,6 +380,7 @@ fun RateDetailsCard(
 ) {
     var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
 
+    // Update currentTime every 1 sec
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = System.currentTimeMillis()

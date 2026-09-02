@@ -1,25 +1,18 @@
 package com.example.parkmate
 
 import android.app.AlarmManager
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.parkmate.core.domain.models.ParkingSession
-import com.example.parkmate.core.domain.models.ParkingSessionWithVehicleInfo
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.notifications.NotificationsHelper
-import com.example.parkmate.notifications.NotificationsHelper.TRANSITION_NOTIFICATION_ID
 import com.example.parkmate.service.RouteTrackingService
-import com.example.parkmate.permissions.RouteTrackingPermissions
 import com.example.parkmate.service.receiver.ParkingExpiryReceiver
 import com.example.parkmate.workManager.OngoingParkingWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,13 +20,14 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class BackgroundTaskManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val workManager: WorkManager
 ) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    /** Parking Expiry Alerts (AlarmManager) **/
 
     fun scheduleParkingExpiryAlerts(
         session: ParkingSession,
@@ -58,8 +52,11 @@ class BackgroundTaskManager @Inject constructor(
 
     fun cancelParkingExpiryAlerts(sessionId: Int) {
         listOf(false, true).forEach { isExact ->
-            createExpiryPendingIntent(sessionId, isExact, flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE)
-                ?.let { alarmManager.cancel(it) }
+            createExpiryPendingIntent(
+                sessionId,
+                isExact,
+                flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )?.let { alarmManager.cancel(it) }
         }
     }
 
@@ -92,6 +89,8 @@ class BackgroundTaskManager @Inject constructor(
         return if (isExact) (sessionId * 10) + 1 else (sessionId * 10) + 2
     }
 
+    /** Ongoing Parking Reminders (WorkManager) **/
+
     fun startOngoingParkingReminder(sessionId: Int) {
         val workTag = getOngoingWorkTag(sessionId)
 
@@ -115,27 +114,28 @@ class BackgroundTaskManager @Inject constructor(
 
     fun stopOngoingParkingReminder(sessionId: Int) {
         workManager.cancelUniqueWork(getOngoingWorkTag(sessionId))
-
-        val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java)
-        notificationManager?.cancel(NotificationsHelper.ONGOING_PARKING_NOTIFICATION_ID)
+        NotificationsHelper.cancelOngoingParkingNotification(context)
     }
 
     private fun getOngoingWorkTag(sessionId: Int): String =
         "${OngoingParkingWorker.WORK_TAG_PREFIX}$sessionId"
 
+
+    /** Route Tracking Service Commands **/
     fun startRouteTracking(sessionId: Int) {
-        check(RouteTrackingPermissions.hasRequiredPermissions(context)) {
-            "Route tracking permissions are required before starting the service."
-        }
         sendCommandToService(RouteTrackingService.ACTION_START, sessionId)
     }
 
     fun stopRouteTracking(sessionId: Int) {
-        sendCommandToService(RouteTrackingService.ACTION_CANCEL, sessionId)
+        sendCommandToService(RouteTrackingService.ACTION_STOP_AND_SAVE, sessionId)
     }
 
     fun markAsArrived(sessionId: Int) {
-        sendCommandToService(RouteTrackingService.ACTION_MANUAL_ARRIVED, sessionId)
+        sendCommandToService(RouteTrackingService.ACTION_STOP_AND_SAVE, sessionId)
+    }
+
+    fun cancelRouteTracking(sessionId: Int) {
+        sendCommandToService(RouteTrackingService.ACTION_CANCEL, sessionId)
     }
 
     fun promptConfirmation(sessionId: Int) {
@@ -147,21 +147,37 @@ class BackgroundTaskManager @Inject constructor(
     }
 
     fun handlePromptNewPark(sessionId: Int) {
-       sendCommandToService(RouteTrackingService.ACTION_PROMPT_NEW_PARK, sessionId)
+        sendCommandToService(RouteTrackingService.ACTION_PROMPT_NEW_PARK, sessionId)
     }
 
     fun dismissVehicleTransitionPrompt() {
-        sendCommandToService(RouteTrackingService.ACTION_DISMISS_TRANSITION_PROMPT)
+        sendCommandToService(RouteTrackingService.ACTION_DISMISS_TRANSITION_PROMPT, -5)
     }
 
-    private fun sendCommandToService(action: String, sessionId: Int = RouteTrackingService.NO_SESSION_ID) {
-        val intent = Intent(context, RouteTrackingService::class.java).apply {
-            this.action = action
-            if (sessionId != RouteTrackingService.NO_SESSION_ID) {
-                putExtra(RouteTrackingService.EXTRA_SESSION_ID, sessionId)
-            }
+    private fun sendCommandToService(
+        actionStr: String,
+        sessionId: Int
+    ) {
+        val intent = Intent(
+            context,
+            RouteTrackingService::class.java
+        ).apply {
+            action = actionStr
+            putExtra(
+                RouteTrackingService.EXTRA_SESSION_ID,
+                sessionId
+            )
         }
-        ContextCompat.startForegroundService(context, intent)
+
+        if (actionStr == RouteTrackingService.ACTION_START) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        } else {
+            context.startService(intent)
+        }
     }
 
     companion object {

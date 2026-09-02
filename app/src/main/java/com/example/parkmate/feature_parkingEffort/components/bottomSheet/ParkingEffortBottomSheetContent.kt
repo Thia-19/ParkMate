@@ -30,6 +30,7 @@ import com.example.parkmate.core.domain.models.parkingEffort.RankedParkingZone
 fun ParkingEffortBottomSheetContent(
     zone: ParkingZone?,
     topZones: List<RankedParkingZone>,
+    isConnected: Boolean,
     modifier: Modifier = Modifier
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -72,14 +73,8 @@ fun ParkingEffortBottomSheetContent(
             contentAlignment = Alignment.TopCenter
         ) {
             when (selectedTabIndex) {
-                0 -> ParkingEffortLeaderboard(
-                    topZones = topZones,
-                    modifier = Modifier.fillMaxSize()
-                )
-                1 -> ParkingEffortScoreSection(
-                    zone = zone,
-                    modifier = Modifier.fillMaxSize()
-                )
+                0 -> ParkingEffortScoreSection(zone = zone, isConnected = isConnected)
+                1 -> ParkingEffortLeaderboard(topZones = topZones)
             }
         }
     }
