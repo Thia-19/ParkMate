@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.content.pm.ServiceInfo
+import com.example.parkmate.service.activity_recognition.VehicleToPedestrianActivityRecognitionManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,6 +38,7 @@ class RouteTrackingService : Service() {
     @Inject lateinit var stepCounterManager: StepCounterManager
     @Inject lateinit var activityRecognitionManager: RouteTrackingActivityRecognitionManager
     @Inject lateinit var completeRouteTrackingUseCase: CompleteRouteTrackingUseCase
+    @Inject lateinit var vehicleToPedestrianManager: VehicleToPedestrianActivityRecognitionManager
 
     private val serviceScope = CoroutineScope(Dispatchers.Default.limitedParallelism(1) + SupervisorJob())
     private var locationJob: Job? = null
@@ -105,6 +107,7 @@ class RouteTrackingService : Service() {
         startStepsTracking()
 
         try {
+            vehicleToPedestrianManager.stopMonitoring()
             activityRecognitionManager.startMonitoring(currentSessionId)
         } catch (e: SecurityException) {
             NotificationsHelper.showErrorNotification(
@@ -258,6 +261,7 @@ class RouteTrackingService : Service() {
         isTracking = false
         try {
             activityRecognitionManager.stopMonitoring(currentSessionId)
+            vehicleToPedestrianManager.startMonitoring()
         } catch (e: SecurityException) {
             // Ignora se permesso tolto
         }
