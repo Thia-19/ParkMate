@@ -85,7 +85,7 @@ private fun SettingsContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
+                        text = stringResource(R.string.feature_settings),
                         fontWeight = FontWeight.Bold
                     )
                 },
