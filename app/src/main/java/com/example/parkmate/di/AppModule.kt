@@ -8,10 +8,16 @@ import com.example.parkmate.core.data.local.data_source.ParkingEffortDao
 import com.example.parkmate.core.data.local.data_source.ParkingSessionDao
 import com.example.parkmate.core.data.local.data_source.SavedLocationDao
 import com.example.parkmate.core.data.local.data_source.VehicleDao
+import com.example.parkmate.core.data.repository.ImageRepositoryImpl
+import com.example.parkmate.core.data.repository.ParkingEffortRepositoryImpl
 import com.example.parkmate.core.domain.repository.SavedLocationRepository
 import com.example.parkmate.core.data.repository.SavedLocationsRepositoryImpl
 import com.example.parkmate.core.domain.repository.ParkingSessionRepository
 import com.example.parkmate.core.data.repository.ParkingSessionsRepositoryImpl
+import com.example.parkmate.core.data.repository.VehiclesRepositoryImpl
+import com.example.parkmate.core.domain.repository.ImageRepository
+import com.example.parkmate.core.domain.repository.ParkingEffortRepository
+import com.example.parkmate.core.domain.repository.VehiclesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,6 +63,22 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideVehicleRepository(
+        dao: VehicleDao
+    ): VehiclesRepository {
+        return VehiclesRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageRepository(
+        @ApplicationContext context: Context
+    ): ImageRepository {
+        return ImageRepositoryImpl(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideSavedLocationDao(db: ParkMateDatabase): SavedLocationDao {
         return db.savedLocationDao
     }
@@ -74,6 +96,15 @@ object AppModule {
     fun provideParkingEffortDao(db: ParkMateDatabase): ParkingEffortDao {
         return db.parkingEffortDao
     }
+
+    @Provides
+    @Singleton
+    fun provideParkingEffortRepository(
+        dao: ParkingEffortDao
+    ): ParkingEffortRepository {
+        return ParkingEffortRepositoryImpl(dao)
+    }
+
 
     @Provides
     @Singleton
