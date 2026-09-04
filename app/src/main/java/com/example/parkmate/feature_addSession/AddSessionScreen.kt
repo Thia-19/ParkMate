@@ -74,6 +74,7 @@ import coil.compose.AsyncImage
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingType
 import com.example.parkmate.core.domain.models.Position
+import com.example.parkmate.core.domain.models.labelRes
 import com.example.parkmate.core.domain.util.images.createImageUri
 import com.example.parkmate.feature_addSession.components.ParkingDateTimePickerDialog
 import com.example.parkmate.feature_addSession.components.SavedLocationsDropdownSelector

@@ -8,12 +8,6 @@ import com.example.parkmate.service.RouteTrackingService
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-/** FUNZIONALITA':
- * cattura le azioni provenienti dai pulsanti delle notifiche
- * definite in NotificationsHelper e le inoltra al BackgroundTaskManager
- */
-
-
 @AndroidEntryPoint
 class RouteTrackingActionReceiver : BroadcastReceiver() {
 
@@ -43,10 +37,5 @@ class RouteTrackingActionReceiver : BroadcastReceiver() {
         const val ACTION_CANCEL = "com.example.parkmate.action.NOTIFICATION_CANCEL"
         const val ACTION_RESUME = "com.example.parkmate.action.NOTIFICATION_RESUME"
         const val ACTION_DISMISS_PROMPT = "action_dismiss_prompt"
-
-        // Not used
-        const val EXTRA_SESSION_ID = "extra_session_id"
-
-        const val ACTION_PROMPT_NEW_PARK = "action_prompt_new_park"
     }
 }

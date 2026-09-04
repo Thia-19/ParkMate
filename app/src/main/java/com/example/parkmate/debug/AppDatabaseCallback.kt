@@ -26,7 +26,6 @@ class AppDatabaseCallback(
             database.vehicleDao.insertVehicle(vehicle)
         }
 
-        // Inseriamo le sessioni una alla volta
         MockData.mockParkingSessions.forEach { session ->
             database.parkingSessionDao.insertParkingSession(session)
         }
