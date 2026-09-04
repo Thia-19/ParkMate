@@ -102,12 +102,13 @@
     <string name="settings_position">Attiva acquisizione della Posizione Corrente</string>
     <string name="settings_enable_position">Consenti a ParkMate di accedere alla tua posizione in real-time, consigliato se si desidera registrare una sessione di parcheggio associata alla posizione corrente (GPS) o per utilizzare la funzionalità Parking Effort.</string>
     <string name="settings_AR_enable">Attiva activity recognition per le sessioni di parcheggio</string>
+    <string name="notifications_active_desc">Notifiche periodiche sullo stato del parcheggio attivo</string>
     <string name="notifications_expired">Biglietto scaduto!</string>
     <string name="notifications_expired_desc">Il biglietto per il veicolo è appena scaduto. Rinnovalo per evitare sanzioni fiscali!</string>
     <string name="notifications_expiry">Scadenza biglietto</string>
     <string name="notifications_expiry_desc">Il biglietto per il veicolo scadrà a breve!</string>
     <string name="notifications_remaining_time">Tempo rimanente</string>
-    <string name="notifications_title_alert">Sessione di parcheggio in corso</string>
+    <string name="notifications_title_alert">Parcheggio in corso</string>
     <string name="history_KPI">"Indicatori chiave "</string>
     <string name="history_KPI_average_expense">Spesa media</string>
     <string name="history_KPI_average_duraion">Durata media</string>
@@ -179,5 +180,9 @@
     <string name="vehicle_type_motorcycle">motorcycle</string>
     <string name="vehicle_type_bicycle">bicycle</string>
     <string name="vehicle_type_other">other</string>
+    <string name="create_transition_channel">Notifiche per la registrazione e chiusura della sosta</string>
+    <string name="notifications_parking_expiry">Avvisi scadenza parcheggi</string>
+    <string name="notifications_parking_expiry_desc">Notifiche per pre-scadenza e scadenza dei biglietti a tariffa fissa</string>
+    <string name="notifications_active">Promemoria Parcheggio Attivo</string>
 
 </resources>

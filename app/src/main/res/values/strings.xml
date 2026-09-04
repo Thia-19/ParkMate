@@ -138,6 +138,11 @@
     <string name="settings_AR_enable">Enable activity recognition for parking sessions. By enabling this option, ParkMate will be able to track you physical activity, prompting you through notifications to handle you parking sessions.</string>
 
     <!-- Notifications -->
+    <string name="create_transition_channel">Notifications prompting to open or handle parking sessions</string>
+    <string name="notifications_parking_expiry">Parking expiry alerts</string>
+    <string name="notifications_parking_expiry_desc">Notifications for pre-expiry and expiry</string>
+    <string name="notifications_active">Active parking reminder</string>
+    <string name="notifications_active_desc">Periodic notifications on the status of the active parking session</string>
     <string name="notifications_expired">Ticket expired!</string>
     <string name="notifications_expired_desc">The ticket for the vehicle has just expired. Renew it to avoid financial penalties.</string>
     <string name="notifications_expiry">Ticket expiry</string>

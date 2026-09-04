@@ -72,9 +72,9 @@ object NotificationsHelper {
             val channel = NotificationChannel(
                 TRANSITION_CHANNEL_ID,
                 TRANSITION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH // Banner visibile e suono!
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifiche per la registrazione e chiusura della sosta"
+                description = context.getString(R.string.create_transition_channel)
                 setShowBadge(true)
             }
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -84,8 +84,8 @@ object NotificationsHelper {
 
     fun createParkingExpiryNotificationChannel(context: Context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Avvisi scadenza parcheggi"
-            val descriptionText = "Notifiche per pre-scadenza e scadenza dei ticketz"
+            val name = context.getString(R.string.notifications_parking_expiry)
+            val descriptionText = context.getString(R.string.notifications_parking_expiry_desc)
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(PARKING_EXPIRY_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -100,10 +100,10 @@ object NotificationsHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 ONGOING_PARKING_CHANNEL_ID,
-                "Promemoria Parcheggio Attivo",
+                context.getString(R.string.notifications_active),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Notifiche periodiche sullo stato del parcheggio attivo"
+                description = context.getString(R.string.notifications_active_desc)
                 setShowBadge(false)
             }
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -292,7 +292,7 @@ object NotificationsHelper {
 
     private fun baseBuilder(context: Context): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, ROUTE_TRACKING_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_route_tracking) // Assicurati che l'icona esista
+            .setSmallIcon(R.drawable.ic_route_tracking)
             .setColor(ContextCompat.getColor(context, R.color.black))
     }
 
@@ -346,7 +346,7 @@ object NotificationsHelper {
         )
 
         val notification = NotificationCompat.Builder(context, PARKING_EXPIRY_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_parking_marker)
+            .setSmallIcon(R.drawable.ic_park)
             .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

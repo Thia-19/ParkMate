@@ -162,7 +162,7 @@ fun ParkingSessionDetails(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)){
                     Text(
-                        text = "VEHICLE TYPE",
+                        text = stringResource(R.string.home_vehicle_type),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -262,7 +262,7 @@ fun ParkingSessionDetails(
                                 style = MaterialTheme.typography.titleSmall
                             )
                             Text(
-                                text = "${item.session.position.latitude}, ${item.session.position.longitude}",
+                                text = String.format(Locale.getDefault(), "%.4f, %.4f", item.session.position.latitude, item.session.position.longitude),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

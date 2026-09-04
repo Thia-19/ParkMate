@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.ParkingSession
@@ -137,7 +138,10 @@ fun ParkingSessionCardHome(
                             text = item.vehicleName,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = contentColor
+                            color = contentColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
 
                         if (isExpired) {
@@ -150,28 +154,31 @@ fun ParkingSessionCardHome(
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onError,
+                                    softWrap = false,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                 )
                             }
                         }
                     }
 
-                    Surface(
-                        shape = CircleShape,
-                        color = badgeContainer,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            val parkingIcon = when (item.session.parkingType) {
-                                ParkingType.FREE -> Icons.Default.MoneyOff
-                                ParkingType.HOURLY_PAID, ParkingType.FIXED_TICKET -> Icons.Default.AttachMoney
+                    if (!isExpired) {
+                        Surface(
+                            shape = CircleShape,
+                            color = badgeContainer,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                val parkingIcon = when (item.session.parkingType) {
+                                    ParkingType.FREE -> Icons.Default.MoneyOff
+                                    ParkingType.HOURLY_PAID, ParkingType.FIXED_TICKET -> Icons.Default.AttachMoney
+                                }
+                                Icon(
+                                    imageVector = parkingIcon,
+                                    contentDescription = item.session.parkingType.name,
+                                    tint = badgeTint,
+                                    modifier = Modifier.size(18.dp)
+                                )
                             }
-                            Icon(
-                                imageVector = parkingIcon,
-                                contentDescription = item.session.parkingType.name,
-                                tint = badgeTint,
-                                modifier = Modifier.size(18.dp)
-                            )
                         }
                     }
                 }
