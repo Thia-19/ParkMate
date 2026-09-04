@@ -10,9 +10,13 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,27 +31,28 @@ fun SwipeToDeleteWrapper(
     shape: Shape = RectangleShape,
     content: @Composable RowScope.() -> Unit
 ) {
+    val currentOnDelete by rememberUpdatedState(onDelete)
+
     val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { dismissValue ->
-            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                onDelete()
-                true
-            } else {
-                false
-            }
-        }
+        initialValue = SwipeToDismissBoxValue.Settled,
+        positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
     )
+
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            currentOnDelete()
+        }
+    }
 
     SwipeToDismissBox(
         state = dismissState,
-        modifier = modifier,
+        modifier = modifier.clip(shape),
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = true,
         backgroundContent = {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(shape)
                     .background(MaterialTheme.colorScheme.errorContainer)
                     .padding(horizontal = 24.dp),
                 contentAlignment = Alignment.CenterEnd

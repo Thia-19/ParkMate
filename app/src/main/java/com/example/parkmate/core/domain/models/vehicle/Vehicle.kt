@@ -3,10 +3,13 @@ package com.example.parkmate.core.domain.models.vehicle
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/* FUNZIONALITA' DI VEHICLE :
-- rappresenta il concetto di veicolo nel dominio
-- rappresenta la tabella del database
- */
+
+enum class VehicleType {
+    MOTORCYCLE,
+    CAR,
+    BICYCLE,
+    OTHER
+}
 
 @Entity(tableName = "vehicles")
 data class Vehicle(

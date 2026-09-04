@@ -16,16 +16,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.R
 
+private val ParkedBackgroundColor = Color(0xFFFFEBEE)
+private val ParkedTextColor = Color(0xFFC62828)
+private val AvailableBackgroundColor = Color(0xFFE8F5E9)
+private val AvailableTextColor = Color(0xFF2E7D32)
+
 @Composable
 fun StatusPill(
     isParked: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = if (isParked) Color( 0xFFFFEBEE) else Color(0xFFE8F5E9)
-    val textColor = if (isParked) Color(0xFFC62828) else Color(0xFF2E7D32)
+    val backgroundColor = if (isParked) ParkedBackgroundColor else AvailableBackgroundColor
+    val textColor = if (isParked) ParkedTextColor else AvailableTextColor
     val text = stringResource(
-        if (isParked) R.string.status_parked
-        else R.string.status_available
+        if (isParked) R.string.status_parked else R.string.status_available
     )
 
     Box(

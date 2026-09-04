@@ -1,6 +1,7 @@
 package com.example.parkmate.di
 
 import android.content.Context
+import android.hardware.SensorManager
 import androidx.room.Room
 import androidx.work.WorkManager
 import com.example.parkmate.core.data.local.data_source.ParkMateDatabase
@@ -12,6 +13,10 @@ import com.example.parkmate.core.domain.repository.SavedLocationRepository
 import com.example.parkmate.core.data.repository.SavedLocationsRepositoryImpl
 import com.example.parkmate.core.domain.repository.ParkingSessionRepository
 import com.example.parkmate.core.data.repository.ParkingSessionsRepositoryImpl
+import com.example.parkmate.core.domain.util.observers.ConnectivityObserver
+import com.example.parkmate.core.domain.util.observers.NetworkConnectivityObserver
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,6 +86,30 @@ object AppModule {
         @ApplicationContext context: Context
     ): WorkManager {
         return WorkManager.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSensorManager(
+        @ApplicationContext context: Context
+    ): SensorManager {
+        return context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(
+        @ApplicationContext context: Context
+    ): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectivityObserver(
+        @ApplicationContext context: Context
+    ): ConnectivityObserver {
+        return NetworkConnectivityObserver(context)
     }
 
 }

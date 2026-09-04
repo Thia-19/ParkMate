@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,9 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.parkmate.permissions.RouteTrackingPermissions
 
-/** FUNZIONALITA':
- * - Contiene i launchers per richiedere facilmente i permessi dalla UI
- */
 class PermissionLaunchers(
     private val locationLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
     private val notificationLauncher: ManagedActivityResultLauncher<String, Boolean>,
@@ -43,9 +39,6 @@ class PermissionLaunchers(
     }
 }
 
-/**
- * Inizializza e memorizza i launcher nel ciclo di vita della composizione.
- */
 @Composable
 fun rememberPermissionLaunchers(
     onPermissionsUpdated: () -> Unit

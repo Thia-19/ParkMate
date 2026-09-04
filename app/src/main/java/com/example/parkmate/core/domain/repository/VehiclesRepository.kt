@@ -3,11 +3,8 @@ package com.example.parkmate.core.domain.repository
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import kotlinx.coroutines.flow.Flow
 
-// Astrazione del database
-
 interface VehiclesRepository {
-
-    suspend fun addVehicle(vehicle: Vehicle)
+    suspend fun addVehicle(vehicle: Vehicle) : Long
 
     fun getVehicles(): Flow<List<Vehicle>>
 

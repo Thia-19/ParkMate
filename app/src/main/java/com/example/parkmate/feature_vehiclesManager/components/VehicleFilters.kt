@@ -36,19 +36,15 @@ fun VehicleFilters(
     var typeMenuExpanded by remember { mutableStateOf(false) }
 
     Row(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 15.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ElevatedFilterChip(
             selected = filterState.status == VehicleStatusFilter.AVAILABLE,
             onClick = {
-                onStatusFilterSelected(
-                    if (filterState.status == VehicleStatusFilter.AVAILABLE) {
-                        VehicleStatusFilter.ALL
-                    } else {
-                        VehicleStatusFilter.AVAILABLE
-                    }
-                )
+                onStatusFilterSelected(filterState.status.toggled(VehicleStatusFilter.AVAILABLE))
             },
             label = { Text(stringResource(R.string.status_available)) },
             colors = FilterChipDefaults.elevatedFilterChipColors()
@@ -57,15 +53,9 @@ fun VehicleFilters(
         ElevatedFilterChip(
             selected = filterState.status == VehicleStatusFilter.PARKED,
             onClick = {
-                onStatusFilterSelected(
-                    if (filterState.status == VehicleStatusFilter.PARKED) {
-                        VehicleStatusFilter.ALL
-                    } else {
-                        VehicleStatusFilter.PARKED
-                    }
-                )
+                onStatusFilterSelected(filterState.status.toggled(VehicleStatusFilter.PARKED))
             },
-            label = { Text(stringResource(R.string.status_parked))},
+            label = { Text(stringResource(R.string.status_parked)) },
             colors = FilterChipDefaults.elevatedFilterChipColors()
         )
 
@@ -74,9 +64,8 @@ fun VehicleFilters(
                 selected = filterState.type != null,
                 onClick = { typeMenuExpanded = true },
                 label = {
-                    val labelText = filterState.type?.let {
-                        stringResource(it.labelRes)
-                    } ?: (stringResource(R.string.all_types))
+                    val labelText = filterState.type?.let { stringResource(it.labelRes) }
+                        ?: stringResource(R.string.all_types)
                     Text(labelText)
                 }
             )
@@ -116,3 +105,6 @@ fun VehicleFilters(
         }
     }
 }
+
+private fun VehicleStatusFilter.toggled(target: VehicleStatusFilter): VehicleStatusFilter =
+    if (this == target) VehicleStatusFilter.ALL else target

@@ -6,9 +6,11 @@ import javax.inject.Inject
 class CancelRouteTrackingUseCase @Inject constructor(
     private val parkingEffortRepository: ParkingEffortRepository
 ) {
-    suspend operator fun invoke(sessionId: Int) {
-        if (sessionId <= 0) return
+    suspend operator fun invoke(sessionId: Int): Result<Unit> {
+        if (sessionId <= 0) return Result.success(Unit)
 
-        parkingEffortRepository.cancelRouteTracking(sessionId)
+        return runCatching {
+            parkingEffortRepository.cancelRouteTracking(sessionId)
+        }
     }
 }

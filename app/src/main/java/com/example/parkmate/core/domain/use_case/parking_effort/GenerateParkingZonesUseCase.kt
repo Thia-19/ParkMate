@@ -68,3 +68,4 @@ class GenerateParkingZonesUseCase @Inject constructor() {
         const val MAX_RECENT_DESTINATIONS = 10
     }
 }
+

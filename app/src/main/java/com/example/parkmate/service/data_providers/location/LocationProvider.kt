@@ -16,7 +16,6 @@ import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 sealed class LocationException(message: String, cause: Throwable? = null) : Exception(message, cause) {
     class LocationDisabledException : LocationException("Servizi di localizzazione o GPS disattivati o Google Play Services non disponibili.")
     class LocationUnavailableException(cause: Throwable? = null) : LocationException("Impossibile rilevare la posizione attuale dopo i tentativi di retry.", cause)
@@ -29,8 +28,7 @@ class LocationProvider @Inject constructor(
 ) {
     private var cachedPosition: Position? = null
     private var lastCacheTimestamp: Long = 0L
-    private val cacheValidityMillis: Long = 3_000L // 3 secondi di cache per chiamate ad alta frequenza
-
+    private val cacheValidityMillis: Long = 3_000L
 
     @SuppressLint("MissingPermission")
     suspend fun getCurrentPosition(
@@ -39,7 +37,6 @@ class LocationProvider @Inject constructor(
         timeoutMillis: Long = 4_000L
     ): Position = withContext(Dispatchers.IO) {
 
-        // 1. Caching per frequenza elevata: risponde istantaneamente se richiamata più volte dal Service
         val currentTime = System.currentTimeMillis()
         cachedPosition?.let { pos ->
             if (currentTime - lastCacheTimestamp < cacheValidityMillis) {
@@ -65,7 +62,7 @@ class LocationProvider @Inject constructor(
                     fusedLocationClient
                         .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
                         .await()
-                } ?: fusedLocationClient.lastLocation.await() // Fallback immediato su ultima posizione nota
+                } ?: fusedLocationClient.lastLocation.await()
 
                 if (location != null) {
                     val position = Position(

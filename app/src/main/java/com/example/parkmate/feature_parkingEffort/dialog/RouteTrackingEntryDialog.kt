@@ -1,7 +1,6 @@
 package com.example.parkmate.feature_parkingEffort.dialog
 
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.parkmate.R
 import com.example.parkmate.feature_parkingEffort.view_model.RouteTrackingEvent
@@ -47,12 +47,13 @@ import com.example.parkmate.notifications.NotificationsHelper
 import com.example.parkmate.permissions.RouteTrackingPermissions
 import com.example.parkmate.service.launchers.rememberPermissionLaunchers
 
-/**
- * FUNZIONALITA' :
- * - Richiesta e verifica dinamica dei permessi
- * - Richiamo dei launcher Android
- * - Avvio tracciamento percorso per valutazione Parking Effort
- */
+private data class PermissionState(
+    val isLocationGranted: Boolean,
+    val isActivityGranted: Boolean,
+    val isNotificationGranted: Boolean
+) {
+    val isAllGranted: Boolean get() = isLocationGranted && isActivityGranted && isNotificationGranted
+}
 
 @Composable
 fun RouteTrackingEntryDialog(
@@ -62,29 +63,24 @@ fun RouteTrackingEntryDialog(
     viewModel: RouteTrackingViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    var isLocationGranted by remember { mutableStateOf(RouteTrackingPermissions.isLocationEnabled(context)) }
-    var isActivityGranted by remember { mutableStateOf(RouteTrackingPermissions.isActivityRecognitionEnabled(context)) }
-    var isNotificationGranted by remember { mutableStateOf(RouteTrackingPermissions.isNotificationEnabled(context)) }
-
-    val refreshPermissionsState = {
-        isLocationGranted = RouteTrackingPermissions.isLocationEnabled(context)
-        isActivityGranted = RouteTrackingPermissions.isActivityRecognitionEnabled(context)
+    fun checkPermissions() = PermissionState(
+        isLocationGranted = RouteTrackingPermissions.isLocationEnabled(context),
+        isActivityGranted = RouteTrackingPermissions.isActivityRecognitionEnabled(context),
         isNotificationGranted = RouteTrackingPermissions.isNotificationEnabled(context)
-    }
+    )
+
+    var permissionsState by remember { mutableStateOf(checkPermissions()) }
 
     val permissionLaunchers = rememberPermissionLaunchers(
-        onPermissionsUpdated = {
-            refreshPermissionsState()
-            Log.i("Attivita dei lauchers", "Stato permessi aggiornato")
-        }
+        onPermissionsUpdated = { permissionsState = checkPermissions() }
     )
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                refreshPermissionsState()
+                permissionsState = checkPermissions()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -93,26 +89,29 @@ fun RouteTrackingEntryDialog(
 
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.events.collect { state ->
-                when (state) {
+            viewModel.events.collect { event ->
+                when (event) {
                     RouteTrackingEvent.Started -> onDismissRequest()
+
                     is RouteTrackingEvent.FailedToStart -> {
-                        val resId = if (state.error is SecurityException) {
+                        val resId = if (event.error is SecurityException) {
                             R.string.permissions_denied_system
                         } else {
                             R.string.srcd_route_tracking_start_failed
                         }
                         NotificationsHelper.showErrorNotification(context, context.getString(resId))
                     }
+
+                    is RouteTrackingEvent.OperationFailed -> {
+                        NotificationsHelper.showErrorNotification(
+                            context,
+                            context.getString(R.string.operation_failed)
+                        )
+                    }
                 }
             }
         }
     }
-
-    val isAllPermissionsGranted =
-            isLocationGranted
-            && isActivityGranted
-            && isNotificationGranted
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -123,12 +122,8 @@ fun RouteTrackingEntryDialog(
                 .fillMaxWidth(0.9f)
                 .padding(16.dp),
             shape = AlertDialogDefaults.shape,
-            colors = CardDefaults.cardColors(
-                containerColor = AlertDialogDefaults.containerColor
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = AlertDialogDefaults.TonalElevation
-            )
+            colors = CardDefaults.cardColors(containerColor = AlertDialogDefaults.containerColor),
+            elevation = CardDefaults.cardElevation(defaultElevation = AlertDialogDefaults.TonalElevation)
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -148,7 +143,7 @@ fun RouteTrackingEntryDialog(
                     IconButton(onClick = onDismissRequest) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Chiusura del Dialog"
+                            contentDescription = null
                         )
                     }
                 }
@@ -166,51 +161,35 @@ fun RouteTrackingEntryDialog(
 
                 PermissionSwitchRow(
                     title = stringResource(R.string.srcd_permission_location),
-                    isGranted = isLocationGranted,
-                    onRequest = { permissionLaunchers.requestLocationPermissions() }
+                    isGranted = permissionsState.isLocationGranted,
+                    onRequest = permissionLaunchers::requestLocationPermissions
                 )
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     PermissionSwitchRow(
                         title = stringResource(R.string.srcd_permission_activity_tracking),
-                        isGranted = isActivityGranted,
-                        onRequest = { permissionLaunchers.requestActivityRecognitionPermission() }
+                        isGranted = permissionsState.isActivityGranted,
+                        onRequest = permissionLaunchers::requestActivityRecognitionPermission
                     )
                 } else {
-                    Text(
-                        text = stringResource(R.string.grant_ActRecognition_permission_toContinue),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    )
+                    PermissionInfoText(stringResource(R.string.grant_ActRecognition_permission_toContinue))
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     PermissionSwitchRow(
                         title = stringResource(R.string.srcd_permission_notifications),
-                        isGranted = isNotificationGranted,
-                        onRequest = { permissionLaunchers.requestNotificationPermission() }
+                        isGranted = permissionsState.isNotificationGranted,
+                        onRequest = permissionLaunchers::requestNotificationPermission
                     )
                 } else {
-                    Text(
-                        text = stringResource(R.string.grant_notifications_permission_toContinue),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    )
+                    PermissionInfoText(stringResource(R.string.grant_notifications_permission_toContinue))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = {
-                        viewModel.startRouteTracking(sessionId)
-                    },
-                    enabled = isAllPermissionsGranted,
+                    onClick = { viewModel.startRouteTracking(sessionId) },
+                    enabled = permissionsState.isAllGranted,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(R.string.srcd_action_start_tracking))
@@ -220,16 +199,16 @@ fun RouteTrackingEntryDialog(
     }
 }
 
-
 @Composable
 private fun PermissionSwitchRow(
     title: String,
     isGranted: Boolean,
-    onRequest: () -> Unit
+    onRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -256,4 +235,19 @@ private fun PermissionSwitchRow(
             }
         )
     }
+}
+
+@Composable
+private fun PermissionInfoText(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    )
 }

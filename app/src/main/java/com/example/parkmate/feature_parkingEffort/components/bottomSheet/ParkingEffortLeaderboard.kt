@@ -1,6 +1,5 @@
 package com.example.parkmate.feature_parkingEffort.components.bottomSheet
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,8 +40,10 @@ fun ParkingEffortLeaderboard(
     if (topZones.isEmpty()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Text(
+                modifier = Modifier.padding(10.dp),
                 text = stringResource(id = R.string.pe_leaderboard_empty),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Bold
             )
         }
         return
@@ -52,17 +53,26 @@ fun ParkingEffortLeaderboard(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(topZones, key = { it.zoneId }) { zone ->
+        items(
+            items = topZones,
+            key = RankedParkingZone::zoneId
+        ) { zone ->
             LeaderboardItem(zone = zone)
         }
     }
 }
 
-@SuppressLint("DefaultLocale")
 @Composable
-private fun LeaderboardItem(zone: RankedParkingZone) {
+private fun LeaderboardItem(
+    zone: RankedParkingZone,
+    modifier: Modifier = Modifier
+) {
+    val isTopRank = zone.rank == 1
+    val badgeBgColor = if (isTopRank) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer
+    val badgeTextColor = if (isTopRank) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),
@@ -78,18 +88,14 @@ private fun LeaderboardItem(zone: RankedParkingZone) {
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(
-                        if (zone.rank == 1) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.secondaryContainer
-                    ),
+                    .background(badgeBgColor),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "${zone.rank}",
+                    text = zone.rank.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = if (zone.rank == 1) MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onSecondaryContainer
+                    color = badgeTextColor
                 )
             }
 
@@ -106,7 +112,7 @@ private fun LeaderboardItem(zone: RankedParkingZone) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Score Star",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(16.dp)
                     )

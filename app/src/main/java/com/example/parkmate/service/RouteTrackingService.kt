@@ -14,7 +14,6 @@ import android.os.IBinder
 import androidx.annotation.RequiresPermission
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.Position
-import com.example.parkmate.core.domain.repository.ParkingEffortRepository
 import com.example.parkmate.core.domain.use_case.parking_effort.route_tracking_logic.CompleteRouteTrackingUseCase
 import com.example.parkmate.permissions.RouteTrackingPermissions
 import com.example.parkmate.service.activity_recognition.RouteTrackingActivityRecognitionManager
@@ -29,6 +28,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.content.pm.ServiceInfo
+import android.util.Log
+import com.example.parkmate.service.activity_recognition.VehicleToPedestrianActivityRecognitionManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,6 +38,7 @@ class RouteTrackingService : Service() {
     @Inject lateinit var stepCounterManager: StepCounterManager
     @Inject lateinit var activityRecognitionManager: RouteTrackingActivityRecognitionManager
     @Inject lateinit var completeRouteTrackingUseCase: CompleteRouteTrackingUseCase
+    @Inject lateinit var vehicleToPedestrianManager: VehicleToPedestrianActivityRecognitionManager  // NUOVO
 
     private val serviceScope = CoroutineScope(Dispatchers.Default.limitedParallelism(1) + SupervisorJob())
     private var locationJob: Job? = null
@@ -66,7 +68,6 @@ class RouteTrackingService : Service() {
             ACTION_CANCEL -> handleCancelCommand(sessionId)
             ACTION_PROMPT_CONFIRMATION -> handlePromptConfirmationCommand(sessionId)
             ACTION_RESUME_TRACKING -> handleResumeTrackingCommand(sessionId)
-            ACTION_PROMPT_NEW_PARK -> handlePromptNewPark()
             ACTION_DISMISS_TRANSITION_PROMPT -> {
                 NotificationsHelper.cancelTransitionNotification(this)
             }
@@ -105,11 +106,12 @@ class RouteTrackingService : Service() {
         startStepsTracking()
 
         try {
+            vehicleToPedestrianManager.stopMonitoring()
             activityRecognitionManager.startMonitoring(currentSessionId)
         } catch (e: SecurityException) {
             NotificationsHelper.showErrorNotification(
                 this,
-                "Permesso di attività fisica revocato. Tracciamento limitato."
+                getString(R.string.tracking_limited)
             )
         }
     }
@@ -170,13 +172,13 @@ class RouteTrackingService : Service() {
                     handleStopAndSaveCommand(currentSessionId)
                     return@launch
                 } catch (e: LocationException.LocationUnavailableException) {
-                    // Perdita momentanea di segnale. Log o ignora per riprovare al prossimo giro (10s)
+                    Log.i("RouteTrackingService", "Location non disponibile al momento: ${e.message}")
                 } catch (e: SecurityException) {
                     NotificationsHelper.showErrorNotification(this@RouteTrackingService, "Permessi revocati. Tracciamento interrotto.")
                     handleStopAndSaveCommand(currentSessionId)
                     return@launch
                 } catch (e: Exception) {
-                    // Eccezione generica inaspettata (es. crash hardware sensore GPS)
+                    Log.i("RouteTrackingService", "Errore durante il tracciamento: ${e.message}")
                 }
 
                 delay(10_000L)
@@ -188,15 +190,11 @@ class RouteTrackingService : Service() {
         stepsJob = serviceScope.launch {
             stepCounterManager.getStepsCount()
                 .catch { e ->
-                    // Il SensorManager o l'hardware ha fallito
+                    Log.i("RouteTrackingService", "Errore durante il conteggio dei passi: ${e.message}")
                 }
                 .collect { currentAbsoluteSteps ->
-                    if (initialStepsCount == null) {
-                        initialStepsCount = currentAbsoluteSteps
-                    }
-                    if (currentAbsoluteSteps > 0 && initialStepsCount != null) {
-                        totalSteps = currentAbsoluteSteps - (initialStepsCount ?: currentAbsoluteSteps)
-                    }
+                    val initial = initialStepsCount ?: currentAbsoluteSteps.also { initialStepsCount = it }
+                    totalSteps = (currentAbsoluteSteps - initial).coerceAtLeast(0)
                 }
         }
     }
@@ -214,6 +212,11 @@ class RouteTrackingService : Service() {
             val elevationGain = if (endAlt > startAlt) endAlt - startAlt else 0.0
 
             try {
+                Log.i("RouteTrackingService", "Saving route tracking data...")
+                Log.i("RouteTrackingService", "Total distance: $totalDistanceMeters meters")
+                Log.i("RouteTrackingService", "Total steps: $totalSteps")
+                Log.i("RouteTrackingService", "Elevation gain: $elevationGain meters")
+                Log.i("RouteTrackingService", "Time frame: $timeFrame milliseconds")
 
                 completeRouteTrackingUseCase(
                     sessionId = currentSessionId,
@@ -258,8 +261,9 @@ class RouteTrackingService : Service() {
         isTracking = false
         try {
             activityRecognitionManager.stopMonitoring(currentSessionId)
+            vehicleToPedestrianManager.startMonitoring()
         } catch (e: SecurityException) {
-            // Ignora se permesso tolto
+
         }
     }
 
@@ -291,10 +295,6 @@ class RouteTrackingService : Service() {
         cleanupAndStopService()
     }
 
-    private fun handlePromptNewPark() {
-        NotificationsHelper.cancelTransitionNotification(this)
-    }
-
     companion object {
         const val EXTRA_SESSION_ID = "extra_session_id"
         const val NO_SESSION_ID = -5
@@ -303,7 +303,6 @@ class RouteTrackingService : Service() {
         const val ACTION_CANCEL = "com.example.parkmate.action.CANCEL"
         const val ACTION_PROMPT_CONFIRMATION = "com.example.parkmate.action.PROMPT_CONFIRMATION"
         const val ACTION_RESUME_TRACKING = "com.example.parkmate.action.RESUME_TRACKING"
-        const val ACTION_PROMPT_NEW_PARK = "action_prompt_new_park"
         const val ACTION_DISMISS_TRANSITION_PROMPT = "action_dismiss_transition_prompt"
 
     }

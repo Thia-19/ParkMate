@@ -5,6 +5,8 @@ import com.example.parkmate.core.domain.repository.ParkingSessionRepository
 import com.example.parkmate.core.domain.repository.VehiclesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class GetVehiclesWithParkingSessionUseCase @Inject constructor(
@@ -16,7 +18,7 @@ class GetVehiclesWithParkingSessionUseCase @Inject constructor(
             vehiclesRepository.getVehicles(),
             parkingSessionRepository.getActiveParkingSessions()
         ) { vehicles, activeSessionsWithVehicle ->
-            
+
             val sessionsByVehicleId = activeSessionsWithVehicle.associateBy(
                 keySelector = { it.session.vehicleId },
                 valueTransform = { it.session }
@@ -28,6 +30,6 @@ class GetVehiclesWithParkingSessionUseCase @Inject constructor(
                     parkingSession = sessionsByVehicleId[vehicle.id]
                 )
             }
-        }
+        }.flowOn(Dispatchers.Default)
     }
 }
