@@ -101,7 +101,7 @@
     <string name="history_vehicle_expense">Spese totali dei veicoli</string>
     <string name="settings_position">Attiva acquisizione della Posizione Corrente</string>
     <string name="settings_enable_position">Consenti a ParkMate di accedere alla tua posizione in real-time, consigliato se si desidera registrare una sessione di parcheggio associata alla posizione corrente (GPS) o per utilizzare la funzionalità Parking Effort.</string>
-    <string name="settings_AR_enable">Attiva activity recognition per le sessioni di parcheggio</string>
+    <string name="settings_AR_enable">Attiva il tracciamento dell\'attività fisica per le sessioni di parcheggio. ParkMate riconoscerà quando scendi da un veicolo e ti inviterà a creare una nuova sessione di parcheggio.</string>
     <string name="notifications_active_desc">Notifiche periodiche sullo stato del parcheggio attivo</string>
     <string name="notifications_expired">Biglietto scaduto!</string>
     <string name="notifications_expired_desc">Il biglietto per il veicolo è appena scaduto. Rinnovalo per evitare sanzioni fiscali!</string>

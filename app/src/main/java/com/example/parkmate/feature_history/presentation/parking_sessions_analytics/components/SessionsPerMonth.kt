@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.parkmate.feature_history.domain.models.MonthlySessions
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -55,7 +56,7 @@ fun SessionsPerMonth(
             rememberColumnCartesianLayer(
                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                     rememberLineComponent(
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = Color(0xFFEFB824),
                         thickness = 16.dp,
                         shape = Shape.Rectangle
                     )

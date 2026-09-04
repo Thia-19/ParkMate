@@ -21,8 +21,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("Boolean", "ENABLE_MOCK_DATA", "true")
+        }
         release {
+            buildConfigField("Boolean", "ENABLE_MOCK_DATA", "false")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

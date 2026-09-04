@@ -18,11 +18,15 @@ import com.example.parkmate.core.data.repository.VehiclesRepositoryImpl
 import com.example.parkmate.core.domain.repository.ImageRepository
 import com.example.parkmate.core.domain.repository.ParkingEffortRepository
 import com.example.parkmate.core.domain.repository.VehiclesRepository
+import com.example.parkmate.debug.AppDatabaseCallback
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -32,13 +36,25 @@ object AppModule {
     @Provides
     @Singleton
     fun provideParkMateDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): ParkMateDatabase {
-        return Room.databaseBuilder (
+        val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+        lateinit var database: ParkMateDatabase
+
+        database = Room.databaseBuilder(
             context,
             ParkMateDatabase::class.java,
             "parkmate_db"
-        ).build()
+        )
+            .addCallback(
+                AppDatabaseCallback(
+                    scope = scope,
+                    provider = { database }
+                )
+            )
+            .build()
+
+        return database
     }
 
     @Provides
