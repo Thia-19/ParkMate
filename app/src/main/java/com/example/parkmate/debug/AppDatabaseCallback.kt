@@ -21,17 +21,14 @@ class AppDatabaseCallback(
             }
         }
     }
-
-    // Usiamo 'suspend' invece di 'async'
     private suspend fun populateMockData(database: ParkMateDatabase) {
-        // Inseriamo i veicoli uno alla volta usando la insert singola del tuo DAO
         MockData.vehicles.forEach { vehicle ->
-            database.vehicleDao.insertVehicle(vehicle) // Sostituisci '.insert' col nome esatto del tuo metodo
+            database.vehicleDao.insertVehicle(vehicle)
         }
 
         // Inseriamo le sessioni una alla volta
         MockData.mockParkingSessions.forEach { session ->
-            database.parkingSessionDao.insertParkingSession(session) // Sostituisci '.insert' col nome esatto del tuo metodo
+            database.parkingSessionDao.insertParkingSession(session)
         }
     }
 }
