@@ -1,4 +1,4 @@
-package com.example.parkmate.core.domain.utils.images
+package com.example.parkmate.core.domain.util.images
 
 import android.content.Context
 import android.net.Uri

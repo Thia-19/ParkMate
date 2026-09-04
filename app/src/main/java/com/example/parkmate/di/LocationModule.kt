@@ -1,29 +1,12 @@
 package com.example.parkmate.di
 
-import android.content.Context
-import android.hardware.SensorManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import dagger.Module
-import dagger.Provides
+import com.example.parkmate.core.domain.util.map.AppGeocoder
+import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
-@Module
+@EntryPoint
 @InstallIn(SingletonComponent::class)
-object LocationAndSensorModule {
-
-    @Provides
-    @Singleton
-    fun provideFusedLocationProviderClient(
-        @ApplicationContext context: Context
-    ): FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-
-    @Provides
-    @Singleton
-    fun provideSensorManager(
-        @ApplicationContext context: Context
-    ): SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+interface AppGeocoderEntryPoint {
+    fun appGeocoder(): AppGeocoder
 }

@@ -46,7 +46,7 @@
     <string name="home_expired_badge">EXPIRED</string>
 
     <!-- Add Session -->
-    <string name="add_session_title">New Session</string>
+    <string name="add_session_title">Open a Parking Session</string>
     <string name="add_session_save">Save</string>
 
     <string name="add_session_vehicle">Vehicle</string>
@@ -112,7 +112,7 @@
     <string name="history_vehicles_default">All vehicles</string>
     <string name="history_reset_filters">Reset filters</string>
     <string name="history_apply_filters">Apply</string>
-    <string name="history_vehicle">Vehicle</string>
+    <string name="history_vehicle">Vehicle name</string>
     <string name="history_total_amount">Total historical spent amount</string>
     <string name="history_exp_analytics">Expenses Analytics</string>
     <string name="history_month">Month</string>
@@ -130,6 +130,7 @@
     <string name="history_last_month">Last Month</string>
     <string name="history_last_6">Last 6 Months</string>
     <string name="history_all_time">All time</string>
+
 
     <!-- Settings -->
     <string name="settings_position">Enable current position acquisition</string>
@@ -151,8 +152,9 @@
     <string name="notifications_title_alert">Ongoing parking session</string>
 
     <!--Error Handling-->
+    <string name="general_error">An error occurred</string>
     <string name="permissions_denied_system">Permissions denied by the System.</string>
-
+    <string name="operation_failed">Operation Failed</string>
 
     <!-- Start Route Calculation Dialog -->
     <string name="srcd_rate_parking_title">Would you like to rate your parking?</string>
@@ -177,8 +179,10 @@
 
     <!-- RouteTrackingService Errors-->
     <string name="permissions_revoked"> Unable to continue route tracking: permissions revoked or GPS disabled.</string>
-    <string name="route_tracking_stopped">"Route Tracking stopped "</string>
+    <string name="route_tracking_stopped">Route Tracking stopped </string>
     <string name="error_saving_route_tracking">Error saving path to database.</string>
+    <string name="tracking_limited">Permission for physical activity revoked. Tracking limited.</string>
+
 
     <!-- Parking Effort Screen-->
     <string name="pe_leaderboard_empty">leaderboard is empty</string>
@@ -188,19 +192,26 @@
     <string name="pe_score_no_zone_selected">No zone selected</string>
     <string name="pe_score_address_loading">Address loading</string>
     <string name="pe_address_not_found">Address not found</string>
-    <string name="pe_score_format">score_format</string>
-    <string name="pe_score_destinations_title">Destination Title</string>
+    <string name="pe_score_average">Average score: %1$s</string>
+    <string name="pe_score_destinations_title">Recent reached destinations for this zone</string>
     <string name="pe_score_no_destinations">No destinations</string>
-    <string name="pe_score_destination_item_title">Destination Item Title</string>
-    <string name="pe_map_destination_marker_title">destination marker</string>
-    <string name="pe_map_destination_marker_snippet">dest marker snippet</string>
+    <string name="pe_score_destination_item_title">Location:</string>
+    <string name="pe_map_destination_marker_title"> Reached on foot </string>
     <string name="pe_map_cd_parking_zone">cd parking zone</string>
+    <string name="pe_discover_effort">Discover the score assigned to this zone</string>
+    <string name="pe_discover_best_parking_zones">Discover the best parking zones</string>
 
     <!-- Destination Confirmation Dialog-->
+    <string name="pe_dialog_dest_title">Want to get here ?</string>
+    <string name="pe_dialog_dest_message">Confirm to see which parking spot is the best. </string>
     <string name="pe_dialog_yes">Yes</string>
     <string name="pe_dialog_no">No</string>
-    <string name="pe_dialog_dest_title">Dest title</string>
-    <string name="pe_dialog_dest_message">Dest message</string>
+
+    <!-- ParkingEffort Help Dialog-->
+    <string name="pe_help_dialog_title">How it works</string>
+    <string name="pe_help_info_parking_points">Colored icons on the map indicate places where you’ve parked, each with a score based on how convenient the parking spot was.\n</string>
+    <string name="pe_help_info_map_click">Tap the map to see which parking spot is most convenient for today’s destination.\n</string>
+
 
     <!-- Vehicles Manager -->
     <string name="status_parked">Parked</string>
@@ -210,6 +221,19 @@
     <string name="vehicle_type_motorcycle">motorcycle</string>
     <string name="vehicle_type_bicycle">bicycle</string>
     <string name="vehicle_type_other">other</string>
+    <string name="search_placeholder">Search </string>
+    <string name="vehicle_deleted">Vehicle deleted</string>
+    <string name="save_changes">Save changes</string>
+    <string name="vehicle_type">Vehicle type</string>
+    <string name="vehicle_name">Vehicle Name</string>
+    <string name="no_vehicles">"No vehicle registered "</string>
+
+    <!--Route Tracking Notification -->
+    <string name="are_you_there">Are you there yet?</string>
+    <string name="arrival_detected">We have noticed you have stopped.</string>
+    <string name="yes_save">Yes, save</string>
+    <string name="no_resume">No, resume</string>
+
 
 
 </resources>

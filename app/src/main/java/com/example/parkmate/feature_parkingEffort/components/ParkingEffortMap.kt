@@ -21,6 +21,7 @@ import androidx.core.graphics.toColorInt
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.parkingEffort.ParkingZone
 import com.example.parkmate.core.domain.util.map.getConvenienceColorHex
+import com.example.parkmate.feature_parkingEffort.util.rememberPulsingCircleAnimation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -32,8 +33,13 @@ import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 
-private const val ZONE_RADIUS_METERS = 150.0
-private val DEFAULT_LOCATION = LatLng(41.8902, 12.4922)
+private const val MAX_PULSE_RADIUS_METERS = 150.0
+private val DEFAULT_LOCATION = LatLng(44.2938, 11.2034)
+private val FALLBACK_ZONE_COLOR = Color.Gray
+
+private fun zoneMarkerColor(averageScore: Double): Color =
+    runCatching { Color(getConvenienceColorHex(averageScore).toColorInt()) }
+        .getOrDefault(FALLBACK_ZONE_COLOR)
 
 @Composable
 fun ParkingEffortMap(
@@ -44,9 +50,8 @@ fun ParkingEffortMap(
     modifier: Modifier = Modifier
 ) {
     val initialPosition = remember(zones) {
-        zones.firstOrNull()?.let {
-            LatLng(it.centerPosition.latitude, it.centerPosition.longitude)
-        } ?: DEFAULT_LOCATION
+        zones.firstOrNull()?.let { LatLng(it.centerPosition.latitude, it.centerPosition.longitude) }
+            ?: DEFAULT_LOCATION
     }
 
     val cameraPositionState = rememberCameraPositionState {
@@ -57,9 +62,7 @@ fun ParkingEffortMap(
         if (zones.isNotEmpty() && selectedZone == null) {
             val firstZone = zones.first()
             val targetPosition = LatLng(firstZone.centerPosition.latitude, firstZone.centerPosition.longitude)
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(targetPosition, 14f)
-            )
+            cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(targetPosition, 14f))
         }
     }
 
@@ -75,24 +78,21 @@ fun ParkingEffortMap(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        uiSettings = MapUiSettings(zoomControlsEnabled = false),
+        uiSettings = remember { MapUiSettings(zoomControlsEnabled = false) },
         onMapClick = { latLng ->
             onZoneSelected(null)
             onMapClick(latLng)
         }
     ) {
         zones.forEach { zone ->
-            val color = Color(getConvenienceColorHex(zone.averageScore).toColorInt())
+            val color = remember(zone.id, zone.averageScore) { zoneMarkerColor(zone.averageScore) }
             val isSelected = selectedZone?.id == zone.id
 
-            Circle(
-                center = LatLng(zone.centerPosition.latitude, zone.centerPosition.longitude),
-                radius = ZONE_RADIUS_METERS,
-                fillColor = color.copy(alpha = if (isSelected) 0.55f else 0.35f),
-                strokeColor = color,
-                strokeWidth = if (isSelected) 6f else 3f,
-                clickable = true,
-                onClick = { onZoneSelected(zone) }
+            ParkingZonePulsingEffect(
+                zone = zone,
+                isSelected = isSelected,
+                color = color,
+                onZoneSelected = { onZoneSelected(zone) }
             )
 
             MarkerComposable(
@@ -132,8 +132,39 @@ fun ParkingEffortMap(
                     key = "dest_${selectedZone.id}_$index",
                     position = LatLng(destPos.latitude, destPos.longitude)
                 ),
-                title = stringResource(id = R.string.pe_map_destination_marker_title, index + 1),
-                snippet = stringResource(id = R.string.pe_map_destination_marker_snippet)
+                title = stringResource(id = R.string.pe_map_destination_marker_title, index + 1)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ParkingZonePulsingEffect(
+    zone: ParkingZone,
+    isSelected: Boolean,
+    color: Color,
+    onZoneSelected: () -> Unit
+) {
+    if (!isSelected) return
+
+    val centerLatLng = remember(zone.centerPosition) {
+        LatLng(zone.centerPosition.latitude, zone.centerPosition.longitude)
+    }
+    val waveStates = rememberPulsingCircleAnimation()
+
+    waveStates.forEach { wave ->
+        val scaleValue = wave.scale.value
+        val alphaValue = wave.alpha.value.coerceIn(0f, 1f)
+
+        if (scaleValue > 0.01f) {
+            Circle(
+                center = centerLatLng,
+                radius = MAX_PULSE_RADIUS_METERS * scaleValue,
+                fillColor = color.copy(alpha = alphaValue * 0.25f),
+                strokeColor = color.copy(alpha = alphaValue),
+                strokeWidth = 8f,
+                clickable = true,
+                onClick = { onZoneSelected() }
             )
         }
     }

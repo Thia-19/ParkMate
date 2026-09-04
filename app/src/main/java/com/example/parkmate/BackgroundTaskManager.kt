@@ -27,8 +27,6 @@ class BackgroundTaskManager @Inject constructor(
 ) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    /** Parking Expiry Alerts (AlarmManager) **/
-
     fun scheduleParkingExpiryAlerts(
         session: ParkingSession,
         warningMinutes: Int = DEFAULT_WARNING_MINUTES
@@ -89,8 +87,6 @@ class BackgroundTaskManager @Inject constructor(
         return if (isExact) (sessionId * 10) + 1 else (sessionId * 10) + 2
     }
 
-    /** Ongoing Parking Reminders (WorkManager) **/
-
     fun startOngoingParkingReminder(sessionId: Int) {
         val workTag = getOngoingWorkTag(sessionId)
 
@@ -121,13 +117,8 @@ class BackgroundTaskManager @Inject constructor(
         "${OngoingParkingWorker.WORK_TAG_PREFIX}$sessionId"
 
 
-    /** Route Tracking Service Commands **/
     fun startRouteTracking(sessionId: Int) {
         sendCommandToService(RouteTrackingService.ACTION_START, sessionId)
-    }
-
-    fun stopRouteTracking(sessionId: Int) {
-        sendCommandToService(RouteTrackingService.ACTION_STOP_AND_SAVE, sessionId)
     }
 
     fun markAsArrived(sessionId: Int) {
@@ -146,14 +137,6 @@ class BackgroundTaskManager @Inject constructor(
         sendCommandToService(RouteTrackingService.ACTION_RESUME_TRACKING, sessionId)
     }
 
-    fun handlePromptNewPark(sessionId: Int) {
-        sendCommandToService(RouteTrackingService.ACTION_PROMPT_NEW_PARK, sessionId)
-    }
-
-    fun dismissVehicleTransitionPrompt() {
-        sendCommandToService(RouteTrackingService.ACTION_DISMISS_TRANSITION_PROMPT, -5)
-    }
-
     private fun sendCommandToService(
         actionStr: String,
         sessionId: Int
@@ -169,14 +152,17 @@ class BackgroundTaskManager @Inject constructor(
             )
         }
 
-        if (actionStr == RouteTrackingService.ACTION_START) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
+        try {
+            if (actionStr == RouteTrackingService.ACTION_START) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
             } else {
                 context.startService(intent)
             }
-        } else {
-            context.startService(intent)
+        } catch (e: IllegalStateException) {
         }
     }
 

@@ -35,7 +35,7 @@
     <string name="home_expired">Parcheggio scaduto</string>
     <string name="home_expires">Scade tra</string>
     <string name="home_expired_badge">SCADUTO</string>
-    <string name="add_session_title">Avvia parcheggio</string>
+    <string name="add_session_title">Avvia Parcheggio</string>
     <string name="add_session_save">Salva</string>
     <string name="add_session_vehicle">Veicolo</string>
     <string name="add_session_no_saved_vehicle">Nessun veicolo salvato</string>
@@ -120,69 +120,89 @@
     <string name="history_last_6">Ultimi 6 mesi</string>
     <string name="history_all_time">Sempre</string>
 
+
     <!--Error Handling-->
-    <string name="permissions_denied_system">Permissions denied by the System.</string>
+    <string name="general_error">Si è verificato un errore</string>
+    <string name="permissions_denied_system">Permessi negati dal sistema.</string>
+    <string name="operation_failed">Operazione non riuscita</string>
 
 
     <!-- Start Route Calculation Dialog -->
-    <string name="srcd_rate_parking_title">Would you like to rate your parking?</string>
-    <string name="srcd_enable_permissions_info">The following permissions are required to continue.</string>
-    <string name="srcd_permission_notifications">Notifications</string>
-    <string name="srcd_permission_activity_tracking">Activity Tracking</string>
-    <string name="srcd_permission_location">Location</string>
-    <string name="srcd_action_start_tracking">Start tracking</string>
-    <string name="srcd_cannot_revoke_permission">Permissions can only be revoked from Android settings.</string>
-    <string name="srcd_route_tracking_start_failed">Route tracking start failed</string>
-    <string name="srcd_content_desc_close_dialog">Close Dialog</string>
+    <string name="srcd_rate_parking_title">Vuoi valutare il tuo parcheggio?</string>
+    <string name="srcd_enable_permissions_info">Per continuare sono necessari i seguenti permessi.</string>
+    <string name="srcd_permission_notifications">Notifiche</string>
+    <string name="srcd_permission_activity_tracking">Rilevamento dell\'attività</string>
+    <string name="srcd_permission_location">Posizione</string>
+    <string name="srcd_action_start_tracking">Avvia rilevamento</string>
+    <string name="srcd_cannot_revoke_permission">I permessi possono essere revocati solo dalle impostazioni di Android.</string>
+    <string name="srcd_route_tracking_start_failed">Avvio del rilevamento del percorso non riuscito</string>
+    <string name="srcd_content_desc_close_dialog">Chiudi finestra di dialogo</string>
 
 
     <!-- Settings Permissions-->
-    <string name="grant_ActRecognition_permission_toContinue">Please, grant Activity Recognition permission to continue.</string>
-    <string name="grant_notifications_permission_toContinue">Please, grant notifications permission to continue.</string>
+    <string name="grant_ActRecognition_permission_toContinue">Concedi il permesso di Rilevamento dell\'attività per continuare.</string>
+    <string name="grant_notifications_permission_toContinue">Concedi il permesso per le notifiche per continuare.</string>
 
     <!-- Parking Effort ViewModel errors-->
-    <string name="pe_error_loading_zones">An error has occurred while loading parking zones</string>
-    <string name="route_tracking_on">Route tracking on</string>
-    <string name="sensors_in_action">Recording location, steps, and altitude.</string>
+    <string name="pe_error_loading_zones">Si è verificato un errore durante il caricamento delle zone di parcheggio</string>
+    <string name="route_tracking_on">Rilevamento del percorso attivo</string>
+    <string name="sensors_in_action">Rilevamento di posizione, passi e altitudine.</string>
 
     <!-- RouteTrackingService Errors-->
-    <string name="permissions_revoked"> Unable to continue route tracking: permissions revoked or GPS disabled.</string>
-    <string name="route_tracking_stopped">"Route Tracking stopped "</string>
-    <string name="error_saving_route_tracking">Error saving path to database.</string>
+    <string name="permissions_revoked">Impossibile continuare il rilevamento del percorso: i permessi sono stati revocati o il GPS è disattivato.</string>
+    <string name="route_tracking_stopped">Rilevamento del percorso interrotto</string>
+    <string name="error_saving_route_tracking">Errore durante il salvataggio del percorso nel database.</string>
+    <string name="tracking_limited">Il permesso per l\'attività fisica è stato revocato. Rilevamento limitato.</string>
+
 
     <!-- Parking Effort Screen-->
-    <string name="pe_leaderboard_empty">leaderboard is empty</string>
-    <string name="pe_tab_leaderboard">Leaderboard</string>
-    <string name="pe_tab_score">Tab Score</string>
-    <string name="pe_address_unknown">Unknown Address</string>
-    <string name="pe_score_no_zone_selected">No zone selected</string>
-    <string name="pe_score_address_loading">Address loading</string>
-    <string name="pe_address_not_found">Address not found</string>
-    <string name="pe_score_format">score_format</string>
-    <string name="pe_score_destinations_title">Destination Title</string>
-    <string name="pe_score_no_destinations">No destinations</string>
-    <string name="pe_score_destination_item_title">Destination Item Title</string>
-    <string name="pe_map_destination_marker_title">destination marker</string>
-    <string name="pe_map_destination_marker_snippet">dest marker snippet</string>
-    <string name="pe_map_cd_parking_zone">cd parking zone</string>
+    <string name="pe_leaderboard_empty">La classifica è vuota</string>
+    <string name="pe_tab_leaderboard">Classifica</string>
+    <string name="pe_tab_score">Punteggio</string>
+    <string name="pe_address_unknown">Indirizzo sconosciuto</string>
+    <string name="pe_score_no_zone_selected">Nessuna zona selezionata</string>
+    <string name="pe_score_address_loading">Caricamento indirizzo</string>
+    <string name="pe_address_not_found">Indirizzo non trovato</string>
+    <string name="pe_score_average">Punteggio medio: %1$s</string>
+    <string name="pe_score_destinations_title">Destinazioni raggiunte di recente per questa zona</string>
+    <string name="pe_score_no_destinations">Nessuna destinazione</string>
+    <string name="pe_score_destination_item_title">Posizione:</string>
+    <string name="pe_map_destination_marker_title"> Raggiunta a piedi </string>
+    <string name="pe_map_cd_parking_zone">zona di parcheggio</string>
+    <string name="pe_discover_effort">Scopri il punteggio assegnato a questa zona</string>
+    <string name="pe_discover_best_parking_zones">Scopri le migliori zone di parcheggio</string>
 
     <!-- Destination Confirmation Dialog-->
-    <string name="pe_dialog_yes">Yes</string>
+    <string name="pe_dialog_dest_title">Vuoi raggiungere questo luogo?</string>
+    <string name="pe_dialog_dest_message">Conferma per scoprire quale parcheggio in zona è il migliore.</string>
+    <string name="pe_dialog_yes">Sì</string>
     <string name="pe_dialog_no">No</string>
-    <string name="pe_dialog_dest_title">Dest title</string>
-    <string name="pe_dialog_dest_message">Dest message</string>
+
+    <!-- ParkingEffort Help Dialog-->
+    <string name="pe_help_dialog_title">Come funziona</string>
+    <string name="pe_help_info_parking_points">Le icone colorate sulla mappa indicano i luoghi in cui hai parcheggiato, ciascuno con un punteggio basato sulla comodità del parcheggio.\n</string>
+    <string name="pe_help_info_map_click">Tocca la mappa per vedere quale parcheggio è più comodo per la destinazione di oggi.\n</string>
+
 
     <!-- Vehicles Manager -->
-    <string name="status_parked">Parked</string>
-    <string name="status_available">Available</string>
-    <string name="all_types">All types</string>
-    <string name="vehicle_type_car">car</string>
-    <string name="vehicle_type_motorcycle">motorcycle</string>
-    <string name="vehicle_type_bicycle">bicycle</string>
-    <string name="vehicle_type_other">other</string>
-    <string name="create_transition_channel">Notifiche per la registrazione e chiusura della sosta</string>
-    <string name="notifications_parking_expiry">Avvisi scadenza parcheggi</string>
-    <string name="notifications_parking_expiry_desc">Notifiche per pre-scadenza e scadenza dei biglietti a tariffa fissa</string>
-    <string name="notifications_active">Promemoria Parcheggio Attivo</string>
+    <string name="status_parked">Parcheggiato</string>
+    <string name="status_available">Disponibile</string>
+    <string name="all_types">Tutti i tipi</string>
+    <string name="vehicle_type_car">auto</string>
+    <string name="vehicle_type_motorcycle">motocicletta</string>
+    <string name="vehicle_type_bicycle">bicicletta</string>
+    <string name="vehicle_type_other">altro</string>
+    <string name="search_placeholder">Cerca </string>
+    <string name="vehicle_deleted">Veicolo eliminato</string>
+    <string name="save_changes">Salva modifiche</string>
+    <string name="vehicle_type">Tipo di veicolo</string>
+    <string name="vehicle_name">Nome del veicolo</string>
+    <string name="no_vehicles">"Nessun veicolo registrato "</string>
+
+    <!--Route Tracking Notification -->
+    <string name="are_you_there">Sei già arrivato?</string>
+    <string name="arrival_detected">Abbiamo notato che ti sei fermato</string>
+    <string name="yes_save">Si, salva</string>
+    <string name="no_resume">No, annulla</string>
 
 </resources>

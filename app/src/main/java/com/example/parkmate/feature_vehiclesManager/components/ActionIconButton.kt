@@ -27,9 +27,6 @@ fun ActionIconButton(
         modifier = modifier.size(36.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription
-        )
+        Icon(imageVector = icon, contentDescription = contentDescription)
     }
 }

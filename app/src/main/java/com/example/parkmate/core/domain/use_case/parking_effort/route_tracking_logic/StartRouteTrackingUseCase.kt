@@ -8,14 +8,11 @@ class StartRouteTrackingUseCase @Inject constructor(
     private val parkingSessionRepository: ParkingSessionRepository,
     private val parkingEffortRepository: ParkingEffortRepository
 ) {
-    suspend operator fun invoke(
-        sessionId: Int,
-    ): RouteTrackingStartResult {
+    suspend operator fun invoke(sessionId: Int): RouteTrackingStartResult {
         if (sessionId <= 0) return RouteTrackingStartResult.InvalidSessionId
 
-        val session = parkingSessionRepository.getParkingSessionById(sessionId)
+        parkingSessionRepository.getParkingSessionById(sessionId)
             ?: return RouteTrackingStartResult.SessionNotFound
-
 
         val existingEffort = parkingEffortRepository.getParkingEffortBySessionId(sessionId)
         if (existingEffort != null) {
@@ -31,5 +28,4 @@ sealed interface RouteTrackingStartResult {
     data object SessionNotFound : RouteTrackingStartResult
     data object AlreadyCompleted : RouteTrackingStartResult
     data object InvalidSessionId : RouteTrackingStartResult
-
 }

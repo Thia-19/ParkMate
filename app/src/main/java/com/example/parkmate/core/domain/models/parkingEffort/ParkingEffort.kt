@@ -31,12 +31,6 @@ data class ParkingEffort (
     val destination: Position? = null
 )
 
-data class EffortWithPosition(
-    val effortId: Int = 0,
-    @Embedded val position: Position,
-    val effortScore: Double = 0.0,
-    @Embedded(prefix = "destination_")
-    val destinationPosition: Position? = null
-)
+
 
 

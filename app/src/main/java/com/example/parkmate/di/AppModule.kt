@@ -1,6 +1,7 @@
 package com.example.parkmate.di
 
 import android.content.Context
+import android.hardware.SensorManager
 import androidx.room.Room
 import androidx.work.WorkManager
 import com.example.parkmate.core.data.local.data_source.ParkMateDatabase
@@ -18,7 +19,11 @@ import com.example.parkmate.core.data.repository.VehiclesRepositoryImpl
 import com.example.parkmate.core.domain.repository.ImageRepository
 import com.example.parkmate.core.domain.repository.ParkingEffortRepository
 import com.example.parkmate.core.domain.repository.VehiclesRepository
+import com.example.parkmate.core.domain.util.observers.ConnectivityObserver
+import com.example.parkmate.core.domain.util.observers.NetworkConnectivityObserver
 import com.example.parkmate.debug.AppDatabaseCallback
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +41,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideParkMateDatabase(
-        @ApplicationContext context: Context,
+        @ApplicationContext context: Context
     ): ParkMateDatabase {
         val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         lateinit var database: ParkMateDatabase
@@ -121,13 +126,36 @@ object AppModule {
         return ParkingEffortRepositoryImpl(dao)
     }
 
-
     @Provides
     @Singleton
     fun provideWorkManager(
         @ApplicationContext context: Context
     ): WorkManager {
         return WorkManager.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSensorManager(
+        @ApplicationContext context: Context
+    ): SensorManager {
+        return context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(
+        @ApplicationContext context: Context
+    ): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectivityObserver(
+        @ApplicationContext context: Context
+    ): ConnectivityObserver {
+        return NetworkConnectivityObserver(context)
     }
 
 }

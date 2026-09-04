@@ -3,14 +3,12 @@ package com.example.parkmate.feature_parkingEffort.dialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.window.DialogProperties
 import com.example.parkmate.R
 
 @Composable
@@ -33,19 +31,9 @@ fun DestinationConfirmationDialog(
             }
         },
         icon = {
-            Icon(
-                imageVector = Icons.Default.Place,
-                contentDescription = "Default icon"
-            )
+            Icon(imageVector = Icons.Default.Place, contentDescription = null)
         },
         title = { Text(stringResource(id = R.string.pe_dialog_dest_title)) },
-        text = { Text(stringResource(id = R.string.pe_dialog_dest_message)) },
-        shape = AlertDialogDefaults.shape,
-        containerColor = AlertDialogDefaults.containerColor,
-        iconContentColor = AlertDialogDefaults.iconContentColor,
-        titleContentColor = AlertDialogDefaults.titleContentColor,
-        textContentColor = AlertDialogDefaults.textContentColor,
-        tonalElevation = AlertDialogDefaults.TonalElevation,
-        properties = DialogProperties()
+        text = { Text(stringResource(id = R.string.pe_dialog_dest_message)) }
     )
 }

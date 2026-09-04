@@ -10,11 +10,9 @@ import javax.inject.Inject
 class ParkingEffortRepositoryImpl @Inject constructor(
     private val dao: ParkingEffortDao
 ) : ParkingEffortRepository {
-
     override suspend fun saveParkingEffort(effort: ParkingEffort) {
         dao.insertParkingEffort(effort)
     }
-
     override fun getAllEfforts(): Flow<List<ParkingEffort>> = dao.observeAll()
 
     override suspend fun getParkingEffortBySessionId(sessionId: Int): ParkingEffort? =
@@ -23,6 +21,6 @@ class ParkingEffortRepositoryImpl @Inject constructor(
     override fun getEffortMapPoints(): Flow<List<EffortWithPosition>> = dao.observeMapPoints()
 
     override suspend fun cancelRouteTracking(sessionId: Int) {
-        dao.deleteParkingEffortBySessionId(sessionId)
+        dao.deleteBySessionId(sessionId)
     }
 }

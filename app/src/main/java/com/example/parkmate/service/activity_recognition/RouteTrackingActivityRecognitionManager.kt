@@ -58,10 +58,10 @@ class RouteTrackingActivityRecognitionManager @Inject constructor(
         ActivityRecognition.getClient(context)
             .requestActivityTransitionUpdates(request, pendingIntent)
             .addOnSuccessListener {
-                Log.d(TAG, "Activity Transition Updates registrate con successo per sessione #$sessionId")
+                Log.d(TAG, "Activity Transition registrato con successo per sessione #$sessionId")
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Registrazione Activity Transition Updates FALLITA per sessione #$sessionId", e)
+                Log.e(TAG, "Activity Transition FALLITO per sessione #$sessionId", e)
             }
     }
 
@@ -71,7 +71,7 @@ class RouteTrackingActivityRecognitionManager @Inject constructor(
         ActivityRecognition.getClient(context)
             .removeActivityTransitionUpdates(pendingIntent)
             .addOnFailureListener { e ->
-                Log.e(TAG, "Rimozione Activity Transition Updates fallita per sessione #$sessionId", e)
+                Log.e(TAG, "Rimozione Activity Transition fallita per sessione #$sessionId", e)
             }
     }
 

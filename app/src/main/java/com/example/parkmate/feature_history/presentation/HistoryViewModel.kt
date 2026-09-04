@@ -1,6 +1,5 @@
 package com.example.parkmate.feature_history.presentation
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkmate.core.domain.models.ParkingType

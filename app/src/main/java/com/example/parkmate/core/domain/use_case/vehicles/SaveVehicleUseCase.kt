@@ -3,6 +3,8 @@ package com.example.parkmate.core.domain.use_case.vehicles
 import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.core.domain.repository.ImageRepository
 import com.example.parkmate.core.domain.repository.VehiclesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SaveVehicleUseCase @Inject constructor(
@@ -13,14 +15,15 @@ class SaveVehicleUseCase @Inject constructor(
         vehicle: Vehicle,
         newImageUriString: String? = null,
         isUpdate: Boolean = false
-    ) {
+    ): Unit = withContext(Dispatchers.IO) {
+
         val oldImagePath = vehicle.imageUri
-        var newImagePath: String? = null
-
-
-        if (newImageUriString != null && newImageUriString != oldImagePath) {
-            newImagePath = imageRepository.saveImage(newImageUriString)
-        }
+        val newImagePath: String? =
+            if (newImageUriString != null && newImageUriString != oldImagePath) {
+                imageRepository.saveImage(newImageUriString)
+            } else {
+                null
+            }
 
         val finalImagePath = newImagePath ?: oldImagePath
         val vehicleToSave = vehicle.copy(imageUri = finalImagePath)
@@ -28,7 +31,6 @@ class SaveVehicleUseCase @Inject constructor(
         try {
             if (isUpdate) {
                 vehiclesRepository.updateVehicle(vehicleToSave)
-
                 if (newImagePath != null && oldImagePath != null) {
                     imageRepository.deleteImage(oldImagePath)
                 }
@@ -36,11 +38,7 @@ class SaveVehicleUseCase @Inject constructor(
                 vehiclesRepository.addVehicle(vehicleToSave)
             }
         } catch (e: Exception) {
-
-            // Rollback: se il DB fallisce, eliminiamo la nuova foto appena creata
-            newImagePath?.let { path ->
-                imageRepository.deleteImage(path)
-            }
+            newImagePath?.let { path -> imageRepository.deleteImage(path) }
             throw e
         }
     }

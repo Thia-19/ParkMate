@@ -1,4 +1,4 @@
-package com.example.parkmate.core.domain.util
+package com.example.parkmate.core.domain.util.map
 
 import android.content.Context
 import android.location.Address
@@ -31,16 +31,21 @@ class AppGeocoder @Inject constructor(
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 suspendCancellableCoroutine { continuation ->
-                    geocoder.getFromLocation(latitude, longitude, 1, object : Geocoder.GeocodeListener {
-                        override fun onGeocode(addresses: MutableList<Address>) {
-                            val addressLine = addresses.firstOrNull()?.getAddressLine(0)
-                            continuation.resume(addressLine ?: formattedCoordinates)
-                        }
+                    geocoder.getFromLocation(
+                        latitude,
+                        longitude,
+                        1,
+                        object : Geocoder.GeocodeListener {
+                            override fun onGeocode(addresses: MutableList<Address>) {
+                                val addressLine = addresses.firstOrNull()?.getAddressLine(0)
+                                continuation.resume(addressLine ?: formattedCoordinates)
+                            }
 
-                        override fun onError(errorMessage: String?) {
-                            continuation.resume(formattedCoordinates)
+                            override fun onError(errorMessage: String?) {
+                                continuation.resume(formattedCoordinates)
+                            }
                         }
-                    })
+                    )
                 }
             } else {
                 withContext(Dispatchers.IO) {
@@ -52,9 +57,5 @@ class AppGeocoder @Inject constructor(
         } catch (e: Exception) {
             formattedCoordinates
         }
-    }
-
-    suspend operator fun invoke(longitude: Double, latitude: Double, isLongitudeFirst: Boolean = true): String {
-        return invoke(latitude = latitude, longitude = longitude)
     }
 }

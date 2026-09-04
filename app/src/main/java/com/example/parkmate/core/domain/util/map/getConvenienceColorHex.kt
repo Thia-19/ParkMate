@@ -1,9 +1,14 @@
 package com.example.parkmate.core.domain.util.map
 
+private const val SCORE_EXCELLENT = 75.0
+private const val SCORE_GOOD = 50.0
+private const val SCORE_FAIR = 30.0
+private const val SCORE_POOR = 15.0
+
 fun getConvenienceColorHex(score: Double): String = when {
-    score >= 75.0 -> "#4CAF50" // Verde: Ottimo (Molto vicino)
-    score >= 50.0 -> "#8BC34A" // Verde chiaro: Buono
-    score >= 30.0 -> "#FFEB3B" // Giallo: Accettabile / Medio
-    score >= 15.0 -> "#FF9800" // Arancione: Scomodo
-    else -> "#F44336"          // Rosso: Pessimo (Molto lontano)
+    score >= SCORE_EXCELLENT -> "#4CAF50"
+    score >= SCORE_GOOD -> "#8BC34A"
+    score >= SCORE_FAIR -> "#FFEB3B"
+    score >= SCORE_POOR -> "#FF9800"
+    else -> "#F44336"
 }

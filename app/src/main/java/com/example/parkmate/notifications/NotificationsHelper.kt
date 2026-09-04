@@ -25,28 +25,19 @@ object NotificationsHelper {
     /** ID CANALI **/
     const val PARKING_EXPIRY_CHANNEL_ID = "parking_expiry_channel"
     const val ONGOING_PARKING_CHANNEL_ID = "ongoing_parking_channel"
-
     const val ROUTE_TRACKING_CHANNEL_ID = "route_tracking_channel"
     const val TRANSITION_CHANNEL_ID = "vehicle_transition_channel"
-
     const val ERROR_CHANNEL_ID = "error_notification_channel"
 
     /** ID NOTIFICHE **/
     const val PARKING_EXPIRY_NOTIFICATION_ID_BASE = 5_000
-
-    // Ongoing parkings
     const val ONGOING_PARKING_NOTIFICATION_ID = 6_000
     const val ROUTE_TRACKING_NOTIFICATION_ID = 7_201
-    const val SAVED_EFFORT_NOTIFICATION_ID = 7_202
     const val CONFIRMATION_NOTIFICATION_ID = 7_203
-    const val PERMISSION_REVOKED_NOTIFICATION_ID = 7_204
-
-    // Activity Recognition: vehicle to pedestrian parking session
     const val TRANSITION_NOTIFICATION_ID = 2001
     const val ERROR_NOTIFICATION_ID = 8_000
 
     /** CREAZIONE CANALI **/
-
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Tracciamento Percorso"
@@ -146,7 +137,6 @@ object NotificationsHelper {
 
 
     /** BUILDERS **/
-
     fun buildTrackingNotification(context: Context, sessionId: Int): Notification {
         createNotificationChannel(context)
 
@@ -272,30 +262,21 @@ object NotificationsHelper {
 
         return baseBuilder(context)
             .setChannelId(TRANSITION_CHANNEL_ID)
-            .setContentTitle("Sei arrivato a destinazione?")
-            .setContentText("Abbiamo rilevato che sei fermo. Vuoi salvare il percorso?")
+            .setContentTitle(context.getString(R.string.are_you_there))
+            .setContentText(context.getString(R.string.arrival_detected))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .addAction(R.drawable.ic_check_circle, "Sì, salva", confirmPendingIntent)
-            .addAction(R.drawable.ic_cancel, "No, continua", resumePendingIntent)
+            .addAction(R.drawable.ic_check_circle, context.getString(R.string.yes_save), confirmPendingIntent)
+            .addAction(R.drawable.ic_cancel, context.getString(R.string.no_resume), resumePendingIntent)
             .setAutoCancel(true)
             .build()
     }
 
-    fun buildWorkerNotification(context: Context, title: String, content: String): Notification {
-        return baseBuilder(context)
-            .setContentTitle(title)
-            .setContentText(content)
-            .build()
-    }
-
     /** HELPERS **/
-
     private fun baseBuilder(context: Context): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, ROUTE_TRACKING_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_route_tracking)
             .setColor(ContextCompat.getColor(context, R.color.black))
     }
-
 
     private fun createDismissPendingIntent(context: Context): PendingIntent {
         val dismissIntent = Intent(context, RouteTrackingActionReceiver::class.java).apply {
@@ -308,8 +289,6 @@ object NotificationsHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
-
-
     fun showVehicleTransitionNotification(
         context: Context,
         hasActiveSessions: Boolean
@@ -325,7 +304,6 @@ object NotificationsHelper {
             NotificationManagerCompat.from(context).notify(TRANSITION_NOTIFICATION_ID, notification)
         }
     }
-
     fun showExpiryNotification(
         context: Context,
         notificationId: Int,
@@ -358,7 +336,6 @@ object NotificationsHelper {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notificationId, notification)
     }
-
     fun showOngoingParkingNotification(
         context: Context,
         title: String,
@@ -375,15 +352,10 @@ object NotificationsHelper {
             )
         }
     }
-
-    fun showPermissionRevokedNotification(context: Context) {
-
-    }
-
     fun showErrorNotification(
         context: Context,
         errorMessage: String,
-        title: String = "Errore"
+        title: String = context.getString(R.string.sensors_in_action)
     ) {
         createErrorNotificationChannel(context)
 

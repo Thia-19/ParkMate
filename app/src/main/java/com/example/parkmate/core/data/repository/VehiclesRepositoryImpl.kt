@@ -5,13 +5,11 @@ import com.example.parkmate.core.domain.models.vehicle.Vehicle
 import com.example.parkmate.core.domain.repository.VehiclesRepository
 import javax.inject.Inject
 
-// Accessed by ViewModel. Interacts with DAO
-
 class VehiclesRepositoryImpl @Inject constructor(
     private val dao: VehicleDao
 ) : VehiclesRepository {
 
-    override suspend fun addVehicle(vehicle: Vehicle) = dao.insertVehicle(vehicle)
+    override suspend fun addVehicle(vehicle: Vehicle) : Long = dao.insertVehicle(vehicle)
 
     override fun getVehicles() = dao.getVehicles()
 
@@ -22,6 +20,3 @@ class VehiclesRepositoryImpl @Inject constructor(
     override suspend fun deleteVehicle(vehicle: Vehicle) = dao.deleteVehicle(vehicle)
 }
 
-/*NOTA:
-Il tipo di ritorno Flow<List<Vehicle>> è inferito in automatico
-*/
