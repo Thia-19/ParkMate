@@ -161,7 +161,6 @@
     <string name="sensors_in_action">Recording location, steps, and altitude.</string>
 
     <!-- RouteTrackingService Errors-->
-    <string name="route_tracking_error">Route Tracking Error</string>
     <string name="permissions_revoked"> Unable to continue route tracking: permissions revoked or GPS disabled.</string>
     <string name="route_tracking_stopped">Route Tracking stopped </string>
     <string name="error_saving_route_tracking">Error saving path to database.</string>
