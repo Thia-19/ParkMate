@@ -163,6 +163,7 @@ class BackgroundTaskManager @Inject constructor(
                 context.startService(intent)
             }
         } catch (e: IllegalStateException) {
+            e.printStackTrace()
         }
     }
 

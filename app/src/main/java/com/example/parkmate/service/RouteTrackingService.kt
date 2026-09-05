@@ -1,22 +1,25 @@
 package com.example.parkmate.service
 
-import com.example.parkmate.notifications.NotificationsHelper
-import com.example.parkmate.service.data_providers.location.LocationException
-import com.example.parkmate.service.data_providers.location.LocationProvider
-import com.example.parkmate.service.data_providers.steps.StepCounterManager
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.example.parkmate.R
 import com.example.parkmate.core.domain.models.Position
 import com.example.parkmate.core.domain.use_case.parking_effort.route_tracking_logic.CompleteRouteTrackingUseCase
+import com.example.parkmate.notifications.NotificationsHelper
 import com.example.parkmate.permissions.RouteTrackingPermissions
 import com.example.parkmate.service.activity_recognition.RouteTrackingActivityRecognitionManager
+import com.example.parkmate.service.activity_recognition.VehicleToPedestrianActivityRecognitionManager
+import com.example.parkmate.service.data_providers.location.LocationException
+import com.example.parkmate.service.data_providers.location.LocationProvider
+import com.example.parkmate.service.data_providers.steps.StepCounterManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,9 +30,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import android.content.pm.ServiceInfo
-import android.util.Log
-import com.example.parkmate.service.activity_recognition.VehicleToPedestrianActivityRecognitionManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -63,11 +63,11 @@ class RouteTrackingService : Service() {
         val sessionId = intent.getIntExtra(EXTRA_SESSION_ID, NO_SESSION_ID)
 
         when (action) {
-            ACTION_START -> handleStartCommand(intent, sessionId)
+            ACTION_START -> handleStartCommand(sessionId)
             ACTION_STOP_AND_SAVE -> handleStopAndSaveCommand(sessionId)
-            ACTION_CANCEL -> handleCancelCommand(sessionId)
+            ACTION_CANCEL -> handleCancelCommand()
             ACTION_PROMPT_CONFIRMATION -> handlePromptConfirmationCommand(sessionId)
-            ACTION_RESUME_TRACKING -> handleResumeTrackingCommand(sessionId)
+            ACTION_RESUME_TRACKING -> handleResumeTrackingCommand()
             ACTION_DISMISS_TRANSITION_PROMPT -> {
                 NotificationsHelper.cancelTransitionNotification(this)
             }
@@ -77,7 +77,7 @@ class RouteTrackingService : Service() {
     }
 
     @RequiresPermission(Manifest.permission.ACTIVITY_RECOGNITION)
-    private fun handleStartCommand(intent: Intent, sessionId: Int) {
+    private fun handleStartCommand(sessionId: Int) {
         val targetSessionId = if (sessionId != NO_SESSION_ID) sessionId else currentSessionId
         startForegroundSafely(targetSessionId)
 
@@ -238,7 +238,7 @@ class RouteTrackingService : Service() {
     }
 
     @RequiresPermission(Manifest.permission.ACTIVITY_RECOGNITION)
-    private fun handleCancelCommand(sessionId: Int) {
+    private fun handleCancelCommand() {
         cleanupAndStopService()
     }
 
@@ -250,7 +250,7 @@ class RouteTrackingService : Service() {
     }
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun handleResumeTrackingCommand(sessionId: Int) {
+    private fun handleResumeTrackingCommand() {
         NotificationsHelper.cancelConfirmationNotification(this)
     }
 
@@ -263,6 +263,11 @@ class RouteTrackingService : Service() {
             activityRecognitionManager.stopMonitoring(currentSessionId)
             vehicleToPedestrianManager.startMonitoring()
         } catch (e: SecurityException) {
+            NotificationsHelper.showErrorNotification(
+                this,
+                getString(R.string.tracking_limited)
+            )
+            resetTracking()
 
         }
     }

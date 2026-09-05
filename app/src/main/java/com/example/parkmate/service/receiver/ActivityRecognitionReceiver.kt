@@ -3,6 +3,7 @@ package com.example.parkmate.service.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.example.parkmate.BackgroundTaskManager
 import com.example.parkmate.service.RouteTrackingService
 import com.google.android.gms.location.ActivityTransition
@@ -13,7 +14,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ActivityRecognitionReceiver : BroadcastReceiver() {
-
     @Inject
     lateinit var backgroundTaskManager: BackgroundTaskManager
 
@@ -23,6 +23,7 @@ class ActivityRecognitionReceiver : BroadcastReceiver() {
         }
 
         if (!ActivityTransitionResult.hasResult(intent)) {
+            Log.w(TAG, "No ActivityTransitionResult nell'intent")
             return
         }
 
@@ -34,6 +35,7 @@ class ActivityRecognitionReceiver : BroadcastReceiver() {
         )
 
         if (sessionId == RouteTrackingService.NO_SESSION_ID) {
+            Log.w(TAG, "Non è presente un sessionId valido")
             return
         }
 
@@ -47,16 +49,17 @@ class ActivityRecognitionReceiver : BroadcastReceiver() {
                     event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER
         }
 
+
         if (hasArrived) {
             backgroundTaskManager.promptConfirmation(sessionId)
         }
-
-        if(hasResumedMoving){
+        if (hasResumedMoving) {
             backgroundTaskManager.resumeTracking(sessionId)
         }
     }
 
-        companion object {
-            const val ACTION_ACTIVITY_TRANSITION = "com.example.parkmate.action.ACTIVITY_TRANSITION"
-        }
+    companion object {
+        private const val TAG = "ActivityRecognitionReceiver"
+        const val ACTION_ACTIVITY_TRANSITION = "com.example.parkmate.action.ACTIVITY_TRANSITION"
     }
+}
