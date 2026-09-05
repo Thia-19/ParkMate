@@ -23,7 +23,7 @@ class ParkingExpiryReceiver : BroadcastReceiver(){
 
         if (sessionId == -1) return
 
-        val pendingResult = goAsync() // lettura al DB -> resta sveglio receiver
+        val pendingResult = goAsync()
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -49,7 +49,7 @@ class ParkingExpiryReceiver : BroadcastReceiver(){
                     NotificationsHelper.showExpiryNotification(context, notificationId, title, content)
                 }
             } finally {
-                pendingResult.finish() // release broadcast
+                pendingResult.finish()
             }
         }
     }

@@ -28,6 +28,5 @@ data class AddSessionState(
     val errorMessage: String? = null,
     val isSaved: Boolean = false,
 
-    // Necessario per tenere traccia del parking effort relativo
     val savedSessionId: Int? = null
 )

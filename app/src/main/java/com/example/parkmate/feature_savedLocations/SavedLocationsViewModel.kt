@@ -26,7 +26,7 @@ class SavedLocationsViewModel @Inject constructor(
         .onStart { loadLocations() }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000), // Ottimizzazione per rotazioni schermo
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = SavedLocationsState(isLoading = true)
         )
 

@@ -392,7 +392,6 @@ fun RateDetailsCard(
 ) {
     var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
 
-    // Update currentTime every 1 sec
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = System.currentTimeMillis()
