@@ -22,25 +22,25 @@ class CalculateParkingScoreUseCase @Inject constructor() {
         var weightedEffortSum = 0.0
         var totalActiveWeight = 0.0
 
-        if (effort.timeFrame > 0) {
+        if (effort.timeFrame >= 0) {
             val normalizedTime = (effort.timeFrame / MAX_REF_TIME_SECONDS).coerceAtMost(1.0)
             weightedEffortSum += normalizedTime * WEIGHT_TIME
             totalActiveWeight += WEIGHT_TIME
         }
 
-        if (effort.distanceMeters > 0.0) {
+        if (effort.distanceMeters >= 0.0) {
             val normalizedDistance = (effort.distanceMeters / MAX_REF_DISTANCE_METERS).coerceAtMost(1.0)
             weightedEffortSum += normalizedDistance * WEIGHT_DISTANCE
             totalActiveWeight += WEIGHT_DISTANCE
         }
 
-        if (effort.steps > 0) {
+        if (effort.steps >= 0) {
             val normalizedSteps = (effort.steps / MAX_REF_STEPS).coerceAtMost(1.0)
             weightedEffortSum += normalizedSteps * WEIGHT_STEPS
             totalActiveWeight += WEIGHT_STEPS
         }
 
-        if (effort.elevationGain > 0.0) {
+        if (effort.elevationGain >= 0.0) {
             val normalizedElevation = (effort.elevationGain / MAX_REF_ELEVATION_METERS).coerceAtMost(1.0)
             weightedEffortSum += normalizedElevation * WEIGHT_ELEVATION
             totalActiveWeight += WEIGHT_ELEVATION
